@@ -14,6 +14,7 @@ public class WMGame extends Game {
 	public void create() {		
 		
 		System.out.println("Game created");
+		System.out.println("This is Edward");
 		setScreen(new GameScreen());
 	}
 

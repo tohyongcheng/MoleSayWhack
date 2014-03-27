@@ -41,13 +41,12 @@ public class GameInputHandler implements InputProcessor {
 		
 		screenX = scaleX(screenX);
 		screenY = scaleY(screenY);
+		System.out.println("screenX: " + screenX + " screenY: " + screenY);
 		
 		for(Mole m: myWorld.getMoleGrid()) {
 			if (m!=null) {
-				if (m.isTouchDown(screenX, screenY)) {
-					m.minusHP();
-					return true;
-				}
+				m.isTouchDown(screenX, screenY);
+				
 			}
 		}
 		

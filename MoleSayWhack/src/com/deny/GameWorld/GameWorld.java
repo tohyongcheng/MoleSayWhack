@@ -37,7 +37,8 @@ public class GameWorld {
 		MENU, READY, RUNNING, DEPLOYMENT, GAMEOVER, HIGHSCORE;
 	}
 
-	public GameWorld() {
+
+	public GameWorld(SocketHandler sH) {
 		
 		//Setup GameState
 		gameState = GameState.READY;
@@ -46,20 +47,7 @@ public class GameWorld {
 		moleQueues = (Queue<Mole>[]) new LinkedList<?>[NUMBER_OF_MOLES_PER_GRID];
 		
 		
-		//Setup Server
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		String message = null;
-		try {
-			message = br.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		boolean isServer = false;
-		if (message.equals("s"))
-			isServer = true;
-		
-		socketHandler = new SocketHandler(isServer, this);
-		socketHandler.start();
+		this.socketHandler = sH;
 		
 		//Setup player and threads
 		this.player = new Player(5);
@@ -81,9 +69,13 @@ public class GameWorld {
 		}
 		
 		this.r = new Random();
+		
+		
 	}
 
     public void update(float delta) {
+
+    	
     	//Dequeue when possible
         for (int i=0; i<NUMBER_OF_MOLES_PER_GRID; i++) {
         	
@@ -110,7 +102,7 @@ public class GameWorld {
         	}
         }
         
-        generateRandomSpawns( 2f , delta);
+        generateRandomSpawns(0.5f,delta);
     }
     
     public Rectangle getBoard() {

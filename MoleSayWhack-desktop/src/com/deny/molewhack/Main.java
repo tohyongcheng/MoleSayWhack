@@ -8,7 +8,8 @@ public class Main {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "MoleSayWhack";
 		cfg.width = 1080 / 3;
-		cfg.height = 1620 / 3;
+//		cfg.height = 1620 / 3;
+		cfg.height = 1800 / 3;
 		
 		new LwjglApplication(new WMGame(), cfg);
 	}

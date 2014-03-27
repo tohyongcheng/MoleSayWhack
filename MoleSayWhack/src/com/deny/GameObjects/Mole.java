@@ -15,7 +15,7 @@ public class Mole {
 	public Mole(Player player) {
 		boundingCircle = new Circle();
 		isDead = false;
-		HP = 5;
+		HP = 1;
 		timeExisted = 0;
 		this.player= player; 
 	}
@@ -47,20 +47,19 @@ public class Mole {
 		return boundingCircle;
 	}
 	
-	public void minusHP() {
-		if (isAlive()) {
-			System.out.println("mole kena attack!");
-			HP -= 1;
-			if (HP==0) {
-				System.out.println("Mole is dead!");
-				isDead = true;
-				
-			}
-		}
-	}
 	
 	public boolean isTouchDown(int screenX, int screenY) {
+		
+		//minusHP
 		if (boundingCircle.contains(screenX, screenY)) {
+			if (isAlive()) {
+				System.out.println("mole kena attack!");
+				HP -= 1;
+				if (HP==0) {
+					System.out.println("Mole is dead!");
+					isDead = true;
+				}
+			}
 			return true;
 		}
 		return false;

@@ -29,13 +29,10 @@ public class GameRenderer {
 	
 	public void render() {
 //		System.out.println("GameRenderer - render");
-		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
         
-        
         shapeRenderer.begin(ShapeType.Filled);
-
         // Chooses RGB Color of 87, 109, 120 at full opacity
         shapeRenderer.setColor(87 / 255.0f, 109 / 255.0f, 120 / 255.0f, 1);
 
@@ -43,8 +40,6 @@ public class GameRenderer {
         shapeRenderer.rect(world.getBoard().x, world.getBoard().y,
                 world.getBoard().width, world.getBoard().height);
 
-        // Tells the shapeRenderer to finish rendering
-        // We MUST do this every time.
         
         shapeRenderer.setColor(200 / 255.0f, 12 / 255.0f, 35 / 255.0f, 1);
         

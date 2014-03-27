@@ -6,51 +6,84 @@ import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.net.SocketHints;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.deny.GameWorld.GameWorld;
+import com.deny.Screens.MultiplayerScreen;
 import com.deny.Threads.ReadThread;
 import com.deny.Threads.SendThread;
 
 public class SocketHandler extends Thread {
 	
-	int port = 9999;
+	int port = 5000;
 	ServerSocketHints serverHints;
 	Socket client;
 	ServerSocket server;
 	SocketHints clientHints;
-	boolean isServer;
+	boolean isServer = false;
 	GameWorld gameWorld;
+	MultiplayerScreen multiS;
 	
 	private ReadThread readThread;
 	private SendThread sendThread;
 	
-	public SocketHandler(boolean isServer, GameWorld gw) {
-		this.isServer = isServer;
-		gameWorld = gw;
+	public SocketHandler(MultiplayerScreen ms) {
+		this.multiS = ms;
 	}
 	
+
+	
 	public void run() {
-		
-		if (isServer) {
-			serverHints = new ServerSocketHints();
-			server = Gdx.net.newServerSocket(Protocol.TCP, port , serverHints);
-		} else {
+			//Create client to check if there is an existing server connection
 			clientHints = new SocketHints();
+			clientHints.connectTimeout = 10000;
 			
-			//start client
-			client = Gdx.net.newClientSocket(Protocol.TCP, "localhost", port, clientHints);
-		}
+			if (isServer == false) {
+				try {
+					client = Gdx.net.newClientSocket(Protocol.TCP, "192.168.81.229", port, clientHints);
+					System.out.println("Trying to find existing server to join...");
+				} catch (GdxRuntimeException e) {
+					System.out.println("There is no current server running! I'm going to be a server now!");
+					isServer = true;
+				}
+			}
+			
+			if (isServer) {
+				while(true) {
+					if (isInterrupted()) {
+						System.out.println("Is interrupted!");
+						dispose();
+						return;
+					}
+					else {
+						serverHints = new ServerSocketHints();
+						serverHints.acceptTimeout = 500;	//set to 0 for infinite waiting
+						System.out.println("I'm a server and I'm waiting for new opponents!");
+						try {
+							if (server == null)
+								server = Gdx.net.newServerSocket(Protocol.TCP, port , serverHints);
+							client = server.accept(clientHints);
+							break;
+						} catch (GdxRuntimeException e) {
+							
+						}
+					}
+				}
+			}
+			
+			if (client.isConnected()) {
+				System.out.println("Connected to server!");
+				this.multiS.setReadyToPlay();
+			}
 		
-		if (isServer) {
-			client = server.accept(null);
-		}
+			
 		
-		if (client.isConnected()) {
-			System.out.println("Connected to server!");
-		}
-		readThread = (new ReadThread(client, gameWorld));
-		sendThread = (new SendThread(client));
-		readThread.start();
-		sendThread.start();
+		
+		
+		
+//		readThread = (new ReadThread(client, gameWorld));
+//		sendThread = (new SendThread(client));
+//		readThread.start();
+//		sendThread.start();
 	}
 	
 	
@@ -76,6 +109,15 @@ public class SocketHandler extends Thread {
 
 	public void setReadThread(ReadThread readThread) {
 		this.readThread = readThread;
+	}
+	
+	public void setGameWorld(GameWorld gw) {
+		this.gameWorld = gw;
+	}
+	
+	public void dispose() {
+		if (server!=null) server.dispose();
+		if (client!=null) client.dispose();
 	}
 
 }

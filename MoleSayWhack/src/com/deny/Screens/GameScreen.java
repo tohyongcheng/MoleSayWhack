@@ -1,5 +1,6 @@
 package com.deny.Screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.deny.GameHelpers.GameInputHandler;
@@ -9,20 +10,26 @@ import com.deny.SocketHandler.SocketHandler;
 
 public class GameScreen implements Screen {
 	
+	private Game game;
 	private GameWorld world;
 	private GameRenderer renderer;
 	private SocketHandler socketHandler;
 	
-	public GameScreen() {
+	public GameScreen(Game game, SocketHandler sH) {
 		System.out.println("GameScreen attached.");
 		
 		float screenWidth = Gdx.graphics.getWidth();
 		float screenHeight = Gdx.graphics.getHeight();
 		float gameWidth = 136;
-		float gameHeight = screenHeight / (screenWidth / gameWidth);
+//		float gameHeight = screenHeight / (screenWidth / gameWidth);
+		float gameHeight = 204;
 		
-		this.world = new GameWorld();
+		this.game = game;
+		this.socketHandler = sH;
+		this.world = new GameWorld(socketHandler);
 		this.renderer = new GameRenderer(world);
+		
+		
 		Gdx.input.setInputProcessor(new GameInputHandler(world, screenWidth / gameWidth, screenHeight / gameHeight));
 	}
 	

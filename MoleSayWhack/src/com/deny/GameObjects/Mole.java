@@ -2,20 +2,21 @@ package com.deny.GameObjects;
 
 import com.badlogic.gdx.math.Circle;
 
-public class Mole {
-	private static final long MOLE_APPEARANCE_TIME = (long) 2f;
-	private int HP;
-	private float cooldown;
-	private float timeExisted;
+public abstract class Mole 
+{
+	static final long MOLE_APPEARANCE_TIME = (long) 2f;
+	int HP;
+//	private float cooldown;
+	float timeExisted;
 	int attack;
 	boolean isDead;
 	Player player;
 	Circle boundingCircle;
 	
-	public Mole(Player player) {
+	public Mole(Player player) 
+	{
 		boundingCircle = new Circle();
 		isDead = false;
-		HP = 5;
 		timeExisted = 0;
 		this.player= player; 
 	}
@@ -33,13 +34,14 @@ public class Mole {
 		player.damage();
 	}
 	
-	public void update(float delta) {
-		if (timeExisted < MOLE_APPEARANCE_TIME && isAlive()) {
-			timeExisted += delta;
-		} else if (timeExisted >= MOLE_APPEARANCE_TIME && isAlive()){
-			damage(player);
-			isDead = true;
-		}
+	public void update(float delta) 
+	{
+//		if (timeExisted < MOLE_APPEARANCE_TIME && isAlive()) {
+//			timeExisted += delta;
+//		} else if (timeExisted >= MOLE_APPEARANCE_TIME && isAlive()){
+//			damage(player);
+//			isDead = true;
+//		}
 	}
 
 	
@@ -48,15 +50,15 @@ public class Mole {
 	}
 	
 	public void minusHP() {
-		if (isAlive()) {
-			System.out.println("mole kena attack!");
-			HP -= 1;
-			if (HP==0) {
-				System.out.println("Mole is dead!");
-				isDead = true;
-				
-			}
-		}
+//		if (isAlive()) {
+//			System.out.println("mole kena attack!");
+//			HP -= 1;
+//			if (HP==0) {
+//				System.out.println("Mole is dead!");
+//				isDead = true;
+//				
+//			}
+//		}
 	}
 	
 	public boolean isTouchDown(int screenX, int screenY) {

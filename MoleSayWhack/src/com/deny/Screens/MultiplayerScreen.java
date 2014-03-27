@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
-import com.deny.SocketHandler.SocketHandler;
+import com.deny.Threads.ServerClientThread;
 
 public class MultiplayerScreen implements Screen {
 	
@@ -23,7 +23,7 @@ public class MultiplayerScreen implements Screen {
 	private OrthographicCamera multiplayerCam;
 	private Rectangle backBounds;
 	private Rectangle playBounds;
-	private SocketHandler socketHandler;
+	private ServerClientThread socketHandler;
 	private ShapeRenderer shapeRenderer;
 	private boolean isConnectedToOpponent = false;
 	Vector3 touchPoint;
@@ -38,7 +38,7 @@ public class MultiplayerScreen implements Screen {
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(multiplayerCam.combined);
 		touchPoint = new Vector3();
-		socketHandler = new SocketHandler(this);
+		socketHandler = new ServerClientThread(this);
 		socketHandler.start();
 	
 	}
@@ -92,7 +92,8 @@ public class MultiplayerScreen implements Screen {
 			
 			if (playBounds.contains(touchPoint.x,touchPoint.y)) {
 				if (isConnectedToOpponent) {
-					game.setScreen(new GameScreen(game, socketHandler));
+					game.setScreen(new PreGameScreen(game, socketHandler));
+//					game.setScreen(new GameScreen(game, socketHandler));
 				}
 			}
 			

@@ -1,16 +1,20 @@
 package com.deny.GameHelpers;
 
-import java.util.Queue;
+import java.util.ArrayList;
 
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameObjects.Mole;
+import com.deny.GameObjects.MoleDeployer;
 import com.deny.GameWorld.GameWorld;
+import com.deny.GameWorld.GameWorld.GameState;
 
 public class GameInputHandler implements InputProcessor {
 	
 	private float scaleFactorX;
 	private float scaleFactorY;
 	private GameWorld myWorld;
+	private ArrayList<Rectangle> placeHolders;
 	
 	
 	public GameInputHandler(GameWorld myWorld, float scaleFactorX,
@@ -18,6 +22,7 @@ public class GameInputHandler implements InputProcessor {
 		this.myWorld = myWorld;
 		this.scaleFactorX = scaleFactorX;
 		this.scaleFactorY = scaleFactorY;
+		placeHolders = myWorld.getPlaceHolders();
 	}
 	
 	
@@ -41,12 +46,29 @@ public class GameInputHandler implements InputProcessor {
 		
 		screenX = scaleX(screenX);
 		screenY = scaleY(screenY);
-		System.out.println("screenX: " + screenX + " screenY: " + screenY);
 		
-		for(Mole m: myWorld.getMoleGrid()) {
-			if (m!=null) {
-				m.isTouchDown(screenX, screenY);
-				
+		if (myWorld.getGameState() == GameState.DEPLOYMENT) {
+			for (int i=0; i<placeHolders.size(); i++) { 
+				if (placeHolders.get(i).contains(screenX, screenY)) {
+					myWorld.getCurrentMoleDeployer().deployMole(i);
+					myWorld.setCurrentMoleDeployer(null);
+					myWorld.setGameState(GameState.READY);
+				}
+			}
+		} else {
+			for(Mole m: myWorld.getMoleGrid()) {
+				if (m!=null) {
+					m.isTouchDown(screenX, screenY);
+				}
+			}
+			
+			for (MoleDeployer md: myWorld.getMoleDeployers()) {
+				if (md!= null) {
+					if (md.isTouchDown(screenX,screenY)) {
+						myWorld.setGameState(GameState.DEPLOYMENT);
+						myWorld.setCurrentMoleDeployer(md);
+					}
+				}
 			}
 		}
 		

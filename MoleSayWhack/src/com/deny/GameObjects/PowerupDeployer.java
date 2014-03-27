@@ -1,16 +1,19 @@
 package com.deny.GameObjects;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.deny.GameWorld.GameWorld;
 //Deploys powerups
 //initialized at the begiinning of the game
 public class PowerupDeployer {
 	private final long COOLDOWN;
 	private float timeCast;
-	TokenType powerupType;
+	private GameWorld gameWorld;
+	PowerupType powerupType;
 	private Rectangle boundingRectangle;
 	boolean availability;
 	
-	public PowerupDeployer(long COOLDOWN, TokenType powerupType){
+	public PowerupDeployer(GameWorld gameWorld, long COOLDOWN, PowerupType powerupType){
+		this.gameWorld = gameWorld;
 		this.powerupType = powerupType;
 		this.COOLDOWN = COOLDOWN;
 		boundingRectangle = new Rectangle();
@@ -19,7 +22,7 @@ public class PowerupDeployer {
 		timeCast = 0;
 	}
 	
-	public TokenType getPowerupType(){
+	public PowerupType getPowerupType(){
 		return powerupType;
 	}
 	
@@ -66,6 +69,8 @@ public class PowerupDeployer {
 	public boolean isTouchDown(int screenX, int screenY) {
 		if (boundingRectangle.contains(screenX, screenY)) {
 			return true;
+			
+			
 		}
 		return false;
 	}

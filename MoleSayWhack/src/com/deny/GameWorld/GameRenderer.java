@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameObjects.Mole;
+import com.deny.GameObjects.MoleDeployer;
 
 public class GameRenderer {
 	
@@ -46,6 +47,14 @@ public class GameRenderer {
         for(Mole m : world.getMoleGrid()) {
         	if (m!= null) {
         		shapeRenderer.circle(m.getBoundingCircle().x, m.getBoundingCircle().y, m.getBoundingCircle().radius);
+        	}
+        }
+        
+        
+        for (MoleDeployer md: world.getMoleDeployers()) {
+        	shapeRenderer.setColor(md.getMoleType().getColor());
+        	if (md!=null) {
+        		shapeRenderer.rect(md.getRectangle().x, md.getRectangle().y,md.getRectangle().width,md.getRectangle().height);
         	}
         }
         

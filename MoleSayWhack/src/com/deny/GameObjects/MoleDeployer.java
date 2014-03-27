@@ -1,6 +1,8 @@
 package com.deny.GameObjects;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.deny.GameWorld.GameWorld;
+import com.deny.Threads.ServerClientThread;
 
 //contains moles
 //have cooldowns
@@ -8,49 +10,45 @@ import com.badlogic.gdx.math.Rectangle;
 //graphic ?? 
 
 public class MoleDeployer {
-	private final long COOLDOWN;
+	private final long COOLDOWN = 2;
 	private float timeDeployed;
 	private Rectangle boundingRectangle;
+	private ServerClientThread socketHandler;
+	private GameWorld gameWorld;
 	boolean availability;
-	TokenType MoleType;
+	MoleType MoleType;
 	
 	/**
 	 * Initialize cooldown & HP, as well as rectangle size and timeDeployed.
 	 * @param HP
 	 * @param COOLDOWN
 	 */
-	public MoleDeployer(TokenType MoleType, long COOLDOWN){
-		this.MoleType = MoleType;
-		this.COOLDOWN = COOLDOWN;
+	
+	public MoleDeployer(GameWorld gw, MoleType moleType) {
+		this.gameWorld = gw;
+		this.socketHandler = gw.getSocketHandler();
+		this.MoleType = moleType;
 		boundingRectangle = new Rectangle();
-		
-		//where to specify the rectangle size?
-		boundingRectangle.setHeight(5);
-		boundingRectangle.setWidth(5);
-		
-		timeDeployed = 0;
+		timeDeployed = 0;;
 	}
 	
-	public TokenType getMoleType(){
+	
+//	public MoleDeployer(TokenType MoleType, long COOLDOWN){
+//		this.MoleType = MoleType;
+//		this.COOLDOWN = COOLDOWN;
+//		boundingRectangle = new Rectangle();
+//		timeDeployed = 0;
+//	}
+	
+	public MoleType getMoleType(){
 		return MoleType;
 	}
 	
-	public String deploy(){
+	public void deployMole(int pos){
 		availability = false;
-		switch(MoleType){
-		case ONEtap: 
-			return "ONEtap";
-		case THREEtap:
-			return "THREEtap";
-		case FIVEtap:
-			return "FIVEtap";
-		case SABOTAGE:
-			return "SABOTAGE";
-		default:
-			return "ERROR";
-		}
-		
+    	socketHandler.deployMole(1, pos);
 	}
+	
 	public void update(float delta) {
 		if (timeDeployed < COOLDOWN && !(valid())) {
 			timeDeployed += delta;

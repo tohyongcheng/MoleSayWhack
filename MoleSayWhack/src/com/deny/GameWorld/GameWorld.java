@@ -1,8 +1,5 @@
 package com.deny.GameWorld;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -10,35 +7,49 @@ import java.util.Random;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameObjects.Mole;
+import com.deny.GameObjects.MoleDeployer;
+import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.Player;
-import com.deny.SocketHandler.SocketHandler;
 import com.deny.Threads.ReadThread;
-import com.deny.Threads.SendThread;
+import com.deny.Threads.ServerClientThread;
 
 public class GameWorld {
 	private final static int NUMBER_OF_MOLES_PER_GRID = 9;
 	private final static int NUMBER_OF_MOLES_PER_DECK = 4;
+	private final static int NUMBER_OF_DEPLOYERS = 3;
 	private GameState gameState;
 	private Player player;
 	private ReadThread readThread;
-	private SendThread sendThread;
 	private Mole[] moleGrid;
 	private Mole[] moleDeck;
 	private Queue<Mole>[] moleQueues;
 	private Rectangle board;
 	private ArrayList<Rectangle> placeHolders;
-	private SocketHandler socketHandler;
+	private ServerClientThread socketHandler;
+	private ArrayList<MoleType> selectedMoles;
+	
+
+	private MoleDeployer[] moleDeployers;
 	
 	//Generate randome spawns
 	private float runningTime;
 	private Random r;
+	private MoleDeployer currentMoleDeployer;
 	
 	public enum GameState {
 		MENU, READY, RUNNING, DEPLOYMENT, GAMEOVER, HIGHSCORE;
 	}
 
 
-	public GameWorld(SocketHandler sH) {
+	public GameWorld(ServerClientThread sH, ArrayList<MoleType> selectedMoles) {
+		
+		//Setup player and threads
+		this.socketHandler = sH;
+		this.readThread = socketHandler.getReadThread();
+		this.readThread.setGameWorld(this);
+		this.player = new Player(5);
+		
+		
 		
 		//Setup GameState
 		gameState = GameState.READY;
@@ -47,17 +58,16 @@ public class GameWorld {
 		moleQueues = (Queue<Mole>[]) new LinkedList<?>[NUMBER_OF_MOLES_PER_GRID];
 		
 		
-		this.socketHandler = sH;
-		
-		//Setup player and threads
-		this.player = new Player(5);
-		this.readThread = socketHandler.getReadThread();
-		this.sendThread = socketHandler.getSendThread();
+		//Setup Mole Deployers. TODO: have moledeployers to be dependent on choice
+		moleDeployers = new MoleDeployer[NUMBER_OF_DEPLOYERS];
+		for (int i =0; i<NUMBER_OF_DEPLOYERS;i++) {
+			moleDeployers[i] = new MoleDeployer(this,selectedMoles.get(i));
+			moleDeployers[i].getRectangle().set((float)(i*136/3.0), 136f, 45.33f, 30f);
+		}
 		
 
 		board = new Rectangle(0, 0, 136, 136);
 		placeHolders = new ArrayList<Rectangle>();
-		
 		for(int i=0;i<3;i++){
 			for(int j=0;j<3;j++) {
 				placeHolders.add(new Rectangle((float) (i*136/3.0), (float)  (j*136/3.0), (float)  45.33, (float)  45.33));
@@ -69,12 +79,11 @@ public class GameWorld {
 		}
 		
 		this.r = new Random();
-		
-		
 	}
 
     public void update(float delta) {
 
+    	if (gameState == GameState.READY) gameState = GameState.RUNNING;
     	
     	//Dequeue when possible
         for (int i=0; i<NUMBER_OF_MOLES_PER_GRID; i++) {
@@ -101,19 +110,16 @@ public class GameWorld {
         		
         	}
         }
-        
-        generateRandomSpawns(0.5f,delta);
     }
     
-    public Rectangle getBoard() {
-        return board;
-    }
 	
     public void deployMole(int moleType, int pos) {
-    	sendThread.deployMole(moleType, pos);
+    	//TODO: Change random
+    	socketHandler.deployMole(moleType, r.nextInt(9));
     }
     
     public void spawnMole(int moleType, int pos) {
+    	//doesn't care about moleType now
     	if (moleGrid[pos] == null) {
     		moleGrid[pos] = new Mole(player);
     	} else {
@@ -121,15 +127,18 @@ public class GameWorld {
     	}
     }
 
+    
+    public Rectangle getBoard() {
+        return board;
+    }
+    
 	public static int getNumberOfMolesPerGrid() {
 		return NUMBER_OF_MOLES_PER_GRID;
 	}
 
-
 	public static int getNumberOfMolesPerDeck() {
 		return NUMBER_OF_MOLES_PER_DECK;
 	}
-
 
 	public GameState getGameState() {
 		return gameState;
@@ -139,30 +148,21 @@ public class GameWorld {
 		return player;
 	}
 
-
 	public ReadThread getReadThread() {
 		return readThread;
 	}
-
-	public SendThread getSendThread() {
-		return sendThread;
-	}
-
 
 	public Mole[] getMoleGrid() {
 		return moleGrid;
 	}
 
-
 	public Mole[] getMoleDeck() {
 		return moleDeck;
 	}
 
-
 	public Queue<Mole>[] getMoleQueues() {
 		return moleQueues;
 	}
-
 
 	public ArrayList<Rectangle> getPlaceHolders() {
 		return placeHolders;
@@ -177,4 +177,26 @@ public class GameWorld {
         	spawnMole( 0, pos);
         }
 	}
+
+	public MoleDeployer[] getMoleDeployers() {
+		return moleDeployers;
+	}
+
+	public void setGameState(GameState gameState) {
+		System.out.println("GameState changed to " + gameState.toString());
+		this.gameState = gameState;
+	}
+
+	public void setCurrentMoleDeployer(MoleDeployer md) {
+		currentMoleDeployer = md;
+	}
+	
+	public MoleDeployer getCurrentMoleDeployer() {
+		return currentMoleDeployer;
+	}
+	
+	public ServerClientThread getSocketHandler() {
+		return socketHandler;
+	}
+
 }

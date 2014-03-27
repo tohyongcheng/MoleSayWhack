@@ -7,37 +7,34 @@ import java.io.InputStreamReader;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.net.Socket;
 import com.deny.GameObjects.Player;
-import com.deny.GameObjects.TokenType;
 import com.deny.GameWorld.GameWorld;
 
 public class ReadThread  extends Thread{
 	private Socket client;
 	private boolean running;
-	private BufferedReader br;
 	private BufferedReader in;
-	private Player player;
 	private String message;
 	private GameWorld gameWorld;
 	
 	
-	public ReadThread(Socket s, GameWorld gw) {
+	public ReadThread(Socket s) {
 		client = s;
 		running = true;
-		gameWorld = gw;
-		br = new BufferedReader(new InputStreamReader(client.getInputStream()));
 		in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-		player = gw.getPlayer();
 	}
 	
 	public void run() {
-		System.out.println("Thread running");
-		try {
-			client.getOutputStream().write("PING\n".getBytes());
-			String response = new BufferedReader(new InputStreamReader(client.getInputStream())).readLine();
-			Gdx.app.log("PingPongSocketExample", "got server message: " + response);
-		} catch (IOException e) {
-			Gdx.app.log("PingPongSocketExample", "an error occured", e);
-		}
+		System.out.println("ReadThread running");
+		
+//		try {
+//			client.getOutputStream().write("CONNECTED\n".getBytes());
+//			String response = in.readLine();
+//			Gdx.app.log("PingPongSocketExample", "got server message: " + response);
+//		} catch (IOException e) {
+//			Gdx.app.log("PingPongSocketExample", "an error occured", e);
+//		}
+		
+		
 		
 		//add the regex to read different inputs.
 		//Use tokens, still send strings, use enum . valueof...
@@ -48,46 +45,18 @@ public class ReadThread  extends Thread{
 		
 		while(running) {
 			try {
-				if (in.ready()) {
-					String message = in.readLine();
-					TokenType messageToken = TokenType.valueOf(message);
-					
-					//create new moles here and deploy them to the board
-					//create new powerups here and deploy them to the board
-					//constantly read innputSocket
-					switch (messageToken){
-					case ONEtap:
-						//gameworld..deploy (new Mole1(player))??
-						break;
-					case THREEtap:
-						break;
-					case FIVEtap:
-						break;
-					case CLONEMOLE:
-						break;
-					case DIVINESHIELD:
-						break;
-					case EARTHQUAKE:
-						break;
-					case KINGMOLE:
-						break;
-					case MOLESHOWER:
-						break;
-					case MOULDY:
-						break;
-					case SABOTAGE:
-						break;
-					case SUPERMOLE:
-						break;
-					case THEOWL:
-						break;
-					case SCORE:
-						break;
-					default:
-						break;
-					}
+				String message = in.readLine();
+				System.out.println("Received Message: " + message);
+				String[] messages = message.split(" ");
+				
+				if (messages[0].equals("[SPAWN]")) {
+					gameWorld.spawnMole(Integer.valueOf(messages[1]), Integer.valueOf(messages[2]));
 				}
 			} catch (IOException e) {
+				e.printStackTrace();
+			} catch(NullPointerException e) {
+				//TODO: To reconnect
+				
 				e.printStackTrace();
 			}
 		}
@@ -98,7 +67,12 @@ public class ReadThread  extends Thread{
 		running = false;
 	}
 
-	public void setPlayer(Player player) {
-		this.player = player;
+
+	public GameWorld getGameWorld() {
+		return gameWorld;
+	}
+
+	public void setGameWorld(GameWorld gameWorld) {
+		this.gameWorld = gameWorld;
 	}
 }

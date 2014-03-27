@@ -1,21 +1,25 @@
 package com.deny.Screens;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.deny.GameHelpers.GameInputHandler;
+import com.deny.GameObjects.MoleType;
 import com.deny.GameWorld.GameRenderer;
 import com.deny.GameWorld.GameWorld;
-import com.deny.SocketHandler.SocketHandler;
+import com.deny.Threads.ServerClientThread;
 
 public class GameScreen implements Screen {
 	
 	private Game game;
 	private GameWorld world;
 	private GameRenderer renderer;
-	private SocketHandler socketHandler;
+	private ServerClientThread socketHandler;
+	private ArrayList<MoleType> selectedMoles;
 	
-	public GameScreen(Game game, SocketHandler sH) {
+	public GameScreen(Game game, ServerClientThread sH, ArrayList<MoleType> selectedMoles) {
 		System.out.println("GameScreen attached.");
 		
 		float screenWidth = Gdx.graphics.getWidth();
@@ -26,7 +30,8 @@ public class GameScreen implements Screen {
 		
 		this.game = game;
 		this.socketHandler = sH;
-		this.world = new GameWorld(socketHandler);
+		this.selectedMoles = selectedMoles;
+		this.world = new GameWorld(socketHandler,selectedMoles);
 		this.renderer = new GameRenderer(world);
 		
 		

@@ -36,6 +36,10 @@ public class SendThread extends Thread {
 		this.player = player;
 	}
 	
+//Depending on where is touched, then send string
+	//constantly read touch input
+//have state of mole deployer & cast deployer ON / OFF
+
 	public void deployMole(int mole, int pos) {
 		out.write("[SPAWN] " + mole + " " + pos);
 	}

@@ -14,7 +14,7 @@ import com.deny.Screens.MultiplayerScreen;
 
 public class ServerClientThread extends Thread {
 	
-	final String address = "192.168.81.229";
+	final String address = "192.168.82.190";
 	int port = 5000;
 	ServerSocketHints serverHints;
 	Socket client;
@@ -72,7 +72,7 @@ public class ServerClientThread extends Thread {
 		
 		if (client.isConnected()) {
 			System.out.println("Connected to server!");
-			this.multiS.setReadyToPlay();
+			this.multiS.setStateToConnected();
 		}
 	
 		
@@ -81,7 +81,7 @@ public class ServerClientThread extends Thread {
 		//br = new BufferedReader(new InputStreamReader(client.getInputStream()));
 		out = new PrintWriter(client.getOutputStream(), true);
 		
-		readThread = new ReadThread(client);
+		readThread = new ReadThread(this,client);
 		readThread.start();
 	}
 	
@@ -126,6 +126,12 @@ public class ServerClientThread extends Thread {
 	public void continueGame() {
 		System.out.println("[SocketHandler] Sending to Continue Game");
 		out.write(("[CONTINUE] \n"));
+		out.flush();
+	}
+	
+	public void toChooseMolesScreen() {
+		System.out.println("[SocketHandler] Sending to Change Screen to Choose Moles Screen");
+		out.write("[CHOOSEMOLESCREEN] \n");
 		out.flush();
 	}
 

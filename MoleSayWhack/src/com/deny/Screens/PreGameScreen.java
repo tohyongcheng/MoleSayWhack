@@ -22,6 +22,9 @@ public class PreGameScreen implements Screen {
 	private static final int GAME_WIDTH = 136;
 	private static final int GAME_HEIGHT = 204;
 
+	private enum preGameState {
+		READY, COUNTING, GO;
+	}
 	
 	Game game;
 	
@@ -35,12 +38,14 @@ public class PreGameScreen implements Screen {
 	private ServerClientThread socketHandler;
 	private ArrayList<MoleType> selectedMoles;
 	private ArrayList<Rectangle> selectedMolesRectangles;
-	private float countDownTime;
+	private float countDownTime = 20f;
+	private preGameState currentState;
 
 	public PreGameScreen(Game game, ServerClientThread socketHandler) {
 		this.game = game;
 		this.socketHandler = socketHandler;
 		this.mainMenuCam = new OrthographicCamera();
+		currentState = preGameState.READY;
 		mainMenuCam.setToOrtho(true, GAME_WIDTH, GAME_HEIGHT);
 		
 		batcher = new SpriteBatch();
@@ -50,7 +55,7 @@ public class PreGameScreen implements Screen {
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(mainMenuCam.combined);
 		touchPoint = new Vector3();
-		playBounds = new Rectangle(23,80,90,30);
+//		playBounds = new Rectangle(23,80,90,30);
 		backBounds = new Rectangle(0,188,16,16);
 		
 		selectedMoles = new ArrayList<MoleType>();
@@ -60,7 +65,6 @@ public class PreGameScreen implements Screen {
 			selectedMolesRectangles.add(new Rectangle( 23f+i*30, 40f, 30f,30f));
 		}		
 		
-		countDownTime = 30f;
 	}
 	
 	private void draw() {
@@ -73,8 +77,8 @@ public class PreGameScreen implements Screen {
         shapeRenderer.setColor(87 / 255.0f, 109 / 255.0f, 120 / 255.0f, 1);
         shapeRenderer.rect(backBounds.x, backBounds.y,
         		backBounds.width, backBounds.height);
-        shapeRenderer.rect(playBounds.x, playBounds.y,
-        		playBounds.width, playBounds.height);
+//        shapeRenderer.rect(playBounds.x, playBounds.y,
+//        		playBounds.width, playBounds.height);
         
 
         for (int i = 0; i< NO_OF_DEPLOYERS; i++) {
@@ -102,36 +106,42 @@ public class PreGameScreen implements Screen {
 
 	private void update(float delta) {
 		
-		if (countDownTime <= 0 ) {
-			game.setScreen(new GameScreen(game, socketHandler, selectedMoles));
-			return;
-		} else {
-			countDownTime -= delta;
-		}
+		switch(currentState) {
 		
-		if(Gdx.input.justTouched()) {
-			mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+		case READY:
+			currentState = preGameState.COUNTING;
+			break;
 			
-			if (backBounds.contains(touchPoint.x, touchPoint.y)) {
-				if (socketHandler !=null) socketHandler.interrupt();
-				game.setScreen(new MainMenuScreen(game));
-				return;
+		case COUNTING:
+			if (countDownTime <= 0 ) {
+				currentState = preGameState.GO;
+			} else {
+				countDownTime -= delta;
 			}
 			
-			if (playBounds.contains(touchPoint.x, touchPoint.y)) {
-				game.setScreen(new GameScreen(game, socketHandler, selectedMoles));
-				return;
-			}
-			
-			for (int i =0; i<NO_OF_DEPLOYERS; i++) {
-				if (selectedMolesRectangles.get(i).contains(touchPoint.x, touchPoint.y)) {
-					MoleType nextMoleType = selectedMoles.get(i).next();
-					selectedMoles.remove(i);
-					selectedMoles.add(i,nextMoleType);
+			if(Gdx.input.justTouched()) {
+				mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+				
+				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
+					if (socketHandler !=null) socketHandler.interrupt();
+					game.setScreen(new MainMenuScreen(game));
+					return;
+				}
+				
+				for (int i =0; i<NO_OF_DEPLOYERS; i++) {
+					if (selectedMolesRectangles.get(i).contains(touchPoint.x, touchPoint.y)) {
+						MoleType nextMoleType = selectedMoles.get(i).next();
+						selectedMoles.remove(i);
+						selectedMoles.add(i,nextMoleType);
+					}
 				}
 			}
+			break;
+			
+		case GO:
+			game.setScreen(new GameScreen(game, socketHandler, selectedMoles));
+			break;
 		}
-		
 	}
 
 	
@@ -140,10 +150,8 @@ public class PreGameScreen implements Screen {
 	public void render(float delta) {
 		update(delta);
 		draw();
-		
 	}
 
-	
 
 	@Override
 	public void resize(int width, int height) {
@@ -180,7 +188,4 @@ public class PreGameScreen implements Screen {
 		// TODO Auto-generated method stub
 		
 	}
-
-	
-
 }

@@ -18,6 +18,7 @@ public class GameRenderer {
 	private ShapeRenderer shapeRenderer;
 	
 	
+	
 	public GameRenderer(GameWorld world) {
 		this.world = world;
 		
@@ -25,6 +26,7 @@ public class GameRenderer {
 		cam.setToOrtho(true, GAME_WIDTH, GAME_HEIGHT);
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(cam.combined);
+		
 		
 	}
 	
@@ -73,6 +75,13 @@ public class GameRenderer {
         // Draws the rectangle from myWorld (Using ShapeType.Line)
         for (Rectangle r : world.getPlaceHolders()) {
         	shapeRenderer.rect(r.x,r.y,r.width,r.height);
+        }
+        
+        for (MoleDeployer md: world.getMoleDeployers()) {
+        	shapeRenderer.setColor(md.getMoleType().getColor());
+        	if (md!=null) {
+        		shapeRenderer.rect(md.getRectangle().x, md.getRectangle().y,md.getRectangle().width,md.getRectangle().height);
+        	}
         }
 
         shapeRenderer.end();

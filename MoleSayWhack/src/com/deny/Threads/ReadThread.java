@@ -4,9 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.net.Socket;
-import com.deny.GameObjects.Player;
 import com.deny.GameWorld.GameWorld;
 
 public class ReadThread  extends Thread{
@@ -14,10 +12,12 @@ public class ReadThread  extends Thread{
 	private boolean running;
 	private BufferedReader in;
 	private String message;
+	private ServerClientThread socketHandler;
 	private GameWorld gameWorld;
 	
 	
-	public ReadThread(Socket s) {
+	public ReadThread(ServerClientThread sh, Socket s) {
+		socketHandler = sh;
 		client = s;
 		running = true;
 		in = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -49,8 +49,15 @@ public class ReadThread  extends Thread{
 				System.out.println("Received Message: " + message);
 				String[] messages = message.split(" ");
 				
-				if (messages[0].equals("[SPAWN]")) {
+				switch(messages[0]) {
+				
+				case "[SPAWN]":
 					gameWorld.spawnMole(Integer.valueOf(messages[1]), Integer.valueOf(messages[2]));
+					break;
+				case "[CHOOSEMOLESCREEN]":
+					System.out.println("Received message to go to select Moles Screen");
+					socketHandler.multiS.setStateToStart();
+					break;
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

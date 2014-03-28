@@ -25,7 +25,6 @@ public class MultiplayerScreen implements Screen {
 	private Rectangle playBounds;
 	private ServerClientThread socketHandler;
 	private ShapeRenderer shapeRenderer;
-	private boolean isConnectedToOpponent = false;
 	Vector3 touchPoint;
 	
 	
@@ -40,6 +39,7 @@ public class MultiplayerScreen implements Screen {
 		touchPoint = new Vector3();
 		socketHandler = new ServerClientThread(this);
 		socketHandler.start();
+		currentState = MultiplayerState.READY;
 	
 	}
 	
@@ -87,22 +87,43 @@ public class MultiplayerScreen implements Screen {
 	}
 	
 	public void update() {	
-		if(Gdx.input.justTouched()) {
-			multiplayerCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-			
-			if (playBounds.contains(touchPoint.x,touchPoint.y)) {
-				if (isConnectedToOpponent) {
-					game.setScreen(new PreGameScreen(game, socketHandler));
-//					game.setScreen(new GameScreen(game, socketHandler));
+		switch (currentState) {
+		case READY:			
+			if(Gdx.input.justTouched()) {
+				multiplayerCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+				
+				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
+					if (socketHandler !=null) socketHandler.interrupt();
+					game.setScreen(new MainMenuScreen(game));
+					return;
 				}
 			}
-			
-			if (backBounds.contains(touchPoint.x, touchPoint.y)) {
-				if (socketHandler !=null) socketHandler.interrupt();
-				game.setScreen(new MainMenuScreen(game));
-				return;
+			break;
+		
+		case CONNECTED:
+			if(Gdx.input.justTouched()) {
+				multiplayerCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+				
+				if (playBounds.contains(touchPoint.x,touchPoint.y)) {
+					//send msg to opponent
+					socketHandler.toChooseMolesScreen();
+					setStateToStart();
+
+				}
+				
+				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
+					if (socketHandler !=null) socketHandler.interrupt();
+					game.setScreen(new MainMenuScreen(game));
+					return;
+				}
 			}
+			break;
+			
+		case START:
+			game.setScreen(new PreGameScreen(game, socketHandler));
+			break;
 		}
+		
 	}
 	
 	public void draw() {
@@ -116,7 +137,7 @@ public class MultiplayerScreen implements Screen {
 
         // Draws the rectangle from myWorld (Using ShapeType.Filled)
         
-        if (isConnectedToOpponent) {
+        if (currentState == MultiplayerState.CONNECTED) {
 	        shapeRenderer.rect(playBounds.x, playBounds.y,
 	        		playBounds.width, playBounds.height);
         }
@@ -127,9 +148,13 @@ public class MultiplayerScreen implements Screen {
         shapeRenderer.end();
 		
 	}
+	
+	public void setStateToStart() {
+		this.currentState = MultiplayerState.START;
+	}
 
-	public void setReadyToPlay() {
-		this.isConnectedToOpponent = true;
+	public void setStateToConnected() {
+		this.currentState = MultiplayerState.CONNECTED;
 	}
 
 }

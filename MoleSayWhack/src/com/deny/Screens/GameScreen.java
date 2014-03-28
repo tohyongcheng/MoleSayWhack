@@ -17,7 +17,6 @@ public class GameScreen implements Screen {
 	private GameWorld world;
 	private GameRenderer renderer;
 	private ServerClientThread socketHandler;
-	private ArrayList<MoleType> selectedMoles;
 	
 	public GameScreen(Game game, ServerClientThread sH, ArrayList<MoleType> selectedMoles) {
 		System.out.println("GameScreen attached.");
@@ -30,7 +29,6 @@ public class GameScreen implements Screen {
 		
 		this.game = game;
 		this.socketHandler = sH;
-		this.selectedMoles = selectedMoles;
 		this.world = new GameWorld(socketHandler,selectedMoles);
 		this.renderer = new GameRenderer(world);
 		

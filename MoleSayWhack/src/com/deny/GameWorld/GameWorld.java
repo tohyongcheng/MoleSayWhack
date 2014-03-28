@@ -27,6 +27,7 @@ public class GameWorld {
 	private ArrayList<Rectangle> placeHolders;
 	private ServerClientThread socketHandler;
 	private ArrayList<MoleType> selectedMoles;
+	private Rectangle pauseOverlay;
 	
 
 	private MoleDeployer[] moleDeployers;
@@ -37,7 +38,7 @@ public class GameWorld {
 	private MoleDeployer currentMoleDeployer;
 	
 	public enum GameState {
-		MENU, READY, RUNNING, DEPLOYMENT, GAMEOVER, HIGHSCORE;
+		READY, RUNNING, DEPLOYMENT, GAMEOVER, HIGHSCORE, PAUSE, MENU;
 	}
 
 
@@ -67,6 +68,7 @@ public class GameWorld {
 		
 
 		board = new Rectangle(0, 0, 136, 136);
+		pauseOverlay = new Rectangle(0,0,136,204);
 		placeHolders = new ArrayList<Rectangle>();
 		for(int i=0;i<3;i++){
 			for(int j=0;j<3;j++) {

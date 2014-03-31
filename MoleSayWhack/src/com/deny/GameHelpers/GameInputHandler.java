@@ -2,15 +2,19 @@ package com.deny.GameHelpers;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
-import com.deny.GameObjects.Mole;
 import com.deny.GameObjects.MoleDeployer;
 import com.deny.GameWorld.GameWorld;
 import com.deny.GameWorld.GameWorld.GameState;
+import com.deny.MoleObjects.Mole;
+import com.deny.Screens.MainMenuScreen;
+import com.deny.Screens.PreGameScreen;
 
 public class GameInputHandler implements InputProcessor {
 	
+	private Game game;
 	private float scaleFactorX;
 	private float scaleFactorY;
 	private GameWorld myWorld;
@@ -20,6 +24,7 @@ public class GameInputHandler implements InputProcessor {
 	public GameInputHandler(GameWorld myWorld, float scaleFactorX,
 			float scaleFactorY) {
 		this.myWorld = myWorld;
+		this.game = myWorld.getGame();
 		this.scaleFactorX = scaleFactorX;
 		this.scaleFactorY = scaleFactorY;
 		placeHolders = myWorld.getPlaceHolders();
@@ -55,7 +60,7 @@ public class GameInputHandler implements InputProcessor {
 					myWorld.setGameState(GameState.READY);
 				}
 			}
-		} else {
+		} else if (myWorld.getGameState() == GameState.RUNNING ){
 			for(Mole m: myWorld.getMoleGrid()) {
 				if (m!=null) {
 					m.isTouchDown(screenX, screenY);
@@ -69,6 +74,21 @@ public class GameInputHandler implements InputProcessor {
 						myWorld.setCurrentMoleDeployer(md);
 					}
 				}
+			}
+		} else if (myWorld.getGameState() == GameState.WIN || myWorld.getGameState() == GameState.LOSE ) {
+			Rectangle playAgainBounds = myWorld.getPlayAgainBounds();
+			Rectangle exitBounds = myWorld.getExitBounds();
+			
+			if (playAgainBounds.contains(screenX,screenY)) {
+				//TODO: put this inside GameWorld instead?
+				myWorld.getSocketHandler().restartGame();
+				myWorld.setGameState(GameState.RESTART);
+			}
+			
+			if (exitBounds.contains(screenX,screenY)) {
+				//TODO: put this inside GameWorld instead?
+				myWorld.getSocketHandler().exitGame();
+				myWorld.setGameState(GameState.EXIT);
 			}
 		}
 		

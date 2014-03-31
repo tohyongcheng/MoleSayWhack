@@ -48,4 +48,8 @@ public enum MoleType {
     	}
 	}
 	
+	public float getCoolDown() {
+		return coolDown;
+	}
+	
 }

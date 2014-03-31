@@ -140,6 +140,7 @@ public class PreGameScreen implements Screen {
 			
 		case GO:
 			game.setScreen(new GameScreen(game, socketHandler, selectedMoles));
+			this.dispose();
 			break;
 		}
 	}
@@ -185,7 +186,6 @@ public class PreGameScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
 }

@@ -3,15 +3,17 @@ package com.deny.Threads;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.SocketException;
 
 import com.badlogic.gdx.net.Socket;
+import com.deny.GameObjects.MoleType;
 import com.deny.GameWorld.GameWorld;
+import com.deny.GameWorld.GameWorld.GameState;
 
 public class ReadThread  extends Thread{
 	private Socket client;
 	private boolean running;
 	private BufferedReader in;
-	private String message;
 	private ServerClientThread socketHandler;
 	private GameWorld gameWorld;
 	
@@ -26,24 +28,11 @@ public class ReadThread  extends Thread{
 	public void run() {
 		System.out.println("ReadThread running");
 		
-//		try {
-//			client.getOutputStream().write("CONNECTED\n".getBytes());
-//			String response = in.readLine();
-//			Gdx.app.log("PingPongSocketExample", "got server message: " + response);
-//		} catch (IOException e) {
-//			Gdx.app.log("PingPongSocketExample", "an error occured", e);
-//		}
-		
-		
-		
-		//add the regex to read different inputs.
-		//Use tokens, still send strings, use enum . valueof...
-		//Mole spawn
-		//Powerup spawn
-		//score update HP
-		//enum
-		
-		while(running) {
+		while(true) {
+			if (isInterrupted()) {
+				return;
+			}
+			
 			try {
 				String message = in.readLine();
 				System.out.println("Received Message: " + message);
@@ -52,28 +41,41 @@ public class ReadThread  extends Thread{
 				switch(messages[0]) {
 				
 				case "[SPAWN]":
-					gameWorld.spawnMole(Integer.valueOf(messages[1]), Integer.valueOf(messages[2]));
+					MoleType moleType = MoleType.valueOf(messages[1]);
+					int pos =  Integer.valueOf(messages[2]);
+					gameWorld.spawnMole(moleType,pos);
 					break;
 				case "[CHOOSEMOLESCREEN]":
 					System.out.println("Received message to go to select Moles Screen");
 					socketHandler.multiS.setStateToStart();
 					break;
+				case "[GAMEOVER]":
+					System.out.println("Received message that other player has died");
+					gameWorld.setGameState(GameState.WIN);
+					break;
+				case "[RESTARTGAME]":
+					System.out.println("Received message to restart the game");
+					gameWorld.setGameState(GameState.RESTART);
+					break;
+				case "[EXITGAME]":
+					System.out.println("Received message to exit the game");
+					gameWorld.setGameState(GameState.EXIT);
+					running = false; 
+					break;
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				System.out.println("Socket Closed");
 			} catch(NullPointerException e) {
-				//TODO: To reconnect
-				
-				e.printStackTrace();
+				System.out.println("Lost connection!");
+				//WAIT FOR RECONNECTION
 			}
 		}
-		
 	}
 
 	public void stopRunning() {
 		running = false;
 	}
-
 
 	public GameWorld getGameWorld() {
 		return gameWorld;

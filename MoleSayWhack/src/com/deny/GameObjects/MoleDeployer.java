@@ -10,13 +10,13 @@ import com.deny.Threads.ServerClientThread;
 //graphic ?? 
 
 public class MoleDeployer {
-	private final long COOLDOWN = 2;
 	private float timeDeployed;
 	private Rectangle boundingRectangle;
 	private ServerClientThread socketHandler;
 	private GameWorld gameWorld;
+	private float cooldown;
+	private MoleType moleType;
 	boolean availability;
-	MoleType MoleType;
 	
 	/**
 	 * Initialize cooldown & HP, as well as rectangle size and timeDeployed.
@@ -27,9 +27,11 @@ public class MoleDeployer {
 	public MoleDeployer(GameWorld gw, MoleType moleType) {
 		this.gameWorld = gw;
 		this.socketHandler = gw.getSocketHandler();
-		this.MoleType = moleType;
+		this.moleType = moleType;
+		availability = true;
 		boundingRectangle = new Rectangle();
-		timeDeployed = 0;;
+		timeDeployed = 0;
+		cooldown = moleType.getCoolDown();
 	}
 	
 	
@@ -41,24 +43,26 @@ public class MoleDeployer {
 //	}
 	
 	public MoleType getMoleType(){
-		return MoleType;
+		return moleType;
 	}
 	
 	public void deployMole(int pos){
-		availability = false;
-    	socketHandler.deployMole(1, pos);
+		if (isAvailable()) {
+			availability = false;
+	    	socketHandler.deployMole(moleType, pos);
+		}
 	}
 	
 	public void update(float delta) {
-		if (timeDeployed < COOLDOWN && !(valid())) {
+		if (timeDeployed < cooldown && !(isAvailable())) {
 			timeDeployed += delta;
-		} else if (timeDeployed >= COOLDOWN && !(valid())){
+		} else if (timeDeployed >= cooldown && !(isAvailable())){
 			timeDeployed = 0;
 			availability = true;
 		}
 	}
 	
-	public boolean valid(){
+	public boolean isAvailable(){
 		return availability;
 	}
 	

@@ -29,9 +29,8 @@ public class GameScreen implements Screen {
 		
 		this.game = game;
 		this.socketHandler = sH;
-		this.world = new GameWorld(socketHandler,selectedMoles);
+		this.world = new GameWorld(game, this, socketHandler,selectedMoles);
 		this.renderer = new GameRenderer(world);
-		
 		
 		Gdx.input.setInputProcessor(new GameInputHandler(world, screenWidth / gameWidth, screenHeight / gameHeight));
 	}
@@ -74,9 +73,7 @@ public class GameScreen implements Screen {
 	}
 
 	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		
+	public void dispose() {		
 	}
 	
 

@@ -9,12 +9,13 @@ import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.net.SocketHints;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.deny.GameObjects.MoleType;
 import com.deny.GameWorld.GameWorld;
 import com.deny.Screens.MultiplayerScreen;
 
 public class ServerClientThread extends Thread {
 	
-	final String address = "192.168.82.190";
+	final String address = "192.168.82.227";
 	int port = 5000;
 	ServerSocketHints serverHints;
 	Socket client;
@@ -107,13 +108,15 @@ public class ServerClientThread extends Thread {
 	}
 	
 	public void dispose() {
+		if (readThread != null) readThread.interrupt();
+		if (multiS != null) multiS.dispose();
 		if (server!=null) server.dispose();
 		if (client!=null) client.dispose();
 	}
 	
-	public void deployMole(int mole, int pos) {
-		System.out.println("[SocketHandler] deployed mole! Sending " + "[SPAWN] " + mole + " " + pos);
-		out.write(("[SPAWN] " + mole + " " + pos+"\n"));
+	public void deployMole(MoleType moleType, int pos) {
+		System.out.println("[SocketHandler] deployed mole! Sending " + "[SPAWN] " + moleType.toString() + " " + pos);
+		out.write(("[SPAWN] " + moleType.toString() + " " + pos+"\n"));
 		out.flush();
 	}
 	
@@ -132,6 +135,24 @@ public class ServerClientThread extends Thread {
 	public void toChooseMolesScreen() {
 		System.out.println("[SocketHandler] Sending to Change Screen to Choose Moles Screen");
 		out.write("[CHOOSEMOLESCREEN] \n");
+		out.flush();
+	}
+	
+	public void gameOver() {
+		System.out.println("[SocketHandler] Sending GameOver");
+		out.write("[GAMEOVER] \n");
+		out.flush();
+	}
+
+	public void restartGame() {
+		System.out.println("[SocketHandler] Sending RestartGame");
+		out.write("[RESTARTGAME] \n");
+		out.flush();
+	}
+
+	public void exitGame() {
+		System.out.println("[SocketHandler] Sending ExitGame");
+		out.write("[EXITGAME] \n");
 		out.flush();
 	}
 

@@ -68,13 +68,13 @@ public class SplashScreen implements Screen
     
     @Override
     public void render(float delta) 
-    {
-        manager.update(delta);
+    { 
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
         batcher.begin();
         sprite.draw(batcher);
         batcher.end();
+        manager.update(delta);
     }
     
     @Override

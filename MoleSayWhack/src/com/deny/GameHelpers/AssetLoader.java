@@ -20,7 +20,7 @@ public class AssetLoader
         logoTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
         //815 is the width, 335 is the height//
-        logo = new TextureRegion(logoTexture, 0, 0, 815, 335);
+        logo = new TextureRegion(logoTexture, 0, 0, 960, 470);
 
 	}
 	

@@ -3,16 +3,15 @@ package com.deny.Threads;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.SocketException;
-
 import com.badlogic.gdx.net.Socket;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameWorld.GameWorld;
 import com.deny.GameWorld.GameWorld.GameState;
+import com.deny.Screens.MultiplayerScreen.MultiplayerState;
+import com.deny.Screens.PreGameScreen.PreGameState;
 
 public class ReadThread  extends Thread{
 	private Socket client;
-	private boolean running;
 	private BufferedReader in;
 	private ServerClientThread socketHandler;
 	private GameWorld gameWorld;
@@ -21,7 +20,6 @@ public class ReadThread  extends Thread{
 	public ReadThread(ServerClientThread sh, Socket s) {
 		socketHandler = sh;
 		client = s;
-		running = true;
 		in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 	}
 	
@@ -40,6 +38,7 @@ public class ReadThread  extends Thread{
 				
 				switch(messages[0]) {
 				
+				//GAMESCREEN
 				case "[SPAWN]":
 					MoleType moleType = MoleType.valueOf(messages[1]);
 					int pos =  Integer.valueOf(messages[2]);
@@ -47,7 +46,7 @@ public class ReadThread  extends Thread{
 					break;
 				case "[CHOOSEMOLESCREEN]":
 					System.out.println("Received message to go to select Moles Screen");
-					socketHandler.multiS.setStateToStart();
+					socketHandler.multiS.setState(MultiplayerState.START);
 					break;
 				case "[GAMEOVER]":
 					System.out.println("Received message that other player has died");
@@ -60,7 +59,19 @@ public class ReadThread  extends Thread{
 				case "[EXITGAME]":
 					System.out.println("Received message to exit the game");
 					gameWorld.setGameState(GameState.EXIT);
-					running = false; 
+					interrupt(); 
+					break;
+					
+				//PREGAMESCREEN
+				case "[MAINMENUSCREEN]":
+					System.out.println("Received message to go back to main menu!");
+					if (socketHandler.preGameS !=null) socketHandler.preGameS.setState(PreGameState.QUIT);
+					break;
+					
+				//MULTIPLAYERSCREEN
+				case "[LEAVEMULTIPLAYERSCREEN]":
+					System.out.println("Received message to restart server!");
+					if (socketHandler.multiS !=null) socketHandler.multiS.setState(MultiplayerState.RESTART);
 					break;
 				}
 			} catch (IOException e) {
@@ -71,10 +82,6 @@ public class ReadThread  extends Thread{
 				//WAIT FOR RECONNECTION
 			}
 		}
-	}
-
-	public void stopRunning() {
-		running = false;
 	}
 
 	public GameWorld getGameWorld() {

@@ -26,6 +26,7 @@ public class GameWorld {
 	private final static int NUMBER_OF_MOLES_PER_GRID = 9;
 	private final static int NUMBER_OF_MOLES_PER_DECK = 4;
 	private final static int NUMBER_OF_DEPLOYERS = 3;
+	private static final float DELAY_BETWEEN_MOLE_APPEARANCE = 1f;
 	
 	private Game game;
 	private GameScreen gameScreen;
@@ -43,6 +44,7 @@ public class GameWorld {
 	private ArrayList<MoleType> selectedMoles;
 	private Rectangle pauseOverlay;
 	private MoleDeployer[] moleDeployers;
+	private float[] moleDelay;
 	
 	
 	//GAMEOVER MENU
@@ -56,6 +58,7 @@ public class GameWorld {
 	private float runningTime;
 	private Random r;
 	private MoleDeployer currentMoleDeployer;
+	
 	
 	public enum GameState {
 		READY, RUNNING, DEPLOYMENT, WIN, LOSE, HIGHSCORE, PAUSE, MENU, EXIT, RESTART;
@@ -79,8 +82,10 @@ public class GameWorld {
 		moleGrid = new Mole[NUMBER_OF_MOLES_PER_GRID];
 		moleDeck = new Mole[NUMBER_OF_MOLES_PER_DECK];
 		moleQueues = (Queue<Mole>[]) new LinkedList<?>[NUMBER_OF_MOLES_PER_GRID];
+		moleDelay = new float[NUMBER_OF_MOLES_PER_GRID];
 		for(int i=0; i<NUMBER_OF_MOLES_PER_GRID; i++ ) {
 			moleQueues[i] = new LinkedList<Mole>();
+			moleDelay[i] = 1f;
 		}
 		
 		
@@ -126,9 +131,9 @@ public class GameWorld {
     		gameScreen.dispose();
     	}
     	
-    	else if (gameState == GameState.EXIT) {
-    		socketHandler.getReadThread().stopRunning();
+    	else if (gameState == GameState.EXIT) {    		
     		socketHandler.dispose();
+    		socketHandler = null;
     		game.setScreen(new MainMenuScreen(game));
     		gameScreen.dispose();
     		
@@ -145,8 +150,11 @@ public class GameWorld {
     	
     	for (int i=0; i<NUMBER_OF_MOLES_PER_GRID; i++) {
         	if ((moleGrid[i] == null)) {
-        		if (moleQueues[i].peek() != null) {
+        		if (moleQueues[i].peek() != null && moleDelay[i] > DELAY_BETWEEN_MOLE_APPEARANCE ) {
         			moleGrid[i] = moleQueues[i].remove();
+        			moleDelay[i] = 0;
+        		} else {
+        			moleDelay[i] += delta;
         		}
         	}
         }

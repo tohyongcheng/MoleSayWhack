@@ -12,10 +12,12 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameWorld.GameWorld;
 import com.deny.Screens.MultiplayerScreen;
+import com.deny.Screens.PreGameScreen;
+import com.deny.Screens.MultiplayerScreen.MultiplayerState;
 
 public class ServerClientThread extends Thread {
 	
-	final String address = "192.168.82.227";
+	final String address = "172.16.13.127";
 	int port = 5000;
 	ServerSocketHints serverHints;
 	Socket client;
@@ -24,7 +26,7 @@ public class ServerClientThread extends Thread {
 	boolean isServer = false;
 	GameWorld gameWorld;
 	MultiplayerScreen multiS;
-	boolean isRunning = true;
+	PreGameScreen preGameS;
 	private PrintWriter out;
 	
 	private ReadThread readThread;
@@ -73,13 +75,9 @@ public class ServerClientThread extends Thread {
 		
 		if (client.isConnected()) {
 			System.out.println("Connected to server!");
-			this.multiS.setStateToConnected();
+			this.multiS.setState(MultiplayerState.CONNECTED);
 		}
-	
 		
-		isRunning = true;
-		//stdin = new BufferedReader(new InputStreamReader(System.in));
-		//br = new BufferedReader(new InputStreamReader(client.getInputStream()));
 		out = new PrintWriter(client.getOutputStream(), true);
 		
 		readThread = new ReadThread(this,client);
@@ -114,6 +112,14 @@ public class ServerClientThread extends Thread {
 		if (client!=null) client.dispose();
 	}
 	
+	public void setPreGameScreen(PreGameScreen preGameScreen) {
+		preGameS = preGameScreen;
+	}
+	
+	public PreGameScreen getPreGameScreen() {
+		return preGameS;
+	}
+	
 	public void deployMole(MoleType moleType, int pos) {
 		System.out.println("[SocketHandler] deployed mole! Sending " + "[SPAWN] " + moleType.toString() + " " + pos);
 		out.write(("[SPAWN] " + moleType.toString() + " " + pos+"\n"));
@@ -138,6 +144,12 @@ public class ServerClientThread extends Thread {
 		out.flush();
 	}
 	
+	public void toMainMenuScreen() {
+		System.out.println("[SocketHandler] Sending to Change Screen to MainMenuScreen");
+		out.write("[MAINMENUSCREEN] \n");
+		out.flush();
+	}
+	
 	public void gameOver() {
 		System.out.println("[SocketHandler] Sending GameOver");
 		out.write("[GAMEOVER] \n");
@@ -155,6 +167,14 @@ public class ServerClientThread extends Thread {
 		out.write("[EXITGAME] \n");
 		out.flush();
 	}
+
+	public void leaveGameRoom() {
+		System.out.println("[SocketHandler] Sending to Leave GameRoom");
+		out.write("[LEAVEMULTIPLAYERSCREEN] \n");
+		out.flush();
+	}
+
+
 
 }
 

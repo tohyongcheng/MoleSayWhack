@@ -9,14 +9,15 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.deny.Screens.MultiplayerScreen.MultiplayerState;
 import com.deny.Threads.ServerClientThread;
 
 public class MultiplayerScreen implements Screen {
 	
 	private static final int GAME_WIDTH = 136;
 	private static final int GAME_HEIGHT = 204;
-	private enum MultiplayerState {
-		READY, CONNECTED, START
+	public enum MultiplayerState {
+		READY, CONNECTED, START, RESTART, QUIT
 	}
 	private MultiplayerState currentState;
 	private Game game;
@@ -105,22 +106,40 @@ public class MultiplayerScreen implements Screen {
 				multiplayerCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (playBounds.contains(touchPoint.x,touchPoint.y)) {
-					//send msg to opponent
 					socketHandler.toChooseMolesScreen();
-					setStateToStart();
-
+					currentState = MultiplayerState.START;
 				}
 				
-				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
-					if (socketHandler !=null) socketHandler.interrupt();
-					game.setScreen(new MainMenuScreen(game));
-					return;
+				else if (backBounds.contains(touchPoint.x, touchPoint.y)) {
+					socketHandler.leaveGameRoom();
+					currentState = MultiplayerState.QUIT;
 				}
 			}
 			break;
 			
+		case QUIT:
+			if (socketHandler !=null) {
+				socketHandler.toMainMenuScreen();
+				socketHandler.interrupt();
+				socketHandler.dispose();
+			}
+			game.setScreen(new MainMenuScreen(game));
+			dispose();
+			break;
+			
+		case RESTART:
+			if (socketHandler !=null) {
+				socketHandler.interrupt();
+				socketHandler.dispose();
+			}
+			socketHandler = new ServerClientThread(this);
+			socketHandler.start();
+			currentState = MultiplayerState.READY;
+			break;
+			
 		case START:
 			game.setScreen(new PreGameScreen(game, socketHandler));
+			dispose();
 			break;
 		}
 		
@@ -149,12 +168,9 @@ public class MultiplayerScreen implements Screen {
 		
 	}
 	
-	public void setStateToStart() {
-		this.currentState = MultiplayerState.START;
-	}
 
-	public void setStateToConnected() {
-		this.currentState = MultiplayerState.CONNECTED;
+	public void setState(MultiplayerState s) {
+		currentState =s;
 	}
 
 }

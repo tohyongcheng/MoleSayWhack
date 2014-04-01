@@ -54,7 +54,7 @@ public class SabotageMole extends Mole
 		{
 			timeExisted += delta;
 		} 
-		else if (timeExisted <= MOLE_APPEARANCE_TIME && this.isAlive())
+		else if (timeExisted >= MOLE_APPEARANCE_TIME && this.isAlive())
 		{
 			isDead = true;
 		}

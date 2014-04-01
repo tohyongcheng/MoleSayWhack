@@ -22,8 +22,8 @@ public class PreGameScreen implements Screen {
 	private static final int GAME_WIDTH = 136;
 	private static final int GAME_HEIGHT = 204;
 
-	private enum preGameState {
-		READY, COUNTING, GO;
+	public enum PreGameState {
+		READY, COUNTING, GO, QUIT;
 	}
 	
 	Game game;
@@ -39,13 +39,14 @@ public class PreGameScreen implements Screen {
 	private ArrayList<MoleType> selectedMoles;
 	private ArrayList<Rectangle> selectedMolesRectangles;
 	private float countDownTime = 20f;
-	private preGameState currentState;
+	private PreGameState currentState;
 
 	public PreGameScreen(Game game, ServerClientThread socketHandler) {
 		this.game = game;
 		this.socketHandler = socketHandler;
 		this.mainMenuCam = new OrthographicCamera();
-		currentState = preGameState.READY;
+		socketHandler.setPreGameScreen(this);
+		currentState = PreGameState.READY;
 		mainMenuCam.setToOrtho(true, GAME_WIDTH, GAME_HEIGHT);
 		
 		batcher = new SpriteBatch();
@@ -109,12 +110,12 @@ public class PreGameScreen implements Screen {
 		switch(currentState) {
 		
 		case READY:
-			currentState = preGameState.COUNTING;
+			currentState = PreGameState.COUNTING;
 			break;
 			
 		case COUNTING:
 			if (countDownTime <= 0 ) {
-				currentState = preGameState.GO;
+				currentState = PreGameState.GO;
 			} else {
 				countDownTime -= delta;
 			}
@@ -123,9 +124,7 @@ public class PreGameScreen implements Screen {
 				mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
-					if (socketHandler !=null) socketHandler.interrupt();
-					game.setScreen(new MainMenuScreen(game));
-					return;
+					currentState = PreGameState.QUIT;
 				}
 				
 				for (int i =0; i<NO_OF_DEPLOYERS; i++) {
@@ -137,10 +136,16 @@ public class PreGameScreen implements Screen {
 				}
 			}
 			break;
-			
+		case QUIT:
+			game.setScreen(new MainMenuScreen(game));
+			socketHandler.toMainMenuScreen();
+			socketHandler.dispose();
+			socketHandler = null;
+			dispose();
+			break;
 		case GO:
 			game.setScreen(new GameScreen(game, socketHandler, selectedMoles));
-			this.dispose();
+			dispose();
 			break;
 		}
 	}
@@ -187,5 +192,9 @@ public class PreGameScreen implements Screen {
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub	
+	}
+	
+	public void setState(PreGameState preGameState) {
+		this.currentState = preGameState; 
 	}
 }

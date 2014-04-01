@@ -12,7 +12,7 @@ public class AssetLoader
 	public static Texture texture, logoTexture;
 	public static TextureRegion logo, mswlogo, startButtonUp, startButtonDown;
 
-	public static Sound  hit, explode;
+	public static Sound  hit, explode, clicksound, gameover;
 	
 	public static void load()
 	{
@@ -21,6 +21,15 @@ public class AssetLoader
 
         //815 is the width, 335 is the height//
         logo = new TextureRegion(logoTexture, 0, 0, 960, 470);
+        
+        
+        
+        //The Sound Effects//
+        hit = Gdx.audio.newSound(Gdx.files.internal("data/Bash.mp3"));
+        explode = Gdx.audio.newSound(Gdx.files.internal("data/Boom.mp3"));
+        clicksound = Gdx.audio.newSound(Gdx.files.internal("data/ButtonClick.mp3"));
+        gameover = Gdx.audio.newSound(Gdx.files.internal("data/gameover.wav"));
+
 
 	}
 	

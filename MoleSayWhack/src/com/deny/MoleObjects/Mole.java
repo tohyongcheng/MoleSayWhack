@@ -2,6 +2,7 @@ package com.deny.MoleObjects;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Circle;
+import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.Player;
 
@@ -67,7 +68,9 @@ public abstract class Mole
 		
 		//minusHP
 		if (boundingCircle.contains(screenX, screenY)) {
-			if (isAlive()) {
+			if (isAlive()) 
+			{
+				AssetLoader.hit.play();
 				System.out.println("mole kena attack!");
 				HP -= 1;
 				if (HP==0) {

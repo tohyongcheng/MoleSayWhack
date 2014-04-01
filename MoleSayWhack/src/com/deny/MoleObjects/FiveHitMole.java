@@ -1,6 +1,7 @@
 package com.deny.MoleObjects;
 
 import com.badlogic.gdx.math.Circle;
+import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.Player;
 
@@ -73,6 +74,6 @@ public class FiveHitMole extends Mole
 	
 	public boolean isTouchDown(int screenX, int screenY) 
 	{
-		return super.isTouchDown(screenX, screenY);
+		return super.isTouchDown(screenX, screenY);		
 	}
 }

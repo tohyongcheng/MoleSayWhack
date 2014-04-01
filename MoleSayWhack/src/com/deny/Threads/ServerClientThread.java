@@ -15,7 +15,7 @@ import com.deny.Screens.MultiplayerScreen;
 
 public class ServerClientThread extends Thread {
 	
-	final String address = "192.168.82.227";
+	final String address = "192.168.1.151";
 	int port = 5000;
 	ServerSocketHints serverHints;
 	Socket client;

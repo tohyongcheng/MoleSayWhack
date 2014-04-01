@@ -8,8 +8,15 @@ import com.deny.Threads.ServerClientThread;
 //have cooldowns
 //deploy moles by sending string, initialized at the beginning of the game
 //graphic ?? 
+/**
+ * Mole Deployer is responsible for sending moles from player A to player B. Both
+ * players will have mole deployer.
+ * @author Edward Loke
+ *
+ */
 
-public class MoleDeployer {
+public class MoleDeployer 
+{
 	private float timeDeployed;
 	private Rectangle boundingRectangle;
 	private ServerClientThread socketHandler;
@@ -24,7 +31,8 @@ public class MoleDeployer {
 	 * @param COOLDOWN
 	 */
 	
-	public MoleDeployer(GameWorld gw, MoleType moleType) {
+	public MoleDeployer(GameWorld gw, MoleType moleType) 
+	{
 		this.gameWorld = gw;
 		this.socketHandler = gw.getSocketHandler();
 		this.moleType = moleType;
@@ -46,14 +54,18 @@ public class MoleDeployer {
 		return moleType;
 	}
 	
-	public void deployMole(int pos){
+	public void deployMole(int pos)
+	{
+		//If it is available, deploy the mole and change availability to false//
 		if (isAvailable()) {
 			availability = false;
 	    	socketHandler.deployMole(moleType, pos);
 		}
 	}
 	
-	public void update(float delta) {
+	public void update(float delta) 
+	{
+		//wait until time deployed exceeds cooldown to make it available again//
 		if (timeDeployed < cooldown && !(isAvailable())) {
 			timeDeployed += delta;
 		} else if (timeDeployed >= cooldown && !(isAvailable())){

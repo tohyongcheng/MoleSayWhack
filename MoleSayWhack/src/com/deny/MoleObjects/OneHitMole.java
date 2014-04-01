@@ -5,9 +5,10 @@ import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.Player;
 
 /**
- * Mole1 is the basic mole that will be used most commonly throughout the game.
+ * OneHitMole is the basic mole that will be used most commonly throughout the game.
  * It has 1 hp and requires 1 tap to be killed. 
  * Damages player for 1hp.
+ * 
  * @author Edward Loke
  *
  */

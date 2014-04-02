@@ -39,9 +39,7 @@ public class MainMenuScreen implements Screen {
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(mainMenuCam.combined);
 		touchPoint = new Vector3();
-		
-		
-		
+
 	}
 	
 	private void draw() {

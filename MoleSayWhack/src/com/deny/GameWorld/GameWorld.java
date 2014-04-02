@@ -65,6 +65,7 @@ public class GameWorld {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	public GameWorld(Game game, GameScreen gameScreen, ServerClientThread sH, ArrayList<MoleType> selectedMoles) {
 		this.game = game;
 		this.gameScreen = gameScreen;
@@ -74,6 +75,7 @@ public class GameWorld {
 		this.readThread = socketHandler.getReadThread();
 		this.readThread.setGameWorld(this);
 		this.player = new Player(5);
+		this.selectedMoles = selectedMoles;
 		
 		
 		
@@ -92,7 +94,7 @@ public class GameWorld {
 		//Setup Mole Deployers.
 		moleDeployers = new MoleDeployer[NUMBER_OF_DEPLOYERS];
 		for (int i =0; i<NUMBER_OF_DEPLOYERS;i++) {
-			moleDeployers[i] = new MoleDeployer(this,selectedMoles.get(i));
+			moleDeployers[i] = new MoleDeployer(this, selectedMoles.get(i));
 			moleDeployers[i].getRectangle().set((float)(i*136/3.0), 136f, 45.33f, 30f);
 		}
 		

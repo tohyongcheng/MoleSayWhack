@@ -14,7 +14,6 @@ import com.deny.Screens.PreGameScreen;
 
 public class GameInputHandler implements InputProcessor {
 	
-	private Game game;
 	private float scaleFactorX;
 	private float scaleFactorY;
 	private GameWorld myWorld;
@@ -22,9 +21,8 @@ public class GameInputHandler implements InputProcessor {
 	
 	
 	public GameInputHandler(GameWorld myWorld, float scaleFactorX,
-			float scaleFactorY) {
+		float scaleFactorY) {
 		this.myWorld = myWorld;
-		this.game = myWorld.getGame();
 		this.scaleFactorX = scaleFactorX;
 		this.scaleFactorY = scaleFactorY;
 		placeHolders = myWorld.getPlaceHolders();

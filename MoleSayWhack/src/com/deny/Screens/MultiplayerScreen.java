@@ -2,6 +2,7 @@ package com.deny.Screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -9,7 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
-import com.deny.Screens.MultiplayerScreen.MultiplayerState;
+import com.deny.GameHelpers.IPAddressInputListener;
 import com.deny.Threads.ServerClientThread;
 
 public class MultiplayerScreen implements Screen {
@@ -24,8 +25,12 @@ public class MultiplayerScreen implements Screen {
 	private OrthographicCamera multiplayerCam;
 	private Rectangle backBounds;
 	private Rectangle playBounds;
+	private Rectangle changeAddressBounds;
 	private ServerClientThread socketHandler;
 	private ShapeRenderer shapeRenderer;
+	private String IPAddress;
+	private Preferences prefs;
+	private IPAddressInputListener listener;
 	Vector3 touchPoint;
 	
 	
@@ -34,14 +39,23 @@ public class MultiplayerScreen implements Screen {
 		this.multiplayerCam = new OrthographicCamera();
 		multiplayerCam.setToOrtho(true, GAME_WIDTH, GAME_HEIGHT);
 		backBounds = new Rectangle(0,188,16,16);
-		playBounds = new Rectangle(23,50,90,50);
+		playBounds = new Rectangle(23,50,90,30);
+		changeAddressBounds = new Rectangle(23,120,90,30);
+		
+		listener = new IPAddressInputListener(this);
+		
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(multiplayerCam.combined);
 		touchPoint = new Vector3();
-		socketHandler = new ServerClientThread(this);
+		
+		//Preferences
+		prefs = Gdx.app.getPreferences("Multiplayer");
+		IPAddress = (prefs.getString("IPAddress", ""));
+				
+		//Sockets!
+		socketHandler = new ServerClientThread(this, IPAddress);
 		socketHandler.start();
 		currentState = MultiplayerState.READY;
-	
 	}
 	
 	@Override
@@ -88,6 +102,7 @@ public class MultiplayerScreen implements Screen {
 	}
 	
 	public void update() {	
+		
 		switch (currentState) {
 		case READY:			
 			if(Gdx.input.justTouched()) {
@@ -97,6 +112,10 @@ public class MultiplayerScreen implements Screen {
 					if (socketHandler !=null) socketHandler.interrupt();
 					game.setScreen(new MainMenuScreen(game));
 					return;
+				}
+				
+				else if (changeAddressBounds.contains(touchPoint.x, touchPoint.y)) {
+					Gdx.input.getTextInput(listener, "Set IP Address", IPAddress);
 				}
 			}
 			break;
@@ -114,6 +133,10 @@ public class MultiplayerScreen implements Screen {
 					socketHandler.leaveGameRoom();
 					currentState = MultiplayerState.QUIT;
 				}
+				
+				else if (changeAddressBounds.contains(touchPoint.x, touchPoint.y)) {
+					Gdx.input.getTextInput(listener, "Set IP Address", IPAddress);
+				}
 			}
 			break;
 			
@@ -128,12 +151,7 @@ public class MultiplayerScreen implements Screen {
 			break;
 			
 		case RESTART:
-			if (socketHandler !=null) {
-				socketHandler.interrupt();
-				socketHandler.dispose();
-			}
-			socketHandler = new ServerClientThread(this);
-			socketHandler.start();
+			restartSocketHandler();
 			currentState = MultiplayerState.READY;
 			break;
 			
@@ -156,16 +174,23 @@ public class MultiplayerScreen implements Screen {
 
         // Draws the rectangle from myWorld (Using ShapeType.Filled)
         
-        if (currentState == MultiplayerState.CONNECTED) {
-	        shapeRenderer.rect(playBounds.x, playBounds.y,
+        switch (currentState) {
+        case CONNECTED:
+        	shapeRenderer.rect(playBounds.x, playBounds.y,
 	        		playBounds.width, playBounds.height);
+        	shapeRenderer.rect(changeAddressBounds.x, changeAddressBounds.y,
+        			changeAddressBounds.width, changeAddressBounds.height);
+        	break;
+        case READY:
+        	shapeRenderer.rect(changeAddressBounds.x, changeAddressBounds.y,
+        			changeAddressBounds.width, changeAddressBounds.height);
+        	break;
         }
         
         shapeRenderer.rect(backBounds.x, backBounds.y,
         		backBounds.width, backBounds.height);
 
         shapeRenderer.end();
-		
 	}
 	
 
@@ -173,4 +198,32 @@ public class MultiplayerScreen implements Screen {
 		currentState =s;
 	}
 
+	public String getIPAddress() {
+		return IPAddress;
+	}
+
+	public synchronized void setIPAddress(String IPAddress) {
+		this.IPAddress = IPAddress;
+		prefs.putString("IPAddress", IPAddress);
+		prefs.flush();
+		System.out.println("Flushed!");
+	}
+	
+	public synchronized void restartSocketHandler() {
+		if (socketHandler !=null) {
+			socketHandler.interrupt();
+			socketHandler.dispose();
+		}
+		socketHandler = (new ServerClientThread(this, IPAddress));
+		socketHandler.start();
+		currentState = MultiplayerState.READY;
+	}
+
+	public ServerClientThread getSocketHandler() {
+		return socketHandler;
+	}
+
+	public void setSocketHandler(ServerClientThread socketHandler) {
+		this.socketHandler = socketHandler;
+	}
 }

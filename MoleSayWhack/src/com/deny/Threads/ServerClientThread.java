@@ -17,40 +17,42 @@ import com.deny.Screens.MultiplayerScreen.MultiplayerState;
 
 public class ServerClientThread extends Thread {
 	
-	final String address = "172.16.13.127";
-	int port = 5000;
-	ServerSocketHints serverHints;
-	Socket client;
-	ServerSocket server;
-	SocketHints clientHints;
-	boolean isServer = false;
-	GameWorld gameWorld;
-	MultiplayerScreen multiS;
-	PreGameScreen preGameS;
+	private String address = "localhost";
+	private int port = 5000;
+	private ServerSocketHints serverHints;
+	private Socket client;
+	private ServerSocket server;
+	private SocketHints clientHints;
+	private SocketHints serverClientHints;
+	private boolean isServer = false;
+	private MultiplayerScreen multiS;
+	private PreGameScreen preGameS;
 	private PrintWriter out;
 	
 	private ReadThread readThread;
 	
-	public ServerClientThread(MultiplayerScreen ms) {
-		this.multiS = ms;
+	public ServerClientThread(MultiplayerScreen ms, String IPAddress) {
+		this.setMultiS(ms);
+		if (IPAddress.equals("")) address = "localhost";
+		else address = IPAddress;
 	}
 	
 	public void run() {
 		//Create client to check if there is an existing server connection
 		clientHints = new SocketHints();
-		clientHints.connectTimeout = 10000;
+		clientHints.connectTimeout = 1000;
 		
-		if (isServer == false) {
-			try {
-				client = Gdx.net.newClientSocket(Protocol.TCP, address, port, clientHints);
-				System.out.println("Trying to find existing server to join...");
-			} catch (GdxRuntimeException e) {
-				System.out.println("There is no current server running! I'm going to be a server now!");
-				isServer = true;
-			}
+		try {
+			System.out.println("Trying to find existing server to join...");
+			client = Gdx.net.newClientSocket(Protocol.TCP, address, port, null);
+		} catch (GdxRuntimeException e) {
+			System.out.println("There is no current server running! I'm going to be a server now!");
+			isServer = true;
 		}
 		
 		if (isServer) {
+			serverClientHints = new SocketHints();
+			serverClientHints.connectTimeout = 10000;
 			while(true) {
 				if (isInterrupted()) {
 					System.out.println("Is interrupted!");
@@ -60,26 +62,26 @@ public class ServerClientThread extends Thread {
 				else {
 					serverHints = new ServerSocketHints();
 					serverHints.acceptTimeout = 500;	//set to 0 for infinite waiting
-					System.out.println("I'm a server and I'm waiting for new opponents!");
+//					System.out.println(address);
+//					System.out.println("I'm a server and I'm waiting for new opponents!");
 					try {
 						if (server == null)
 							server = Gdx.net.newServerSocket(Protocol.TCP, port , serverHints);
-						client = server.accept(clientHints);
+						client = server.accept(serverClientHints);
 						break;
 					} catch (GdxRuntimeException e) {
-						
+						System.out.println("Error with creating ServerSocket");
 					}
 				}
 			}
 		}
 		
 		if (client.isConnected()) {
-			System.out.println("Connected to server!");
-			this.multiS.setState(MultiplayerState.CONNECTED);
+			System.out.println("Connected to other player!");
+			this.getMultiS().setState(MultiplayerState.CONNECTED);
 		}
 		
 		out = new PrintWriter(client.getOutputStream(), true);
-		
 		readThread = new ReadThread(this,client);
 		readThread.start();
 	}
@@ -101,23 +103,19 @@ public class ServerClientThread extends Thread {
 		this.readThread = readThread;
 	}
 	
-	public void setGameWorld(GameWorld gw) {
-		this.gameWorld = gw;
-	}
-	
 	public void dispose() {
 		if (readThread != null) readThread.interrupt();
-		if (multiS != null) multiS.dispose();
+		
 		if (server!=null) server.dispose();
 		if (client!=null) client.dispose();
 	}
 	
 	public void setPreGameScreen(PreGameScreen preGameScreen) {
-		preGameS = preGameScreen;
+		setPreGameS(preGameScreen);
 	}
 	
 	public PreGameScreen getPreGameScreen() {
-		return preGameS;
+		return getPreGameS();
 	}
 	
 	public void deployMole(MoleType moleType, int pos) {
@@ -170,11 +168,29 @@ public class ServerClientThread extends Thread {
 
 	public void leaveGameRoom() {
 		System.out.println("[SocketHandler] Sending to Leave GameRoom");
-		out.write("[LEAVEMULTIPLAYERSCREEN] \n");
-		out.flush();
+		try {
+			out.write("[LEAVEMULTIPLAYERSCREEN] \n");
+			out.flush();
+		} catch (NullPointerException e) {
+			System.out.println("No Read Thread created yet...");
+		}
 	}
 
+	public MultiplayerScreen getMultiS() {
+		return multiS;
+	}
 
+	public void setMultiS(MultiplayerScreen multiS) {
+		this.multiS = multiS;
+	}
+
+	public PreGameScreen getPreGameS() {
+		return preGameS;
+	}
+
+	public void setPreGameS(PreGameScreen preGameS) {
+		this.preGameS = preGameS;
+	}
 
 }
 

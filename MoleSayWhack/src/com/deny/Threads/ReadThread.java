@@ -46,7 +46,7 @@ public class ReadThread  extends Thread{
 					break;
 				case "[CHOOSEMOLESCREEN]":
 					System.out.println("Received message to go to select Moles Screen");
-					socketHandler.multiS.setState(MultiplayerState.START);
+					socketHandler.getMultiS().setState(MultiplayerState.START);
 					break;
 				case "[GAMEOVER]":
 					System.out.println("Received message that other player has died");
@@ -65,13 +65,13 @@ public class ReadThread  extends Thread{
 				//PREGAMESCREEN
 				case "[MAINMENUSCREEN]":
 					System.out.println("Received message to go back to main menu!");
-					if (socketHandler.preGameS !=null) socketHandler.preGameS.setState(PreGameState.QUIT);
+					if (socketHandler.getPreGameS() !=null) socketHandler.getPreGameS().setState(PreGameState.QUIT);
 					break;
 					
 				//MULTIPLAYERSCREEN
 				case "[LEAVEMULTIPLAYERSCREEN]":
 					System.out.println("Received message to restart server!");
-					if (socketHandler.multiS !=null) socketHandler.multiS.setState(MultiplayerState.RESTART);
+					if (socketHandler.getMultiS() !=null) socketHandler.getMultiS().setState(MultiplayerState.RESTART);
 					break;
 				}
 			} catch (IOException e) {

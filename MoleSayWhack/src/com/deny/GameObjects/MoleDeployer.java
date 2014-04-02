@@ -13,7 +13,6 @@ public class MoleDeployer {
 	private float timeDeployed;
 	private Rectangle boundingRectangle;
 	private ServerClientThread socketHandler;
-	private GameWorld gameWorld;
 	private float cooldown;
 	private MoleType moleType;
 	boolean availability;
@@ -25,7 +24,6 @@ public class MoleDeployer {
 	 */
 	
 	public MoleDeployer(GameWorld gw, MoleType moleType) {
-		this.gameWorld = gw;
 		this.socketHandler = gw.getSocketHandler();
 		this.moleType = moleType;
 		availability = true;
@@ -34,13 +32,6 @@ public class MoleDeployer {
 		cooldown = moleType.getCoolDown();
 	}
 	
-	
-//	public MoleDeployer(TokenType MoleType, long COOLDOWN){
-//		this.MoleType = MoleType;
-//		this.COOLDOWN = COOLDOWN;
-//		boundingRectangle = new Rectangle();
-//		timeDeployed = 0;
-//	}
 	
 	public MoleType getMoleType(){
 		return moleType;

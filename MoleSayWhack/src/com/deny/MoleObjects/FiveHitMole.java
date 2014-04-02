@@ -1,14 +1,16 @@
 package com.deny.MoleObjects;
 
 import com.badlogic.gdx.math.Circle;
+import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.Player;
 
 /**
  * To change!
- * FiveHitMole is the basic mole that will be used most commonly throughout the game.
- * It has 1 hp and requires 1 tap to be killed. 
+ * FiveHitMole is one of the moles available for spawn.
+ * It has 5 hp and requires 5 taps to be killed. 
  * Damages player for 1hp.
+ * 
  * @author Edward Loke
  *
  */
@@ -72,6 +74,6 @@ public class FiveHitMole extends Mole
 	
 	public boolean isTouchDown(int screenX, int screenY) 
 	{
-		return super.isTouchDown(screenX, screenY);
+		return super.isTouchDown(screenX, screenY);		
 	}
 }

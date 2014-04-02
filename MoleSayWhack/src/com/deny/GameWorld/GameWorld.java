@@ -7,6 +7,7 @@ import java.util.Random;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Rectangle;
+import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleDeployer;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.Player;
@@ -147,7 +148,9 @@ public class GameWorld {
     	
     	if (player.isDead()) {
     		gameState = GameState.LOSE;
+    		System.out.println("GameState changed to LOSE");
     		socketHandler.gameOver();
+    		AssetLoader.gameover.play();
     	}
     	
     	for (int i=0; i<NUMBER_OF_MOLES_PER_GRID; i++) {

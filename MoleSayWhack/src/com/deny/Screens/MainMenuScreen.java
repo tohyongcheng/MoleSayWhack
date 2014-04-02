@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.deny.GameHelpers.AssetLoader;
 import com.deny.MoleObjects.Mole;
 
 public class MainMenuScreen implements Screen {
@@ -70,12 +71,14 @@ public class MainMenuScreen implements Screen {
 			if (playBounds.contains(touchPoint.x, touchPoint.y)) {
 				game.setScreen(new MultiplayerScreen(game));
 				this.dispose();
+				AssetLoader.clicksound.play();
 				return;
 			}
 			
 			if (optionsBounds.contains(touchPoint.x, touchPoint.y)) {
 				game.setScreen(new OptionsScreen(game));
 				this.dispose();
+				AssetLoader.clicksound.play();
 				return;
 			}
 			

@@ -1,6 +1,7 @@
 package com.deny.MoleObjects;
 
 import com.badlogic.gdx.math.Circle;
+import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.Player;
 
@@ -65,7 +66,8 @@ public class SabotageMole extends Mole
 	{
 		if (super.isTouchDown(screenX, screenY)) {
 			damage(player);
-			return true;
+			AssetLoader.explode.play();
+			return true;			
 		}
 		return false;
 		

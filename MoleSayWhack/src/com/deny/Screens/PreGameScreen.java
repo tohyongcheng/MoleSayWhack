@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.Threads.ServerClientThread;
 
@@ -132,6 +133,7 @@ public class PreGameScreen implements Screen {
 						MoleType nextMoleType = selectedMoles.get(i).next();
 						selectedMoles.remove(i);
 						selectedMoles.add(i,nextMoleType);
+						AssetLoader.clicksound.play();
 					}
 				}
 			}

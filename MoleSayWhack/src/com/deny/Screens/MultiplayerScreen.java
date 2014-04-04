@@ -1,11 +1,23 @@
 package com.deny.Screens;
 
+import java.awt.TextArea;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
@@ -23,14 +35,17 @@ public class MultiplayerScreen implements Screen {
 	private MultiplayerState currentState;
 	private Game game;
 	private OrthographicCamera multiplayerCam;
+	private SpriteBatch batcher;
 	private Rectangle backBounds;
 	private Rectangle playBounds;
 	private Rectangle changeAddressBounds;
 	private ServerClientThread socketHandler;
 	private ShapeRenderer shapeRenderer;
-	private String IPAddress;
+	private String otherAddress;
+	private String myAddress;
 	private Preferences prefs;
 	private IPAddressInputListener listener;
+	private BitmapFont font;
 	Vector3 touchPoint;
 	
 	
@@ -41,8 +56,11 @@ public class MultiplayerScreen implements Screen {
 		backBounds = new Rectangle(0,188,16,16);
 		playBounds = new Rectangle(23,50,90,30);
 		changeAddressBounds = new Rectangle(23,120,90,30);
-		
 		listener = new IPAddressInputListener(this);
+		
+		font = new BitmapFont();
+		batcher = new SpriteBatch();
+		batcher.setProjectionMatrix(multiplayerCam.combined);
 		
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(multiplayerCam.combined);
@@ -50,12 +68,35 @@ public class MultiplayerScreen implements Screen {
 		
 		//Preferences
 		prefs = Gdx.app.getPreferences("Multiplayer");
-		IPAddress = (prefs.getString("IPAddress", ""));
+		otherAddress = (prefs.getString("IPAddress", ""));
 				
 		//Sockets!
-		socketHandler = new ServerClientThread(this, IPAddress);
+		socketHandler = new ServerClientThread(this, otherAddress);
 		socketHandler.start();
 		currentState = MultiplayerState.READY;
+		
+		 // The following code loops through the available network interfaces
+        // Keep in mind, there can be multiple interfaces per device, for example
+        // one per NIC, one per active wireless and the loopback
+        // In this case we only care about IPv4 address ( x.x.x.x format )
+        List<String> addresses = new ArrayList<String>();
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            for(NetworkInterface ni : Collections.list(interfaces)){
+                for(InetAddress address : Collections.list(ni.getInetAddresses()))
+                {
+                    if(address instanceof Inet4Address){
+                        addresses.add(address.getHostAddress());
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+        
+        // Print the contents of our array to a string.  Yeah, should have used StringBuilder
+
+        myAddress = addresses.get(0);
 	}
 	
 	@Override
@@ -115,7 +156,7 @@ public class MultiplayerScreen implements Screen {
 				}
 				
 				else if (changeAddressBounds.contains(touchPoint.x, touchPoint.y)) {
-					Gdx.input.getTextInput(listener, "Set IP Address", IPAddress);
+					Gdx.input.getTextInput(listener, "Set IP Address", otherAddress);
 				}
 			}
 			break;
@@ -135,7 +176,7 @@ public class MultiplayerScreen implements Screen {
 				}
 				
 				else if (changeAddressBounds.contains(touchPoint.x, touchPoint.y)) {
-					Gdx.input.getTextInput(listener, "Set IP Address", IPAddress);
+					Gdx.input.getTextInput(listener, "Set IP Address", otherAddress);
 				}
 			}
 			break;
@@ -191,6 +232,10 @@ public class MultiplayerScreen implements Screen {
         		backBounds.width, backBounds.height);
 
         shapeRenderer.end();
+        
+        batcher.begin();
+        font.draw(batcher, myAddress.toString(), 0, 20);
+	    batcher.end();
 	}
 	
 
@@ -199,11 +244,11 @@ public class MultiplayerScreen implements Screen {
 	}
 
 	public String getIPAddress() {
-		return IPAddress;
+		return otherAddress;
 	}
 
 	public synchronized void setIPAddress(String IPAddress) {
-		this.IPAddress = IPAddress;
+		this.otherAddress = IPAddress;
 		prefs.putString("IPAddress", IPAddress);
 		prefs.flush();
 		System.out.println("Flushed!");
@@ -214,7 +259,7 @@ public class MultiplayerScreen implements Screen {
 			socketHandler.interrupt();
 			socketHandler.dispose();
 		}
-		socketHandler = (new ServerClientThread(this, IPAddress));
+		socketHandler = (new ServerClientThread(this, otherAddress));
 		socketHandler.start();
 		currentState = MultiplayerState.READY;
 	}
@@ -225,5 +270,9 @@ public class MultiplayerScreen implements Screen {
 
 	public void setSocketHandler(ServerClientThread socketHandler) {
 		this.socketHandler = socketHandler;
+	}
+
+	public Game getGame() {
+		return game;
 	}
 }

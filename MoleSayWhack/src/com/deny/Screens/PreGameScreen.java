@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -16,6 +15,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
+import com.deny.Threads.ReadThread.ScreenState;
 import com.deny.Threads.ServerClientThread;
 
 public class PreGameScreen implements Screen {
@@ -47,6 +47,7 @@ public class PreGameScreen implements Screen {
 		this.socketHandler = socketHandler;
 		this.mainMenuCam = new OrthographicCamera();
 		socketHandler.setPreGameScreen(this);
+		socketHandler.getReadThread().setCurrentState(ScreenState.PREGAME);
 		currentState = PreGameState.READY;
 		mainMenuCam.setToOrtho(true, GAME_WIDTH, GAME_HEIGHT);
 		

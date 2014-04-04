@@ -43,10 +43,14 @@ public class GameWorld {
 	private ArrayList<Rectangle> placeHolders;
 	private ServerClientThread socketHandler;
 	private ArrayList<MoleType> selectedMoles;
-	private Rectangle pauseOverlay;
+	
 	private MoleDeployer[] moleDeployers;
 	private float[] moleDelay;
 	
+	//PAUSE MENU
+	private Rectangle pauseButton;
+	private Rectangle pauseOverlay;	
+	private Rectangle continueButton;
 	
 	//GAMEOVER MENU
 	private Rectangle gameOverMenu;
@@ -102,6 +106,7 @@ public class GameWorld {
 		//setup board and overlay
 		board = new Rectangle(0, 0, 136, 136);
 		pauseOverlay = new Rectangle(0,0,136,204);
+		pauseButton = new Rectangle(120,188,16,16);
 		placeHolders = new ArrayList<Rectangle>();
 		for(int i=0;i<3;i++){
 			for(int j=0;j<3;j++) {
@@ -111,6 +116,7 @@ public class GameWorld {
 		
 		//GameOverMenu
 		gameOverMenu = new Rectangle(0,30, 136, 136);
+		continueButton = new Rectangle(20, 50, 96, 30);
 		playAgainBounds = new Rectangle(20, 50, 96, 30);
 		exitBounds = new Rectangle(20, 100, 96, 30);
 		
@@ -123,6 +129,14 @@ public class GameWorld {
     	
     	else if (gameState == GameState.LOSE) {
     		// stop updating everything. 
+    	}
+    	
+    	else if (gameState == GameState.MENU) {
+    		
+    	} 
+    	
+    	else if (gameState == GameState.PAUSE) {
+    		
     	}
     	
     	else if (gameState == GameState.DEPLOYMENT || gameState == GameState.RUNNING) {
@@ -306,6 +320,35 @@ public class GameWorld {
 	
 	public Game getGame() {
 		return game;
+	}
+
+	public Rectangle getPauseOverlay() {
+		return pauseOverlay;
+	}
+
+	public Rectangle getPauseButton() {
+		return pauseButton;
+	}
+
+	public void pauseGame() {
+		socketHandler.pauseGame();
+		gameState = GameState.MENU;
+	}
+
+	public Rectangle getContinueButton() {
+		return continueButton;
+	}
+
+	public void exitGame() {
+		getSocketHandler().exitGame();
+		setGameState(GameState.EXIT);
+		
+	}
+
+	public void continueGame() {
+		getSocketHandler().continueGame();
+		setGameState(GameState.RUNNING);
+		
 	}
 
 }

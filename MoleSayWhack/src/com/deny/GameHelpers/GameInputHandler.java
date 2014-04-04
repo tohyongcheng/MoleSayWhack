@@ -50,7 +50,9 @@ public class GameInputHandler implements InputProcessor {
 		screenX = scaleX(screenX);
 		screenY = scaleY(screenY);
 		
-		if (myWorld.getGameState() == GameState.DEPLOYMENT) {
+		GameState currentState = myWorld.getGameState();
+		
+		if (currentState == GameState.DEPLOYMENT) {
 			for (int i=0; i<placeHolders.size(); i++) { 
 				if (placeHolders.get(i).contains(screenX, screenY)) {
 					myWorld.getCurrentMoleDeployer().deployMole(i);
@@ -58,7 +60,24 @@ public class GameInputHandler implements InputProcessor {
 					myWorld.setGameState(GameState.READY);
 				}
 			}
-		} else if (myWorld.getGameState() == GameState.RUNNING ){
+			
+			for (MoleDeployer md: myWorld.getMoleDeployers()) {
+				if (md!= null) {
+					if (md.isTouchDown(screenX,screenY)) {
+						myWorld.setGameState(GameState.READY);
+						myWorld.setCurrentMoleDeployer(null);
+					}
+				}
+			}
+			
+			if (myWorld.getPauseButton().contains(screenX,screenY)) {
+				myWorld.getSocketHandler().exitGame();
+				myWorld.setGameState(GameState.MENU);
+			}
+		} 
+		
+		else if (currentState == GameState.RUNNING ){
+			
 			for(Mole m: myWorld.getMoleGrid()) {
 				if (m!=null) {
 					m.isTouchDown(screenX, screenY);
@@ -73,12 +92,17 @@ public class GameInputHandler implements InputProcessor {
 					}
 				}
 			}
-		} else if (myWorld.getGameState() == GameState.WIN || myWorld.getGameState() == GameState.LOSE ) {
+			
+			if (myWorld.getPauseButton().contains(screenX,screenY)) {
+				myWorld.pauseGame();
+			}
+		} 
+		
+		else if (currentState == GameState.WIN || currentState == GameState.LOSE ) {
 			Rectangle playAgainBounds = myWorld.getPlayAgainBounds();
 			Rectangle exitBounds = myWorld.getExitBounds();
 			
 			if (playAgainBounds.contains(screenX,screenY)) {
-				//TODO: put this inside GameWorld instead?
 				myWorld.getSocketHandler().restartGame();
 				myWorld.setGameState(GameState.RESTART);
 			}
@@ -88,6 +112,30 @@ public class GameInputHandler implements InputProcessor {
 				myWorld.getSocketHandler().exitGame();
 				myWorld.setGameState(GameState.EXIT);
 			}
+		} 
+		
+		else if (currentState == GameState.PAUSE) {
+			
+			
+			
+		} 
+		
+		else if (currentState == GameState.MENU) {
+			
+			Rectangle exitBounds = myWorld.getExitBounds();
+			if (exitBounds.contains(screenX,screenY)) {
+				//TODO: put this inside GameWorld instead?
+				myWorld.exitGame();
+			}
+			
+			Rectangle continueButton = myWorld.getContinueButton();
+			if (continueButton.contains(screenX,screenY)) {
+				myWorld.continueGame();
+			}
+			
+			
+			
+			
 		}
 		
 		return false;

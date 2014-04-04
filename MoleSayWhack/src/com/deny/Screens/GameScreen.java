@@ -10,6 +10,7 @@ import com.deny.GameObjects.MoleType;
 import com.deny.GameWorld.GameRenderer;
 import com.deny.GameWorld.GameWorld;
 import com.deny.Threads.ServerClientThread;
+import com.deny.Threads.ReadThread.ScreenState;
 
 public class GameScreen implements Screen {
 	
@@ -29,6 +30,7 @@ public class GameScreen implements Screen {
 		
 		this.game = game;
 		this.socketHandler = sH;
+		this.socketHandler.getReadThread().setCurrentState(ScreenState.PREGAME);
 		this.world = new GameWorld(game, this, socketHandler,selectedMoles);
 		this.renderer = new GameRenderer(world);
 		

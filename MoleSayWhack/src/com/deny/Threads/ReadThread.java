@@ -3,24 +3,37 @@ package com.deny.Threads;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.net.Socket;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameWorld.GameWorld;
 import com.deny.GameWorld.GameWorld.GameState;
+import com.deny.Screens.MainMenuScreen;
+import com.deny.Screens.MultiplayerScreen;
 import com.deny.Screens.MultiplayerScreen.MultiplayerState;
+import com.deny.Screens.PreGameScreen;
 import com.deny.Screens.PreGameScreen.PreGameState;
 
 public class ReadThread  extends Thread{
+	private Game game;
 	private Socket client;
 	private BufferedReader in;
 	private ServerClientThread socketHandler;
 	private GameWorld gameWorld;
+	private PreGameScreen preGameScreen;
+	private MultiplayerScreen multiPlayerScreen;
+	public enum ScreenState{
+		MULTIPLAYER, PREGAME, GAME
+	}
+	private ScreenState currentState;
 	
-	
-	public ReadThread(ServerClientThread sh, Socket s) {
+	public ReadThread(ServerClientThread sh, Socket client) {
 		socketHandler = sh;
-		client = s;
+		game = socketHandler.getGame();
+		this.client = client;
 		in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+		this.currentState = ScreenState.MULTIPLAYER;
 	}
 	
 	public void run() {
@@ -61,6 +74,14 @@ public class ReadThread  extends Thread{
 					gameWorld.setGameState(GameState.EXIT);
 					interrupt(); 
 					break;
+				case "[PAUSE]":
+					System.out.println("Received message to pause the game");
+					gameWorld.setGameState(GameState.PAUSE);
+					break;
+				case "[CONTINUE]":
+					System.out.println("Received message to unpause the game");
+					gameWorld.setGameState(GameState.RUNNING);
+					break;
 					
 				//PREGAMESCREEN
 				case "[MAINMENUSCREEN]":
@@ -78,10 +99,29 @@ public class ReadThread  extends Thread{
 				//e.printStackTrace();
 				System.out.println("Socket Closed");
 			} catch(NullPointerException e) {
+				//DISCONNECT
 				System.out.println("Lost connection!");
-				//WAIT FOR RECONNECTION
+				switch (currentState) {
+				case MULTIPLAYER:
+					break;
+				case PREGAME:
+					break;
+				case GAME:
+					break;
+				}
+				game.setScreen(new MainMenuScreen(game));
+				socketHandler.dispose();
+				return;
 			}
 		}
+	}
+
+	public ScreenState getCurrentState() {
+		return currentState;
+	}
+
+	public void setCurrentState(ScreenState currentState) {
+		this.currentState = currentState;
 	}
 
 	public GameWorld getGameWorld() {

@@ -1,6 +1,7 @@
 package com.deny.MoleObjects;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
@@ -46,6 +47,20 @@ public abstract class Mole
 //			damage(player);
 //			isDead = true;
 //		}
+	}
+	public TextureRegion getAsset(){
+		switch(moleType){
+		case ONETAP:
+			return AssetLoader.mole1;
+		case THREETAP:
+			return AssetLoader.mole3;
+		case FIVETAP:
+			return AssetLoader.mole5;
+		case SABOTAGE:
+			return AssetLoader.moleSabo;
+		default:
+			return AssetLoader.mole1;
+		} 
 	}
 
 	

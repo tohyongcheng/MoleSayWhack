@@ -1,6 +1,8 @@
 package com.deny.GameObjects;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.deny.GameHelpers.AssetLoader;
 
 public enum MoleType {
 	//MOLETYPES
@@ -15,6 +17,21 @@ public enum MoleType {
 	MoleType(int HP, float coolDown) {
 		this.HP = HP;
 		this.coolDown = coolDown;
+	}
+	
+	public TextureRegion getAsset(){
+		switch(this){
+		case ONETAP:
+			return AssetLoader.mole1;
+		case THREETAP:
+			return AssetLoader.mole3;
+		case FIVETAP:
+			return AssetLoader.mole5;
+		case SABOTAGE:
+			return AssetLoader.moleSabo;
+		default:
+			return AssetLoader.mole1;
+		} 
 	}
 	
 	public MoleType next() {

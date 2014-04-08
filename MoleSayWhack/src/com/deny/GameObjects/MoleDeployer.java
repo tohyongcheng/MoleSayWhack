@@ -1,6 +1,8 @@
 package com.deny.GameObjects;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameWorld.GameWorld;
 import com.deny.Threads.ServerClientThread;
 
@@ -63,6 +65,21 @@ public class MoleDeployer
 			timeDeployed = 0;
 			availability = true;
 		}
+	}
+	
+	public TextureRegion getAsset(){
+		switch(moleType){
+		case ONETAP:
+			return AssetLoader.mole1;
+		case THREETAP:
+			return AssetLoader.mole3;
+		case FIVETAP:
+			return AssetLoader.mole5;
+		case SABOTAGE:
+			return AssetLoader.moleSabo;
+		default:
+			return AssetLoader.mole1;
+		} 
 	}
 	
 	public boolean isAvailable(){

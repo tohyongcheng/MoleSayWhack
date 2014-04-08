@@ -20,8 +20,8 @@ import com.deny.Threads.ServerClientThread;
 
 public class PreGameScreen implements Screen {
 	private static final int NO_OF_DEPLOYERS = 3;
-	private static final int GAME_WIDTH = 136;
-	private static final int GAME_HEIGHT = 204;
+	private static final int GAME_WIDTH = 272;
+	private static final int GAME_HEIGHT = 408;
 
 	public enum PreGameState {
 		READY, COUNTING, GO, QUIT;
@@ -39,7 +39,7 @@ public class PreGameScreen implements Screen {
 	private ServerClientThread socketHandler;
 	private ArrayList<MoleType> selectedMoles;
 	private ArrayList<Rectangle> selectedMolesRectangles;
-	private float countDownTime = 20f;
+	private float countDownTime = 10f;
 	private PreGameState currentState;
 
 	public PreGameScreen(Game game, ServerClientThread socketHandler) {
@@ -54,18 +54,21 @@ public class PreGameScreen implements Screen {
 		batcher = new SpriteBatch();
 		batcher.setProjectionMatrix(mainMenuCam.combined);
 		font = new BitmapFont();
+		font.setScale(1, -1);
 		
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(mainMenuCam.combined);
 		touchPoint = new Vector3();
 //		playBounds = new Rectangle(23,80,90,30);
-		backBounds = new Rectangle(0,188,16,16);
+		backBounds = new Rectangle(0,386,32,32);
 		
 		selectedMoles = new ArrayList<MoleType>();
 		selectedMolesRectangles = new ArrayList<Rectangle>();
+
 		for (int i=0; i <NO_OF_DEPLOYERS; i++) {
 			selectedMoles.add(MoleType.ONETAP);
-			selectedMolesRectangles.add(new Rectangle( 23f+i*30, 40f, 30f,30f));
+			selectedMolesRectangles.add(new Rectangle( 45f+i*30*2, 40f*2, 30f*2,30f*2));
+	
 		}		
 		
 	}
@@ -74,8 +77,8 @@ public class PreGameScreen implements Screen {
 		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-        
-        shapeRenderer.begin(ShapeType.Filled);
+     
+       /* shapeRenderer.begin(ShapeType.Filled);
         // Chooses RGB Color of 87, 109, 120 at full opacity
         shapeRenderer.setColor(87 / 255.0f, 109 / 255.0f, 120 / 255.0f, 1);
         shapeRenderer.rect(backBounds.x, backBounds.y,
@@ -91,17 +94,22 @@ public class PreGameScreen implements Screen {
             shapeRenderer.rect(r.x,r.y,r.width,r.height);
     	}
         
-        
-        shapeRenderer.end();
+        shapeRenderer.end();*/
         
         batcher.begin();
-//        for (int i = 0; i< NO_OF_DEPLOYERS; i++) {
-//        	MoleType moleType = selectedMoles.get(i);
-//            font.draw(batcher, moleType.toString(), selectedMolesRectangles.get(i).x, selectedMolesRectangles.get(i).y);
-//    	}
-//        
+        batcher.enableBlending();
+        batcher.draw(AssetLoader.bg, 0, 0, 272, 408);
         
-        font.draw(batcher, String.valueOf((int)countDownTime), 68, 20);
+        for (int i = 0; i< NO_OF_DEPLOYERS; i++) {
+    	   MoleType moleType = selectedMoles.get(i);
+    	   Rectangle r = selectedMolesRectangles.get(i);
+    	   batcher.draw(moleType.getAsset(),r.x, r.y, r.width, r.height);
+    	   //font.draw(batcher, moleType.toString(), selectedMolesRectangles.get(i).x, selectedMolesRectangles.get(i).y);
+    	}     
+        
+        font.draw(batcher, String.valueOf((int)countDownTime), 68*2, 20*2);
+        batcher.draw(AssetLoader.cancel, backBounds.x, backBounds.y,
+        		backBounds.width, backBounds.height);
         batcher.end();
 		
 	}

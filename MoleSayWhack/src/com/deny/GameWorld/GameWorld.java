@@ -116,9 +116,9 @@ public class GameWorld {
 		
 		//GameOverMenu
 		gameOverMenu = new Rectangle(0,30, 136, 136);
-		continueButton = new Rectangle(20, 50, 96, 30);
-		playAgainBounds = new Rectangle(20, 50, 96, 30);
-		exitBounds = new Rectangle(20, 100, 96, 30);
+		continueButton = new Rectangle(55, 50, 30, 30);
+		playAgainBounds = new Rectangle(50, 50, 30, 30);
+		exitBounds = new Rectangle(50, 100, 30, 30);
 		
 		//setup random for random spawning
 		this.r = new Random();
@@ -126,6 +126,7 @@ public class GameWorld {
 
     public void update(float delta) {
     	if (gameState == GameState.READY) gameState = GameState.RUNNING;
+    	
     	
     	else if (gameState == GameState.LOSE) {
     		// stop updating everything. 
@@ -144,6 +145,8 @@ public class GameWorld {
     	}
     	
     	else if (gameState == GameState.RESTART) {
+    		AssetLoader.sequencer1.stop();
+    		AssetLoader.sequencer1.setTickPosition(0);
     		game.setScreen(new PreGameScreen(game, socketHandler));
     		gameScreen.dispose();
     	}
@@ -151,11 +154,16 @@ public class GameWorld {
     	else if (gameState == GameState.EXIT) {    		
     		socketHandler.dispose();
     		socketHandler = null;
+    		
+    		AssetLoader.sequencer1.stop();
+    		AssetLoader.sequencer1.setTickPosition(0);
     		game.setScreen(new MainMenuScreen(game));
     		gameScreen.dispose();
     		
     	}
-    	
+    	AssetLoader.sequencer.stop();
+    	AssetLoader.sequencer.setTickPosition(0);
+    	AssetLoader.sequencer1.start();
     }
     
     public void updateRunning(float delta) {
@@ -184,6 +192,7 @@ public class GameWorld {
         		moleGrid[i].getBoundingCircle().set((float) (placeHolders.get(i).x + 45.33/2), 
 						(float) (placeHolders.get(i).y + 45.33/2), 
 						12f);
+        	
         		
         		if (moleGrid[i].isDead()) {
 	        		//JVM will automatically clean up unreachable objects

@@ -9,7 +9,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameHelpers.AssetLoader;
+
 import com.deny.GameHelpers.GameInputHandler;
+
 import com.deny.GameObjects.MoleDeployer;
 import com.deny.GameWorld.GameWorld.GameState;
 import com.deny.MoleObjects.Mole;
@@ -35,7 +37,7 @@ public class GameRenderer {
 		
 		batcher = new SpriteBatch();
 		batcher.setProjectionMatrix(cam.combined);
-		
+
 	}
 	
 	public void render() {
@@ -45,6 +47,7 @@ public class GameRenderer {
         
         batcher.begin();
         batcher.enableBlending();
+
         batcher.draw(AssetLoader.gameBG, 0, 0, (int)(544*scaleW), (int)(816*scaleH));
         
         // Draw MOLES
@@ -59,10 +62,12 @@ public class GameRenderer {
         	//shapeRenderer.setColor(md.getMoleType().getColor());
         	if (md!=null) {
         		batcher.draw(md.getAsset(), md.getRectangle().x + (int)(7*scaleW), md.getRectangle().y + (int)(7*scaleH),md.getRectangle().width - (int)(12*scaleW),md.getRectangle().height - (int)(12*scaleH));
-        		//shapeRenderer.rect(md.getRectangle().x, md.getRectangle().y,md.getRectangle().width,md.getRectangle().height);
+
+        		
         	}
         }
        
+
        
         
         batcher.end();
@@ -102,6 +107,7 @@ public class GameRenderer {
 	        	batcher.draw(AssetLoader.hmr, GameInputHandler.moleT.getBoundingCircle().x, GameInputHandler.moleT.getBoundingCircle().y, (int)(90*scaleW),(int)(69*scaleH));
 	        	
 	        }
+
         }
        
         if (world.getGameState() == GameState.DEPLOYMENT) {
@@ -141,7 +147,7 @@ public class GameRenderer {
         }
         batcher.end();
         
-      
+
  
         batcher.begin();
         batcher.enableBlending();
@@ -156,7 +162,7 @@ public class GameRenderer {
 	
 			
         }
-        
+
         if (world.getGameState() == GameState.LOSE) {
         	batcher.draw(AssetLoader.Lose, 0, 0, GAME_WIDTH, GAME_HEIGHT);
 			
@@ -167,16 +173,20 @@ public class GameRenderer {
 			batcher.draw(AssetLoader.cnl, exitBounds.x,exitBounds.y,exitBounds.width,exitBounds.height);
 			
 			
+
 		}
         
         else if (world.getGameState() == GameState.PAUSE ) {
         	Rectangle pauseOverlay = world.getPauseOverlay();
+
         	batcher.draw(AssetLoader.psBG, pauseOverlay.x, pauseOverlay.y, pauseOverlay.width, pauseOverlay.height);
+
 
         }
         
         else if (world.getGameState() == GameState.MENU ) {
         	Rectangle pauseOverlay = world.getPauseOverlay();
+
         	batcher.draw(AssetLoader.psBG, pauseOverlay.x, pauseOverlay.y, pauseOverlay.width, pauseOverlay.height);
 
         	Rectangle exitBounds = world.getExitBounds();
@@ -189,6 +199,7 @@ public class GameRenderer {
         
         batcher.end();
     
+
         
         
 	}

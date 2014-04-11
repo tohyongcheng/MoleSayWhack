@@ -137,9 +137,11 @@ public class GameWorld {
 		
 		//GameOverMenu
 		gameOverMenu = new Rectangle(0,30, 136, 136);
+
 		continueButton = new Rectangle(GAME_WIDTH/2-(int)(82*scaleW/2), GAME_HEIGHT/2, (int)(83*scaleW), (int)(82*scaleH));
 		playAgainBounds = new Rectangle(GAME_WIDTH/2-(int)(82*scaleW/2), GAME_HEIGHT/2, (int)(83*scaleW), (int)(82*scaleH));
 		exitBounds = new Rectangle(GAME_WIDTH/2-(int)(82*scaleW/2), GAME_HEIGHT/2 + (int)(115*scaleH), (int)(83*scaleW), (int)(82*scaleH));
+
 		
 		//setup random for random spawning
 		this.r = new Random();
@@ -178,12 +180,10 @@ public class GameWorld {
     	else if (gameState == GameState.EXIT) {    		
     		socketHandler.dispose();
     		socketHandler = null;
-
     		game.setScreen(new MainMenuScreen(game));
     		gameScreen.dispose();
     		
     	}
-
     }
     
     public void updateRunning(float delta) {
@@ -210,9 +210,11 @@ public class GameWorld {
         for (int i=0; i<NUMBER_OF_MOLES_PER_GRID; i++) {
         	if (moleGrid[i] != null) {
         		moleGrid[i].update(delta);
+
         		//change here
         		moleGrid[i].getBoundingCircle().set((int)(placeHolders.get(i).x + (30*scaleW)), (int) (placeHolders.get(i).y + (40*scaleH)), (int)(120*scaleW), (int)(120*scaleH)); 
 						
+
         	
         		
         		if (moleGrid[i].isDead()) {

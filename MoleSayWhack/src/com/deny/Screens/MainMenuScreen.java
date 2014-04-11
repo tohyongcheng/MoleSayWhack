@@ -14,11 +14,13 @@ import com.deny.GameHelpers.AssetLoader;
 import com.deny.MoleObjects.Mole;
 
 public class MainMenuScreen implements Screen {
+
 	
 	private static final int GAME_WIDTH = (int) Gdx.graphics.getWidth();//544; //136 to 272
 	private static final int GAME_HEIGHT = (int) Gdx.graphics.getHeight(); //204 to 408
 	double scaleW = (double)GAME_WIDTH/544.0;
 	double scaleH = (double) GAME_HEIGHT/816;
+
 	Game game;
 	
 	OrthographicCamera mainMenuCam;
@@ -39,13 +41,14 @@ public class MainMenuScreen implements Screen {
 		
 		//Create bounds. We are to edit the Position and the Width/Height Here!
 
+
 		int boxLength = (int) Math.round(((260/2)*scaleW)) ;
 
 		System.out.println(boxLength);
 		startBounds = new Rectangle((int)Math.ceil(GAME_WIDTH/2 - boxLength), (int) (Math.ceil(GAME_HEIGHT/2) + GAME_HEIGHT*0.05*scaleH), (int)(260*scaleW), (int) (91*scaleH));
 		optionsBounds = new Rectangle((int)Math.ceil(GAME_WIDTH/2 - boxLength), (int) (Math.ceil(GAME_HEIGHT/2)+ scaleH*(GAME_HEIGHT*0.05 + 100)), (int)(260*scaleW),(int) (91*scaleH));
 		scoreBounds = new Rectangle((int)Math.ceil(GAME_WIDTH/2 - boxLength), (int) (Math.ceil(GAME_HEIGHT/2) + scaleH*(GAME_HEIGHT*0.05+ 200)),(int)(260*scaleW),(int) (91*scaleH));
-		
+
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(mainMenuCam.combined);
 		
@@ -53,9 +56,11 @@ public class MainMenuScreen implements Screen {
         // Attach batcher to camera
         batcher.setProjectionMatrix(mainMenuCam.combined);
 		touchPoint = new Vector3();	
+
 		AssetLoader.ann.stop();
 		AssetLoader.summer.stop();
 		AssetLoader.summer.loop();
+
 	}
 	
 	private void draw() {
@@ -68,6 +73,7 @@ public class MainMenuScreen implements Screen {
         // This is good for performance when drawing images that do not require transparency.
         batcher.enableBlending();
         //put the position here
+
         
         batcher.draw(AssetLoader.background, 0, 0, GAME_WIDTH, GAME_HEIGHT);
         double Titlewidth = 336*scaleW;
@@ -85,6 +91,7 @@ public class MainMenuScreen implements Screen {
         batcher.draw(AssetLoader.hghB, scoreBounds.x, scoreBounds.y, 
         		scoreBounds.width, scoreBounds.height);
       
+
         batcher.end();
        /* shapeRenderer.begin(ShapeType.Filled);
         shapeRenderer.setColor(87 / 255.0f, 109 / 255.0f, 120 / 255.0f, 1);
@@ -118,9 +125,7 @@ public class MainMenuScreen implements Screen {
 			}
 		}
 	
-		/*AssetLoader.sequencer1.stop();
-		AssetLoader.sequencer1.setTickPosition(0);
-		AssetLoader.sequencer.start();*/
+
 	}	
 	
 	@Override

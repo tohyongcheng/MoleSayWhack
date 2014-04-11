@@ -1,12 +1,14 @@
 package com.deny.MoleObjects;
 
-import com.badlogic.gdx.Gdx;
+
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Circle;
+
+
+
+
 import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
@@ -59,6 +61,7 @@ public abstract class Mole
 	public TextureRegion getAsset(){
 		switch(moleType){
 		case ONETAP:
+
 			return AssetLoader.m1;
 		case THREETAP:
 			return AssetLoader.m3;
@@ -68,6 +71,7 @@ public abstract class Mole
 			return AssetLoader.sm;
 		default:
 			return AssetLoader.m1;
+
 		} 
 	}
 

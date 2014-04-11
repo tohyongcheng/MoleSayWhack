@@ -19,16 +19,19 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class AssetLoader 
 {
 	//The Textures//
+
 	public static Texture texture, logoTexture, win;
 	public static Texture Main1024, Game1024, moleDep1024, lose, PS;
 	public static TextureRegion gameBG, ps, rpl, ext, rsm, psBG, borderVert, borderHor, hmr;
 	public static TextureRegion background, strB, optB, hghB, Title, m1, m3, m5, sm,
 	enterIP, loading, cnl, mdm1, mdm3, mdm5, mdsm, titleDep, Lose, dplyOK, dplyCD, dplySEL;
 	public static TextureRegion logo, mswlogo, startButtonUp, startButtonDown, winTextR;
+
 	public static TextureRegion bg, Hm, title, startButt, optButt, scoreButt, 
 		mole1, mole3, mole5, moleSabo, pause, play, cancel, replay, ipButt;
 	
 	//128 x 128
+
 	public static Sound  hit, explode, clicksound, gameover, button, back,summer, ann, sent, slctd, popup;
 
 
@@ -146,6 +149,7 @@ public class AssetLoader
 		winTextR = new TextureRegion(win, 0,0,544,816);
 		winTextR.flip(false,true);
 		
+
 		logoTexture = new Texture(Gdx.files.internal("data/DenySplash.png"));
         logoTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
@@ -197,12 +201,13 @@ public class AssetLoader
 		ipButt = new TextureRegion(texture, 2, 455, 158, 56);
 		ipButt.flip(false, true);
         
-		
+
         //The Sound Effects//
         hit = Gdx.audio.newSound(Gdx.files.internal("data/Bash.mp3"));
         explode = Gdx.audio.newSound(Gdx.files.internal("data/Boom.mp3"));
         clicksound = Gdx.audio.newSound(Gdx.files.internal("data/ButtonClick.mp3"));
         gameover = Gdx.audio.newSound(Gdx.files.internal("data/gameover.wav"));
+
        
         button = Gdx.audio.newSound(Gdx.files.internal("data/button-20.wav"));
         //buttons for back
@@ -214,6 +219,7 @@ public class AssetLoader
         sent = Gdx.audio.newSound(Gdx.files.internal("data/button-7.wav"));
         slctd = Gdx.audio.newSound(Gdx.files.internal("data/button-28.wav"));
         popup =Gdx.audio.newSound(Gdx.files.internal("data/button-10.wav"));
+
 	}
 	
 	public static void dispose() {

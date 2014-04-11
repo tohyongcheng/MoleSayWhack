@@ -19,6 +19,7 @@ public enum MoleType {
 		this.coolDown = coolDown;
 	}
 	
+
 	
 	public TextureRegion getAsset(){
 		switch(this){
@@ -30,8 +31,9 @@ public enum MoleType {
 			return AssetLoader.mdm5;
 		case SABOTAGE:
 			return AssetLoader.mdsm;
+
 		default:
-			return AssetLoader.mole1;
+			return AssetLoader.mdm1;
 		} 
 	}
 	

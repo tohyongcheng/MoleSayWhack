@@ -28,15 +28,17 @@ import com.deny.Threads.ServerClientThread;
 
 public class MultiplayerScreen implements Screen {
 	
+
 	private static final int GAME_WIDTH = Gdx.graphics.getWidth();
 	private static final int GAME_HEIGHT = Gdx.graphics.getHeight();
+
 	public enum MultiplayerState {
 		READY, CONNECTED, START, RESTART, QUIT
 	}
 	private MultiplayerState currentState;
 	private Game game;
 	private OrthographicCamera multiplayerCam;
-	private SpriteBatch batcher;
+	private SpriteBatch batcher, batcher2;
 	private Rectangle backBounds;
 	private Rectangle playBounds;
 	private Rectangle changeAddressBounds;
@@ -54,6 +56,7 @@ public class MultiplayerScreen implements Screen {
 		this.game = game;
 		this.multiplayerCam = new OrthographicCamera();
 		multiplayerCam.setToOrtho(true, GAME_WIDTH, GAME_HEIGHT);
+
         double scaleW = (double) GAME_WIDTH/544;
         double scaleH = (double) GAME_HEIGHT/816;
         
@@ -62,12 +65,14 @@ public class MultiplayerScreen implements Screen {
 		playBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(GAME_HEIGHT/3 - 90*scaleH/2),(int)(260*scaleW), (int)(90*scaleH));
 		changeAddressBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(2*GAME_HEIGHT/3 - 90*scaleH/2),(int)(260*scaleW), (int)(90*scaleH));
 		
+
 		listener = new IPAddressInputListener(this);
 		
 		font = new BitmapFont();
 		font.setScale(1, -1);
 		batcher = new SpriteBatch();
 		batcher.setProjectionMatrix(multiplayerCam.combined);
+	
 		
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(multiplayerCam.combined);
@@ -222,6 +227,7 @@ public class MultiplayerScreen implements Screen {
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
         batcher.begin();
         batcher.enableBlending();
+
         batcher.draw(AssetLoader.background, 0, 0, GAME_WIDTH, GAME_HEIGHT);
 
         
@@ -236,14 +242,18 @@ public class MultiplayerScreen implements Screen {
         	batcher.draw(AssetLoader.loading, playBounds.x, playBounds.y,
 	        		playBounds.width, playBounds.height);
         	batcher.draw(AssetLoader.enterIP, changeAddressBounds.x, changeAddressBounds.y,
+
         			changeAddressBounds.width, changeAddressBounds.height);
         	break;
         }
         
+
         batcher.draw(AssetLoader.cnl, backBounds.x, backBounds.y,
+
         		backBounds.width, backBounds.height);
 
         font.draw(batcher, myAddress.toString(), 0, 20);
+       
 	    batcher.end();
 	}
 	

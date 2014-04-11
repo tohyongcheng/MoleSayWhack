@@ -71,6 +71,7 @@ public class MoleDeployer
 	public TextureRegion getAsset(){
 		switch(moleType){
 		case ONETAP:
+
 			return AssetLoader.m1;
 		case THREETAP:
 			return AssetLoader.m3;
@@ -80,6 +81,7 @@ public class MoleDeployer
 			return AssetLoader.sm;
 		default:
 			return AssetLoader.m1;
+
 		} 
 	}
 	

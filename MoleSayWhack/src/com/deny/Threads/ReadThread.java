@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.net.Socket;
 import com.deny.GameObjects.MoleType;
+import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameWorld;
 import com.deny.GameWorld.GameWorld.GameState;
 import com.deny.Screens.MainMenuScreen;
@@ -24,7 +25,7 @@ public class ReadThread  extends Thread{
 	private PreGameScreen preGameScreen;
 	private MultiplayerScreen multiPlayerScreen;
 	public enum ScreenState{
-		MULTIPLAYER, PREGAME, GAME
+		MULTIPLAYER, PREGAME, GAME, PREGAMEPOWERUP
 	}
 	private ScreenState currentState;
 	
@@ -83,6 +84,11 @@ public class ReadThread  extends Thread{
 					gameWorld.setGameState(GameState.RUNNING);
 					break;
 					
+				case "[POWERUP]":
+					PowerUpType powerUp = PowerUpType.valueOf(messages[1]);
+					gameWorld.invokePowerUp(powerUp);
+					break;
+					
 				//PREGAMESCREEN
 				case "[MAINMENUSCREEN]":
 					System.out.println("Received message to go back to main menu!");
@@ -100,15 +106,6 @@ public class ReadThread  extends Thread{
 				System.out.println("Socket Closed");
 			} catch(NullPointerException e) {
 				//DISCONNECT
-				System.out.println("Lost connection!");
-				switch (currentState) {
-				case MULTIPLAYER:
-					break;
-				case PREGAME:
-					break;
-				case GAME:
-					break;
-				}
 				game.setScreen(new MainMenuScreen(game));
 				socketHandler.dispose();
 				return;

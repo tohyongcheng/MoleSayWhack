@@ -13,7 +13,8 @@ public class IPAddressInputListener implements TextInputListener {
 	
 	@Override
 	public void input(String text) {
-		multiS.getSocketHandler().leaveGameRoom();
+		
+//		multiS.getSocketHandler().leaveGameRoom();
 		multiS.setIPAddress(text);
 		multiS.restartSocketHandler();
 		

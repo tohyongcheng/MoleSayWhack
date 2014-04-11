@@ -13,6 +13,7 @@ import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameHelpers.GameInputHandler;
 
 import com.deny.GameObjects.MoleDeployer;
+import com.deny.GameObjects.PowerUpDeployer;
 import com.deny.GameWorld.GameWorld.GameState;
 import com.deny.MoleObjects.Mole;
 
@@ -66,9 +67,7 @@ public class GameRenderer {
         		
         	}
         }
-       
 
-       
         
         batcher.end();
        
@@ -86,8 +85,7 @@ public class GameRenderer {
         batcher.draw(AssetLoader.borderVert, first.x-(int)(15*scaleW), first.y - (int)(21*scaleH), (int)(30*scaleW), (int)(489*scaleH));
         batcher.draw(AssetLoader.borderVert, second.x-(int)(15*scaleW), second.y - (int)(21*scaleH), (int)(30*scaleW), (int)(489*scaleH));
         batcher.end();
-        
-  
+          
         //CONDITIONS
         batcher.begin();
         if (world.getGameState() == GameState.RUNNING ) {
@@ -95,10 +93,10 @@ public class GameRenderer {
 	        batcher.enableBlending();
 	        for (MoleDeployer md: world.getMoleDeployers()) {
 	        	
-	        	if (md!=null && md.availability == true) {
+	        	if (md!=null && md.isAvailable() == true) {
 	        		batcher.draw(AssetLoader.dplyOK, md.getRectangle().x, md.getRectangle().y,md.getRectangle().width,md.getRectangle().height);
 	        	}
-	        	else if (md!= null && md.availability == false){
+	        	else if (md!= null && md.isAvailable() == false){
 	        		batcher.draw(AssetLoader.dplyCD, md.getRectangle().x, md.getRectangle().y,md.getRectangle().width,md.getRectangle().height);
 	        	}
 	        }
@@ -108,6 +106,16 @@ public class GameRenderer {
 	        	
 	        }
 
+        //Render PowerUps
+        shapeRenderer.begin(ShapeType.Filled);
+        for (PowerUpDeployer pd: world.getPowerUpDeployers()) {
+        	if (pd!=null) {
+        		shapeRenderer.setColor(pd.getPowerupType().getColor());
+        		shapeRenderer.rect(pd.getRectangle().x, pd.getRectangle().y,pd.getRectangle().width,pd.getRectangle().height);
+        	}
+        }
+        shapeRenderer.end();
+
         }
        
         if (world.getGameState() == GameState.DEPLOYMENT) {
@@ -116,16 +124,16 @@ public class GameRenderer {
 	        batcher.enableBlending();
 	        for (MoleDeployer md: world.getMoleDeployers()) {
 	        	
-	        	if (md!=null && md.selected == false && md.availability == true) {
+	        	if (md!=null && md.selected == false && md.isAvailable() == true) {
 	        		batcher.draw(AssetLoader.dplyOK, md.getRectangle().x, md.getRectangle().y,md.getRectangle().width,md.getRectangle().height);
 	        	}
-	        	else if (md!=null && md.selected == true && md.availability == true){
+	        	else if (md!=null && md.selected == true && md.isAvailable() == true){
 	        		batcher.draw(AssetLoader.dplySEL, md.getRectangle().x, md.getRectangle().y,md.getRectangle().width,md.getRectangle().height);
 	        	}
-	        	else if (md!=null && md.selected == true && md.availability == false){
+	        	else if (md!=null && md.selected == true && md.isAvailable() == false){
 	        		batcher.draw(AssetLoader.dplyCD, md.getRectangle().x, md.getRectangle().y,md.getRectangle().width,md.getRectangle().height);
 	        	}
-	        	else if(md!=null && md.selected == false && md.availability == false){
+	        	else if(md!=null && md.selected == false && md.isAvailable() == false){
 	        		batcher.draw(AssetLoader.dplyCD, md.getRectangle().x, md.getRectangle().y,md.getRectangle().width,md.getRectangle().height);
 	        	}
 	        }

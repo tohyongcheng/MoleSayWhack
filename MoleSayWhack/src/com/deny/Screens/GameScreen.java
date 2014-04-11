@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.deny.GameHelpers.GameInputHandler;
 import com.deny.GameObjects.MoleType;
+import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameRenderer;
 import com.deny.GameWorld.GameWorld;
 import com.deny.Threads.ServerClientThread;
@@ -19,7 +20,7 @@ public class GameScreen implements Screen {
 	private GameRenderer renderer;
 	private ServerClientThread socketHandler;
 	
-	public GameScreen(Game game, ServerClientThread sH, ArrayList<MoleType> selectedMoles) {
+	public GameScreen(Game game, ServerClientThread sH, ArrayList<MoleType> selectedMoles, ArrayList<PowerUpType> selectedPowerUps) {
 		System.out.println("GameScreen attached.");
 		
 		float screenWidth = Gdx.graphics.getWidth();
@@ -29,7 +30,7 @@ public class GameScreen implements Screen {
 		this.game = game;
 		this.socketHandler = sH;
 		this.socketHandler.getReadThread().setCurrentState(ScreenState.PREGAME);
-		this.world = new GameWorld(game, this, socketHandler,selectedMoles);
+		this.world = new GameWorld(game, this, socketHandler,selectedMoles, selectedPowerUps);
 		this.renderer = new GameRenderer(world);
 		
 		Gdx.input.setInputProcessor(new GameInputHandler(world, screenWidth, screenHeight));

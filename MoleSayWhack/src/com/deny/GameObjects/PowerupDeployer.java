@@ -2,66 +2,76 @@ package com.deny.GameObjects;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameWorld.GameWorld;
+import com.deny.Threads.ServerClientThread;
 //Deploys powerups
-//initialized at the begiinning of the game
-public class PowerupDeployer {
-	private final long COOLDOWN;
-	private float timeCast;
-	private GameWorld gameWorld;
-	PowerupType powerupType;
-	private Rectangle boundingRectangle;
-	boolean availability;
+//initialized at the beginning of the game
+
+public class PowerUpDeployer {
 	
-	public PowerupDeployer(GameWorld gameWorld, long COOLDOWN, PowerupType powerupType){
+	private PowerUpType powerupType;
+	private final float coolDown;
+	private float timeDeployed;
+	private GameWorld gameWorld;
+	private Rectangle boundingRectangle;
+	boolean isAvailable;
+	private ServerClientThread socketHandler;
+	
+	public PowerUpDeployer(GameWorld gameWorld, PowerUpType powerupType){
 		this.gameWorld = gameWorld;
+		this.socketHandler = gameWorld.getSocketHandler();
 		this.powerupType = powerupType;
-		this.COOLDOWN = COOLDOWN;
+		this.coolDown = powerupType.getCoolDown();
 		boundingRectangle = new Rectangle();
-		boundingRectangle.setHeight(5);
-		boundingRectangle.setWidth(5);
-		timeCast = 0;
+		timeDeployed = 0;
 	}
 	
-	public PowerupType getPowerupType(){
+	
+	public void update(float delta) 
+	{
+		//wait until time deployed exceeds cooldown to make it available again//
+		if (timeDeployed < coolDown && !(isAvailable)) {
+			timeDeployed += delta;
+		} else if (timeDeployed >= coolDown && !(isAvailable)){
+			timeDeployed = 0;
+			isAvailable = true;
+		}
+	}
+	
+	public boolean isAvailable() {
+		return isAvailable;
+	}
+	
+	public PowerUpType getPowerupType(){
 		return powerupType;
 	}
 	
-	public String cast(){
-		
-		availability = false;
+	public void deploy(){
+		//send message or change gameworld variables
+		isAvailable = false;
 		switch (powerupType){
-		case 	EARTHQUAKE:
-			return "EARTHQUAKE";
-		case DIVINESHIELD:
-			return "DIVINESHIELD";
-		case MOLESHOWER:
-			return "MOLESHOWER";
-		case KINGMOLE:
-			return "KINGMOLE";
-		case THEOWL:
-			return "THEOWL";
-		case SUPERMOLE:
-			return "SUPERMOLE";
-		case CLONEMOLE:
-			return "CLONEMOLE";
-		case MOULDY:
-			return "MOULDY";
+		case BLOCKGRID:
+			break;
+		case DISABLEALLPOWERUPS:
+			break;
+		case DISABLEONEMOLEDEPLOYER:
+			break;
+		case DUMMY:
+			break;
+		case EARTHQUAKE:
+			break;
+		case FOG:
+			break;
+		case INVULNERABILITY:
+			break;
+		case MOLEKING:
+			break;
 		default:
-			return "ERROR";
+			break;
+		
 		}
 	}
+
 	
-	public void update(float delta) {
-		if (timeCast < COOLDOWN && !(valid())) {
-			timeCast += delta;
-		} else if (timeCast >= COOLDOWN && !(valid())){
-			timeCast = 0;
-			availability = true;
-		}
-	}
-	public boolean valid(){
-		return availability;
-	}
 	public Rectangle getRectangle(){
 		return boundingRectangle;
 	}

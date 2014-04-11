@@ -15,17 +15,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
+import com.deny.GameObjects.PowerUpType;
 import com.deny.Threads.ReadThread.ScreenState;
 import com.deny.Threads.ServerClientThread;
 
-public class PreGameScreen implements Screen {
+public class PreGamePowerUpScreen implements Screen {
 	private static final int NO_OF_DEPLOYERS = 3;
-
-	private static final int GAME_WIDTH = Gdx.graphics.getWidth();
-	private static final int GAME_HEIGHT = Gdx.graphics.getHeight();
-	public double scaleW = (double)GAME_WIDTH/544;
-	public double scaleH = (double) GAME_HEIGHT/816;
-
+	private static final int GAME_WIDTH = 272;
+	private static final int GAME_HEIGHT = 408;
 
 	public enum PreGameState {
 		READY, COUNTING, GO, QUIT;
@@ -39,18 +36,22 @@ public class PreGameScreen implements Screen {
 	private ShapeRenderer shapeRenderer;
 	private Vector3 touchPoint;
 	private Rectangle backBounds;
+	private Rectangle playBounds;
 	private ServerClientThread socketHandler;
 	private ArrayList<MoleType> selectedMoles;
-	private ArrayList<Rectangle> selectedMolesRectangles;
+	private ArrayList<PowerUpType> selectedPowerUps;
+	private ArrayList<Rectangle> selectedPowerUpsRectangles;
 	private float countDownTime = 10f;
 	private PreGameState currentState;
 
-	public PreGameScreen(Game game, ServerClientThread socketHandler) {
+	public PreGamePowerUpScreen(Game game, ServerClientThread socketHandler, ArrayList<MoleType> selectedMoles) {
 		this.game = game;
 		this.socketHandler = socketHandler;
+		this.selectedMoles = selectedMoles;
+		
 		this.mainMenuCam = new OrthographicCamera();
-		socketHandler.setPreGameScreen(this);
-		socketHandler.getReadThread().setCurrentState(ScreenState.PREGAME);
+		socketHandler.setPreGamePowerUpScreen(this);
+		socketHandler.getReadThread().setCurrentState(ScreenState.PREGAMEPOWERUP);
 		currentState = PreGameState.READY;
 		mainMenuCam.setToOrtho(true, GAME_WIDTH, GAME_HEIGHT);
 		
@@ -58,21 +59,20 @@ public class PreGameScreen implements Screen {
 		batcher.setProjectionMatrix(mainMenuCam.combined);
 		font = new BitmapFont();
 		font.setScale(1, -1);
-
+		
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(mainMenuCam.combined);
 		touchPoint = new Vector3();
-		backBounds = new Rectangle(3,(int)(GAME_HEIGHT-9-82*scaleH),(int)(83*scaleW), (int)(82*scaleH));
+		backBounds = new Rectangle(0,386,32,32);
 
 		
-		selectedMoles = new ArrayList<MoleType>();
-		selectedMolesRectangles = new ArrayList<Rectangle>();
+		selectedPowerUps = new ArrayList<PowerUpType>();
+		selectedPowerUpsRectangles = new ArrayList<Rectangle>();
 
 		for (int i=0; i <NO_OF_DEPLOYERS; i++) {
-			selectedMoles.add(MoleType.ONETAP);
-
-			selectedMolesRectangles.add(new Rectangle( (int)(GAME_WIDTH/2 - 474*scaleW/2),(int)(GAME_HEIGHT/4.5 +(i*(178*scaleH+7)-5)) , (int)(474*scaleW),(int)(178*scaleH )));
-
+			selectedPowerUps.add(PowerUpType.EARTHQUAKE);
+			selectedPowerUpsRectangles.add(new Rectangle( 45f+i*30*2, 40f*2, 30f*2,30f*2));
+	
 		}		
 		
 	}
@@ -82,26 +82,33 @@ public class PreGameScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
      
-      
+
+        
         batcher.begin();
         batcher.enableBlending();
-
-        batcher.draw(AssetLoader.background, 0, 0, GAME_WIDTH, GAME_HEIGHT);
-        batcher.draw(AssetLoader.titleDep, (int)(GAME_WIDTH/2 - (324*scaleW)/2), (int)(GAME_HEIGHT/15), (int)(324*scaleW) , (int)(133*scaleH));
-        for (int i = 0; i< NO_OF_DEPLOYERS; i++) {
-    	   MoleType moleType = selectedMoles.get(i);
-    	   Rectangle r = selectedMolesRectangles.get(i);
-    	   batcher.draw(moleType.getAsset(),r.x, r.y, r.width, r.height);
-    	   //font.draw(batcher, moleType.toString(), selectedMolesRectangles.get(i).x, selectedMolesRectangles.get(i).y);
-    	}     
+        batcher.draw(AssetLoader.bg, 0, 0, 272, 408);
         
-        
+//        for (int i = 0; i< NO_OF_DEPLOYERS; i++) {
+//    	   PowerupType powerupType = selectedPowerUps.get(i);
+//    	   Rectangle r = selectedPowerUpsRectangles.get(i);
+//    	   batcher.draw(powerupType.getAsset(),r.x, r.y, r.width, r.height);
+//    	}     
         
         font.draw(batcher, String.valueOf((int)countDownTime), 68*2, 20*2);
-        batcher.draw(AssetLoader.cnl, backBounds.x, backBounds.y,
-
+        batcher.draw(AssetLoader.cancel, backBounds.x, backBounds.y,
         		backBounds.width, backBounds.height);
         batcher.end();
+        
+        
+        //Draw the PowerupDeployers
+        shapeRenderer.begin(ShapeType.Filled);
+        for (int i = 0; i< NO_OF_DEPLOYERS; i++) {
+        	PowerUpType powerUpType = selectedPowerUps.get(i);
+        	Rectangle r = selectedPowerUpsRectangles.get(i);
+    		shapeRenderer.setColor(powerUpType.getColor());
+            shapeRenderer.rect(r.x,r.y,r.width,r.height);
+    	}
+        shapeRenderer.end();
 		
 	}
 
@@ -125,31 +132,29 @@ public class PreGameScreen implements Screen {
 				mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.back.play();
 					currentState = PreGameState.QUIT;
 				}
 				
 				for (int i =0; i<NO_OF_DEPLOYERS; i++) {
-					if (selectedMolesRectangles.get(i).contains(touchPoint.x, touchPoint.y)) {
-						//AssetLoader.button.play();
-						MoleType nextMoleType = selectedMoles.get(i).next();
-						selectedMoles.remove(i);
-						selectedMoles.add(i,nextMoleType);
+					if (selectedPowerUpsRectangles.get(i).contains(touchPoint.x, touchPoint.y)) {
+						PowerUpType nextPowerUpType = selectedPowerUps.get(i).next();
+						selectedPowerUps.remove(i);
+						selectedPowerUps.add(i,nextPowerUpType);
 						AssetLoader.clicksound.play();
 					}
 				}
 			}
 			break;
+			
 		case QUIT:
 			game.setScreen(new MainMenuScreen(game));
-//			socketHandler.toMainMenuScreen();
 			socketHandler.dispose();
 			socketHandler = null;
 			dispose();
 			break;
 			
 		case GO:
-			game.setScreen(new PreGamePowerUpScreen(game, socketHandler, selectedMoles));
+			game.setScreen(new GameScreen(game, socketHandler, selectedMoles, selectedPowerUps));
 			dispose();
 			break;
 		}

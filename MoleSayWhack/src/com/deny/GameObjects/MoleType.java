@@ -9,7 +9,9 @@ public enum MoleType {
 	ONETAP(1,0.5f), // 1 hit, -1 hp, 0.5 seconds CD
 	THREETAP(3,2f), // 3 hit, -1 hp, 2 seconds CD
 	FIVETAP(5,4f), // 5 hit, -1 hp, 4 seconds CD
-	SABOTAGE(1,3f); // dont hit, -1 hp, 3 seconds CD
+	SABOTAGE(1,3f),  // dont hit, -1 hp, 3 seconds CD
+	MOLEKING(20,10f),
+	DUMMY(1,0f);
 	
 	int HP;
 	float coolDown;
@@ -31,7 +33,10 @@ public enum MoleType {
 			return AssetLoader.mdm5;
 		case SABOTAGE:
 			return AssetLoader.mdsm;
-
+//		case MOLEKING:
+//			return AssetLoader.moleKing;
+//		case DUMMY:
+//			return AssetLoader.dummyMole;
 		default:
 			return AssetLoader.mdm1;
 		} 

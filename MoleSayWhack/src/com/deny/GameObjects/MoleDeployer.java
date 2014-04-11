@@ -24,20 +24,15 @@ public class MoleDeployer
 	private ServerClientThread socketHandler;
 	private float cooldown;
 	private MoleType moleType;
+
 	//ADDED THIS TO INDICATE WHETHER IT IS SELEECTED / COOLDOWN
-	public boolean availability;
 	public boolean selected;
-	/**
-	 * Initialize cooldown & HP, as well as rectangle size and timeDeployed.
-	 * @param HP
-	 * @param COOLDOWN
-	 */
-	
+	boolean isAvailable;
 
 	public MoleDeployer(GameWorld gw, MoleType moleType) {
 		this.socketHandler = gw.getSocketHandler();
 		this.moleType = moleType;
-		availability = true;
+		isAvailable = true;
 		boundingRectangle = new Rectangle();
 		timeDeployed = 0;
 		cooldown = moleType.getCoolDown();
@@ -52,7 +47,7 @@ public class MoleDeployer
 	{
 		//If it is available, deploy the mole and change availability to false//
 		if (isAvailable()) {
-			availability = false;
+			isAvailable = false;
 	    	socketHandler.deployMole(moleType, pos);
 		}
 	}
@@ -64,7 +59,7 @@ public class MoleDeployer
 			timeDeployed += delta;
 		} else if (timeDeployed >= cooldown && !(isAvailable())){
 			timeDeployed = 0;
-			availability = true;
+			isAvailable = true;
 		}
 	}
 	
@@ -86,7 +81,7 @@ public class MoleDeployer
 	}
 	
 	public boolean isAvailable(){
-		return availability;
+		return isAvailable;
 	}
 	
 	public Rectangle getRectangle(){
@@ -99,4 +94,6 @@ public class MoleDeployer
 		}
 		return false;
 	}
+	
+	
 }

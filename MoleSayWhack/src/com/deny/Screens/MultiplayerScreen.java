@@ -108,7 +108,7 @@ public class MultiplayerScreen implements Screen {
         
         // Print the contents of our array to a string.  Yeah, should have used StringBuilder
 
-        myAddress = addresses.get(0);
+        myAddress = addresses.get(1);
 	}
 	
 	@Override
@@ -200,7 +200,7 @@ public class MultiplayerScreen implements Screen {
 			
 		case QUIT:
 			if (socketHandler !=null) {
-				socketHandler.toMainMenuScreen();
+//				socketHandler.toMainMenuScreen();
 				socketHandler.interrupt();
 				socketHandler.dispose();
 			}

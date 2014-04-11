@@ -12,14 +12,17 @@ import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleDeployer;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.Player;
+import com.deny.GameObjects.PowerUpDeployer;
+import com.deny.GameObjects.PowerUpType;
+import com.deny.MoleObjects.DummyMole;
 import com.deny.MoleObjects.FiveHitMole;
 import com.deny.MoleObjects.Mole;
+import com.deny.MoleObjects.MoleKing;
 import com.deny.MoleObjects.OneHitMole;
 import com.deny.MoleObjects.SabotageMole;
 import com.deny.MoleObjects.ThreeHitMole;
 import com.deny.Screens.GameScreen;
 import com.deny.Screens.MainMenuScreen;
-import com.deny.Screens.PreGameScreen;
 import com.deny.Threads.ReadThread;
 import com.deny.Threads.ServerClientThread;
 
@@ -49,8 +52,10 @@ public class GameWorld {
 	private ArrayList<Rectangle> placeHolders;
 	private ServerClientThread socketHandler;
 	private ArrayList<MoleType> selectedMoles;
+	private ArrayList<PowerUpType> selectedPowerUps;
 	
 	private MoleDeployer[] moleDeployers;
+	private PowerUpDeployer[] powerUpDeployers;
 	private float[] moleDelay;
 	
 	//PAUSE MENU
@@ -63,22 +68,32 @@ public class GameWorld {
 	private Rectangle playAgainBounds;
 	private Rectangle exitBounds;
 	
-	
+	//POWERUPS
+	public enum PowerUpState {
+		//states to activate certain booleans
+		EARTHQUAKE, MOLESHOWER, MOLEKING, DISABLEONE, DISABLEALL, FOG, INVULNERABILITY, BLOCKGRID, DUMMY;
+	}
+	private boolean hasFog;
+	private boolean hasInvulnerability;
+	private boolean hasMoleShower;
+	private boolean[] blockedMoleDeployers;
+	private boolean blockedPowerUps;
+	private boolean[] blockedGrids;
+	private boolean hasDummyMoles;
 
-
-	//Generate randome spawns
+	//Generate random spawns
 	private float runningTime;
 	private Random r;
 	private MoleDeployer currentMoleDeployer;
 	
 	
 	public enum GameState {
-		READY, RUNNING, DEPLOYMENT, WIN, LOSE, HIGHSCORE, PAUSE, MENU, EXIT, RESTART;
+		READY, RUNNING, DEPLOYMENT, WIN, LOSE, HIGHSCORE, PAUSE, MENU, EXIT, RESTART, POWERUP;
 	}
 
 
 	@SuppressWarnings("unchecked")
-	public GameWorld(Game game, GameScreen gameScreen, ServerClientThread sH, ArrayList<MoleType> selectedMoles) {
+	public GameWorld(Game game, GameScreen gameScreen, ServerClientThread sH, ArrayList<MoleType> selectedMoles, ArrayList<PowerUpType> selectedPowerUps) {
 		this.game = game;
 		this.gameScreen = gameScreen;
 		
@@ -88,10 +103,9 @@ public class GameWorld {
 		this.readThread.setGameWorld(this);
 		this.player = new Player(5);
 		this.selectedMoles = selectedMoles;
+		this.selectedPowerUps = selectedPowerUps;
 		
-		
-		
-		//Setup GameState
+		//Setup GameState, Grid and Delays.
 		gameState = GameState.READY;
 		moleGrid = new Mole[NUMBER_OF_MOLES_PER_GRID];
 		moleDeck = new Mole[NUMBER_OF_MOLES_PER_DECK];
@@ -102,6 +116,20 @@ public class GameWorld {
 			moleDelay[i] = 1f;
 		}
 		
+		//Setup PowerUp Boolean Variables
+		hasFog = false;
+		hasInvulnerability = false;
+		hasMoleShower = false;
+		blockedMoleDeployers = new boolean[NUMBER_OF_DEPLOYERS];
+		for (int i =0; i<NUMBER_OF_DEPLOYERS;i++) {
+			blockedMoleDeployers[i] = false;
+		}
+		blockedPowerUps = false;
+		blockedGrids = new boolean[NUMBER_OF_MOLES_PER_GRID];
+		for (int i =0; i<NUMBER_OF_MOLES_PER_GRID;i++) {
+			blockedGrids[i] = false;
+		}
+
 		
 		//Setup Mole Deployers.
 		moleDeployers = new MoleDeployer[NUMBER_OF_DEPLOYERS];
@@ -109,6 +137,13 @@ public class GameWorld {
 			//change here
 			moleDeployers[i] = new MoleDeployer(this, selectedMoles.get(i));
 			moleDeployers[i].getRectangle().set((int)(GAME_WIDTH/2-(340*scaleW/2)+(i*120*scaleW)),(int)(560*scaleH),(int)(100*scaleW),(int)(100*scaleH));
+		}
+		
+		//Setup Powerup Deployers
+		powerUpDeployers = new PowerUpDeployer[NUMBER_OF_DEPLOYERS];
+		for (int i =0; i<NUMBER_OF_DEPLOYERS;i++) {
+			powerUpDeployers[i] = new PowerUpDeployer(this, selectedPowerUps.get(i));
+			powerUpDeployers[i].getRectangle().set((float)(i*136/3.0), 166f, 45.33f, 20f);
 		}
 		
 		//setup board and overlay
@@ -151,42 +186,38 @@ public class GameWorld {
 		
 	}
 
-    public void update(float delta) {
-    	if (gameState == GameState.READY) gameState = GameState.RUNNING;
-    	
-    	
-    	else if (gameState == GameState.LOSE) {
-    		// stop updating everything. 
-    	}
-    	
-    	else if (gameState == GameState.MENU) {
-    		
-    	} 
-    	
-    	else if (gameState == GameState.PAUSE) {
-    		
-    	}
-    	
-    	else if (gameState == GameState.DEPLOYMENT || gameState == GameState.RUNNING) {
-	        updateRunning(delta);
-    	}
-    	
-    	else if (gameState == GameState.RESTART) {
 
-    		game.setScreen(new PreGameScreen(game, socketHandler));
-    		gameScreen.dispose();
-    	}
-    	
-    	else if (gameState == GameState.EXIT) {    		
-    		socketHandler.dispose();
-    		socketHandler = null;
-    		game.setScreen(new MainMenuScreen(game));
-    		gameScreen.dispose();
-    		
+    public void update(float delta) {    	
+    	switch(gameState) {
+    	case READY:
+    		gameState = GameState.RUNNING;
+    		break;
+    	case LOSE:
+    		break;
+    	case MENU:
+    		break;
+    	case PAUSE:
+    		break;
+    	case DEPLOYMENT:
+    		updateRunning(delta);
+    		break;
+    	case RUNNING:
+    		updateRunning(delta);
+    		break;
+    	case EXIT:
+    		updateExit(delta);
+    		break;
     	}
     }
     
-    public void updateRunning(float delta) {
+    private void updateExit(float delta) {
+    	socketHandler.dispose();
+		socketHandler = null;
+		game.setScreen(new MainMenuScreen(game));
+		gameScreen.dispose();
+	}
+
+	public void updateRunning(float delta) {
     	
     	if (player.isDead()) {
     		gameState = GameState.LOSE;
@@ -248,6 +279,12 @@ public class GameWorld {
 				AssetLoader.popup.play();
 				moleGrid[pos] = new SabotageMole(player);
 				break;
+			case MOLEKING:
+				moleGrid[pos] = new MoleKing(player);
+				break;
+			case DUMMY: 
+				moleGrid[pos] = new DummyMole(player);
+				break;
 			default:
 				break;
     		}
@@ -264,6 +301,12 @@ public class GameWorld {
 				break;
 			case SABOTAGE:
 				moleQueues[pos].add(new SabotageMole(player));
+				break;
+			case MOLEKING:
+				moleQueues[pos].add(new MoleKing(player));
+				break;
+			case DUMMY:
+				moleQueues[pos].add(new DummyMole(player));
 				break;
 			default:
 				break;
@@ -312,16 +355,16 @@ public class GameWorld {
 		return placeHolders;
 	}
     
-	public void generateRandomSpawns(float cooldown, float delta) {
+	public void generateRandomSpawns(float duration, float delta, MoleType moleType) {
 		//Generate random spawns
         runningTime += delta;
         int pos = r.nextInt(9);
-        if(runningTime > cooldown) {
+        if(runningTime > duration) {
         	runningTime = 0;
-        	spawnMole(MoleType.ONETAP, pos);
+        	spawnMole(moleType, pos);
         }
 	}
-
+	
 	public MoleDeployer[] getMoleDeployers() {
 		return moleDeployers;
 	}
@@ -385,6 +428,169 @@ public class GameWorld {
 		getSocketHandler().continueGame();
 		setGameState(GameState.RUNNING);
 		
+	}
+
+	public PowerUpDeployer[] getPowerUpDeployers() {
+		return powerUpDeployers;
+	}
+
+	public void invokePowerUp(PowerUpType powerUp) {
+		switch(powerUp) {
+		case BLOCKGRID:
+			invokeBlockGrid();
+			break;
+		case DISABLEALLPOWERUPS:
+			disableAllPowerDeployers();
+			break;
+		case DISABLEONEMOLEDEPLOYER:
+			disableMoleDeployer();
+			break;
+		case DUMMY:
+			generateDummyMoles();
+			break;
+		case FOG:
+			enableFog();
+			break;
+		case MOLEKING:
+			generateMoleKing();
+			break;
+		case MOLESHOWER:
+			invokeMoleShower();
+			break;
+		default:
+			break;
+		}
+		
+	}
+	
+	
+	/**
+	 * This function adds a ONETAP mole into each grid space. This is done by using LibGDX's postRunnable which 
+	 * passes a Runnable into rendering thread. This will run the code in the Runnable in the rendering thread 
+	 * in the next frame, before ApplicationListener.render() is called.
+	 * 
+	 * It is called in the MOLESHOWER PowerUp.
+	 */
+	public void invokeMoleShower() {
+		new Thread(new Runnable() {
+			public void run() {
+				Gdx.app.postRunnable(new Runnable() {
+					public void run() {
+						for (int i=0; i<NUMBER_OF_MOLES_PER_GRID; i++) {
+				        	spawnMole(MoleType.ONETAP,i);
+						}
+					}
+				});
+			}
+		}).start();
+	}
+	
+	
+	/**
+	 * This function clears all the moles in the grid as well as in the queues of the grids. This is done
+	 * by using LibGDX's postRunnable which passes a Runnable into rendering thread. This will run the code 
+	 * in the Runnable in the rendering thread in the next frame, before ApplicationListener.render() is called.
+	 * 
+	 * It is called in the EARTHQUAKE PowerUp.
+	 */
+	
+	public void clearAllMoles() {
+		new Thread(new Runnable() {
+			public void run() {
+				Gdx.app.postRunnable(new Runnable() {
+					public void run() {
+						for (int i=0; i<NUMBER_OF_MOLES_PER_GRID; i++) {
+				        	moleGrid[i] = null;
+				        	moleQueues[i].clear();
+						}
+					}
+				});
+			}
+		}).start();
+	}
+	
+	/**
+	 * This function disables a random MoleDeployer of the player for a limited duration.
+	 */
+	public void disableMoleDeployer() {
+		new Thread(new Runnable() {
+			public void run() {
+				Gdx.app.postRunnable(new Runnable() {
+					public void run() {
+						//Set a random Mole Deployer to be disabled
+						blockedMoleDeployers[r.nextInt(2)] = true;
+					}
+				});
+			}
+		}).start();
+	}
+	
+	public void enableFog() {
+		new Thread(new Runnable() {
+			public void run() {
+				Gdx.app.postRunnable(new Runnable() {
+					public void run() {
+						//Set fog to be true!
+						hasFog = true;
+					}
+				});
+			}
+		}).start();
+	}
+	
+	public void disableAllPowerDeployers() {
+		new Thread(new Runnable() {
+			public void run() {
+				Gdx.app.postRunnable(new Runnable() {
+					public void run() {
+						blockedPowerUps = true;
+					}
+				});
+			}
+		}).start();
+	}
+	
+	public void invokeInvulnerability() {
+		new Thread(new Runnable() {
+			public void run() {
+				Gdx.app.postRunnable(new Runnable() {
+					public void run() {
+						hasInvulnerability = true;
+					}
+				});
+			}
+		}).start();
+	}
+	
+	public void invokeBlockGrid() {
+		new Thread(new Runnable() {
+			public void run() {
+				Gdx.app.postRunnable(new Runnable() {
+					public void run() {
+						blockedGrids[r.nextInt(2)] = true;
+					}
+				});
+			}
+		}).start();
+	}
+	
+
+	
+	public void generateDummyMoles() {
+		new Thread(new Runnable() {
+			public void run() {
+				Gdx.app.postRunnable(new Runnable() {
+					public void run() {
+						hasDummyMoles = true;
+					}
+				});
+			}
+		}).start();
+	}
+
+	
+	public void generateMoleKing() {
+		socketHandler.deployMole(MoleType.MOLEKING, r.nextInt(9));
 	}
 
 }

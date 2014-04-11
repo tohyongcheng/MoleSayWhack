@@ -124,8 +124,6 @@ public class MainMenuScreen implements Screen {
 				return;
 			}
 		}
-	
-
 	}	
 	
 	@Override

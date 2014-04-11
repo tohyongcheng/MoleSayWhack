@@ -2,16 +2,14 @@ package com.deny.GameHelpers;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameObjects.MoleDeployer;
+import com.deny.GameObjects.PowerUpDeployer;
 import com.deny.GameWorld.GameWorld;
 import com.deny.GameWorld.GameWorld.GameState;
 import com.deny.MoleObjects.Mole;
-import com.deny.Screens.MainMenuScreen;
-import com.deny.Screens.PreGameScreen;
 
 public class GameInputHandler implements InputProcessor {
 	public static boolean moleTouched;
@@ -94,11 +92,18 @@ public class GameInputHandler implements InputProcessor {
 				if (md!= null) {
 					if (md.isTouchDown(screenX,screenY)) {
 						md.selected = true;
-						if (md.availability == true){
+						if (md.isAvailable()){
 						AssetLoader.slctd.play();
-						
 						myWorld.setGameState(GameState.DEPLOYMENT);
 						myWorld.setCurrentMoleDeployer(md);}
+					}
+				}
+			}
+			
+			for (PowerUpDeployer pd: myWorld.getPowerUpDeployers()) {
+				if (pd!= null) {
+					if (pd.isTouchDown(screenX,screenY) && pd.isAvailable()) {
+						pd.deploy();
 					}
 				}
 			}

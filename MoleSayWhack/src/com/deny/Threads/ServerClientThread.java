@@ -11,8 +11,11 @@ import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.net.SocketHints;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.deny.GameObjects.MoleType;
+import com.deny.GameObjects.PowerUpType;
+import com.deny.GameWorld.GameWorld.PowerUpState;
 import com.deny.Screens.MultiplayerScreen;
 import com.deny.Screens.MultiplayerScreen.MultiplayerState;
+import com.deny.Screens.PreGamePowerUpScreen;
 import com.deny.Screens.PreGameScreen;
 
 public class ServerClientThread extends Thread {
@@ -27,9 +30,11 @@ public class ServerClientThread extends Thread {
 	private boolean isServer = false;
 	private MultiplayerScreen multiS;
 	private PreGameScreen preGameS;
+	private PreGamePowerUpScreen preGamePowerUpScreen;
 	private PrintWriter out;
 	
 	private ReadThread readThread;
+	
 	
 	public ServerClientThread(MultiplayerScreen ms, String IPAddress) {
 		this.setMultiS(ms);
@@ -148,11 +153,11 @@ public class ServerClientThread extends Thread {
 		out.flush();
 	}
 	
-	public void toMainMenuScreen() {
-		System.out.println("[SocketHandler] Sending to Change Screen to MainMenuScreen");
-		out.write("[MAINMENUSCREEN] \n");
-		out.flush();
-	}
+//	public void toMainMenuScreen() {
+//		System.out.println("[SocketHandler] Sending to Change Screen to MainMenuScreen");
+//		out.write("[MAINMENUSCREEN] \n");
+//		out.flush();
+//	}
 	
 	public void gameOver() {
 		System.out.println("[SocketHandler] Sending GameOver");
@@ -177,6 +182,12 @@ public class ServerClientThread extends Thread {
 		out.write("[LEAVEMULTIPLAYERSCREEN] \n");
 		out.flush();
 	}
+	
+	public void sendPowerUp(PowerUpType powerUpType) {
+		System.out.println("[SocketHandler] deployed mole! Sending " + "[SPAWN] " + powerUpType.toString());
+		out.write(("[SPAWN] " + powerUpType.toString()));
+		out.flush();
+	}
 
 	public MultiplayerScreen getMultiS() {
 		return multiS;
@@ -196,6 +207,10 @@ public class ServerClientThread extends Thread {
 	
 	public Game getGame() {
 		return game;
+	}
+
+	public void setPreGamePowerUpScreen(PreGamePowerUpScreen preGamePowerUpScreen) {
+		this.preGamePowerUpScreen = preGamePowerUpScreen;
 	}
 
 }

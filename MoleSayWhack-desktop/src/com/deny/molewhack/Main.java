@@ -7,9 +7,9 @@ public class Main {
 	public static void main(String[] args) {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "MoleSayWhack";
-		cfg.width = 1080 / 3;
-//		cfg.height = 1620 / 3;
-		cfg.height = 1800 / 3;
+		cfg.width = 136;
+	//	cfg.height = 1620 / 3;
+		cfg.height = 204;
 		
 		new LwjglApplication(new WMGame(), cfg);
 	}

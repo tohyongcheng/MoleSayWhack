@@ -20,8 +20,10 @@ import com.deny.Threads.ServerClientThread;
 
 public class PreGameScreen implements Screen {
 	private static final int NO_OF_DEPLOYERS = 3;
-	private static final int GAME_WIDTH = 136;
-	private static final int GAME_HEIGHT = 204;
+	private static final int GAME_WIDTH = Gdx.graphics.getWidth();
+	private static final int GAME_HEIGHT = Gdx.graphics.getHeight();
+	public double scaleW = (double)GAME_WIDTH/544;
+	public double scaleH = (double) GAME_HEIGHT/816;
 
 	public enum PreGameState {
 		READY, COUNTING, GO, QUIT;
@@ -35,7 +37,6 @@ public class PreGameScreen implements Screen {
 	private ShapeRenderer shapeRenderer;
 	private Vector3 touchPoint;
 	private Rectangle backBounds;
-	private Rectangle playBounds;
 	private ServerClientThread socketHandler;
 	private ArrayList<MoleType> selectedMoles;
 	private ArrayList<Rectangle> selectedMolesRectangles;
@@ -54,18 +55,19 @@ public class PreGameScreen implements Screen {
 		batcher = new SpriteBatch();
 		batcher.setProjectionMatrix(mainMenuCam.combined);
 		font = new BitmapFont();
-		
+		font.setScale(1, -1);
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(mainMenuCam.combined);
 		touchPoint = new Vector3();
-//		playBounds = new Rectangle(23,80,90,30);
-		backBounds = new Rectangle(0,188,16,16);
+		backBounds = new Rectangle(3,(int)(GAME_HEIGHT-9-82*scaleH),(int)(83*scaleW), (int)(82*scaleH));
 		
 		selectedMoles = new ArrayList<MoleType>();
 		selectedMolesRectangles = new ArrayList<Rectangle>();
+
 		for (int i=0; i <NO_OF_DEPLOYERS; i++) {
 			selectedMoles.add(MoleType.ONETAP);
-			selectedMolesRectangles.add(new Rectangle( 23f+i*30, 40f, 30f,30f));
+			selectedMolesRectangles.add(new Rectangle( (int)(GAME_WIDTH/2 - 474*scaleW/2),(int)(GAME_HEIGHT/4.5 +(i*(178*scaleH+7)-5)) , (int)(474*scaleW),(int)(178*scaleH )));
+	
 		}		
 		
 	}
@@ -74,8 +76,8 @@ public class PreGameScreen implements Screen {
 		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-        
-        shapeRenderer.begin(ShapeType.Filled);
+     
+       /* shapeRenderer.begin(ShapeType.Filled);
         // Chooses RGB Color of 87, 109, 120 at full opacity
         shapeRenderer.setColor(87 / 255.0f, 109 / 255.0f, 120 / 255.0f, 1);
         shapeRenderer.rect(backBounds.x, backBounds.y,
@@ -91,17 +93,24 @@ public class PreGameScreen implements Screen {
             shapeRenderer.rect(r.x,r.y,r.width,r.height);
     	}
         
-        
-        shapeRenderer.end();
+        shapeRenderer.end();*/
         
         batcher.begin();
-//        for (int i = 0; i< NO_OF_DEPLOYERS; i++) {
-//        	MoleType moleType = selectedMoles.get(i);
-//            font.draw(batcher, moleType.toString(), selectedMolesRectangles.get(i).x, selectedMolesRectangles.get(i).y);
-//    	}
-//        
+        batcher.enableBlending();
+        batcher.draw(AssetLoader.background, 0, 0, GAME_WIDTH, GAME_HEIGHT);
+        batcher.draw(AssetLoader.titleDep, (int)(GAME_WIDTH/2 - (324*scaleW)/2), (int)(GAME_HEIGHT/15), (int)(324*scaleW) , (int)(133*scaleH));
+        for (int i = 0; i< NO_OF_DEPLOYERS; i++) {
+    	   MoleType moleType = selectedMoles.get(i);
+    	   Rectangle r = selectedMolesRectangles.get(i);
+    	   batcher.draw(moleType.getAsset(),r.x, r.y, r.width, r.height);
+    	   //font.draw(batcher, moleType.toString(), selectedMolesRectangles.get(i).x, selectedMolesRectangles.get(i).y);
+    	}     
         
-        font.draw(batcher, String.valueOf((int)countDownTime), 68, 20);
+        
+        
+        font.draw(batcher, String.valueOf((int)countDownTime), 68*2, 20*2);
+        batcher.draw(AssetLoader.cnl, backBounds.x, backBounds.y,
+        		backBounds.width, backBounds.height);
         batcher.end();
 		
 	}
@@ -126,11 +135,13 @@ public class PreGameScreen implements Screen {
 				mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
+					AssetLoader.back.play();
 					currentState = PreGameState.QUIT;
 				}
 				
 				for (int i =0; i<NO_OF_DEPLOYERS; i++) {
 					if (selectedMolesRectangles.get(i).contains(touchPoint.x, touchPoint.y)) {
+						//AssetLoader.button.play();
 						MoleType nextMoleType = selectedMoles.get(i).next();
 						selectedMoles.remove(i);
 						selectedMoles.add(i,nextMoleType);

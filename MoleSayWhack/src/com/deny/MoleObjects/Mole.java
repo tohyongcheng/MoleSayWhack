@@ -1,7 +1,13 @@
 package com.deny.MoleObjects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.Player;
@@ -14,12 +20,15 @@ public abstract class Mole
 	protected int attack;
 	protected boolean isDead;
 	protected Player player;
-	protected Circle boundingCircle;
+	protected Rectangle boundingRectangle;
 	protected MoleType moleType;
+
+	
 	
 	public Mole(Player player) 
 	{
-		boundingCircle = new Circle();
+
+		boundingRectangle = new Rectangle();
 		isDead = false;
 		timeExisted = 0;
 		this.player= player; 
@@ -47,10 +56,24 @@ public abstract class Mole
 //			isDead = true;
 //		}
 	}
+	public TextureRegion getAsset(){
+		switch(moleType){
+		case ONETAP:
+			return AssetLoader.m1;
+		case THREETAP:
+			return AssetLoader.m3;
+		case FIVETAP:
+			return AssetLoader.m5;
+		case SABOTAGE:
+			return AssetLoader.sm;
+		default:
+			return AssetLoader.m1;
+		} 
+	}
 
 	
-	public Circle getBoundingCircle() {
-		return boundingCircle;
+	public Rectangle getBoundingCircle() {
+		return boundingRectangle;
 	}
 	
 	public void minusHP() {
@@ -67,9 +90,11 @@ public abstract class Mole
 	public boolean isTouchDown(int screenX, int screenY) {
 		
 		//minusHP
-		if (boundingCircle.contains(screenX, screenY)) {
+		if (boundingRectangle.contains(screenX, screenY)) {
 			if (isAlive()) 
 			{
+
+				//PLAY IT WHEN IT IS HIT.
 				AssetLoader.hit.play();
 				System.out.println("mole kena attack!");
 				HP -= 1;

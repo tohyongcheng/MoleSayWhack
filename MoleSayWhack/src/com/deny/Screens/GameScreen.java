@@ -24,9 +24,7 @@ public class GameScreen implements Screen {
 		
 		float screenWidth = Gdx.graphics.getWidth();
 		float screenHeight = Gdx.graphics.getHeight();
-		float gameWidth = 136;
-//		float gameHeight = screenHeight / (screenWidth / gameWidth);
-		float gameHeight = 204;
+
 		
 		this.game = game;
 		this.socketHandler = sH;
@@ -34,7 +32,7 @@ public class GameScreen implements Screen {
 		this.world = new GameWorld(game, this, socketHandler,selectedMoles);
 		this.renderer = new GameRenderer(world);
 		
-		Gdx.input.setInputProcessor(new GameInputHandler(world, screenWidth / gameWidth, screenHeight / gameHeight));
+		Gdx.input.setInputProcessor(new GameInputHandler(world, screenWidth, screenHeight));
 	}
 	
 	

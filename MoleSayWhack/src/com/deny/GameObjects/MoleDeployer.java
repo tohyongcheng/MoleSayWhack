@@ -1,6 +1,8 @@
 package com.deny.GameObjects;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameWorld.GameWorld;
 import com.deny.Threads.ServerClientThread;
 
@@ -22,8 +24,9 @@ public class MoleDeployer
 	private ServerClientThread socketHandler;
 	private float cooldown;
 	private MoleType moleType;
-	boolean availability;
-	
+	//ADDED THIS TO INDICATE WHETHER IT IS SELEECTED / COOLDOWN
+	public boolean availability;
+	public boolean selected;
 	/**
 	 * Initialize cooldown & HP, as well as rectangle size and timeDeployed.
 	 * @param HP
@@ -63,6 +66,21 @@ public class MoleDeployer
 			timeDeployed = 0;
 			availability = true;
 		}
+	}
+	
+	public TextureRegion getAsset(){
+		switch(moleType){
+		case ONETAP:
+			return AssetLoader.m1;
+		case THREETAP:
+			return AssetLoader.m3;
+		case FIVETAP:
+			return AssetLoader.m5;
+		case SABOTAGE:
+			return AssetLoader.sm;
+		default:
+			return AssetLoader.m1;
+		} 
 	}
 	
 	public boolean isAvailable(){

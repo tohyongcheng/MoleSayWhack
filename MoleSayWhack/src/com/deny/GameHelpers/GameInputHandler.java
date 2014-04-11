@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameObjects.MoleDeployer;
 import com.deny.GameWorld.GameWorld;
@@ -13,12 +14,13 @@ import com.deny.Screens.MainMenuScreen;
 import com.deny.Screens.PreGameScreen;
 
 public class GameInputHandler implements InputProcessor {
-	
+	public static boolean moleTouched;
+	public static Mole moleT;
 	private float scaleFactorX;
 	private float scaleFactorY;
 	private GameWorld myWorld;
 	private ArrayList<Rectangle> placeHolders;
-	
+	private SpriteBatch batcher;
 	
 	public GameInputHandler(GameWorld myWorld, float scaleFactorX,
 		float scaleFactorY) {
@@ -46,15 +48,15 @@ public class GameInputHandler implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		
-		screenX = scaleX(screenX);
-		screenY = scaleY(screenY);
-		
+		moleTouched = false;
+		//HAMMER DISSAPEARS WHEN U TOUCH SOMETHING ELSE
+
 		GameState currentState = myWorld.getGameState();
 		
 		if (currentState == GameState.DEPLOYMENT) {
 			for (int i=0; i<placeHolders.size(); i++) { 
 				if (placeHolders.get(i).contains(screenX, screenY)) {
+					AssetLoader.sent.play();
 					myWorld.getCurrentMoleDeployer().deployMole(i);
 					myWorld.setCurrentMoleDeployer(null);
 					myWorld.setGameState(GameState.READY);
@@ -71,6 +73,7 @@ public class GameInputHandler implements InputProcessor {
 			}
 			
 			if (myWorld.getPauseButton().contains(screenX,screenY)) {
+				AssetLoader.button.play();
 				myWorld.getSocketHandler().exitGame();
 				myWorld.setGameState(GameState.MENU);
 			}
@@ -80,20 +83,28 @@ public class GameInputHandler implements InputProcessor {
 			
 			for(Mole m: myWorld.getMoleGrid()) {
 				if (m!=null) {
-					m.isTouchDown(screenX, screenY);
+					moleT = m;
+					//to draw hammer
+					moleTouched = m.isTouchDown(screenX, screenY);
 				}
 			}
 			
 			for (MoleDeployer md: myWorld.getMoleDeployers()) {
+				md.selected=false;
 				if (md!= null) {
 					if (md.isTouchDown(screenX,screenY)) {
+						md.selected = true;
+						if (md.availability == true){
+						AssetLoader.slctd.play();
+						
 						myWorld.setGameState(GameState.DEPLOYMENT);
-						myWorld.setCurrentMoleDeployer(md);
+						myWorld.setCurrentMoleDeployer(md);}
 					}
 				}
 			}
 			
 			if (myWorld.getPauseButton().contains(screenX,screenY)) {
+				AssetLoader.button.play();
 				myWorld.pauseGame();
 			}
 		} 
@@ -103,11 +114,13 @@ public class GameInputHandler implements InputProcessor {
 			Rectangle exitBounds = myWorld.getExitBounds();
 			
 			if (playAgainBounds.contains(screenX,screenY)) {
+				AssetLoader.button.play();
 				myWorld.getSocketHandler().restartGame();
 				myWorld.setGameState(GameState.RESTART);
 			}
 			
 			if (exitBounds.contains(screenX,screenY)) {
+				AssetLoader.back.play();
 				//TODO: put this inside GameWorld instead?
 				myWorld.getSocketHandler().exitGame();
 				myWorld.setGameState(GameState.EXIT);
@@ -125,11 +138,13 @@ public class GameInputHandler implements InputProcessor {
 			Rectangle exitBounds = myWorld.getExitBounds();
 			if (exitBounds.contains(screenX,screenY)) {
 				//TODO: put this inside GameWorld instead?
+				AssetLoader.back.play();
 				myWorld.exitGame();
 			}
 			
 			Rectangle continueButton = myWorld.getContinueButton();
 			if (continueButton.contains(screenX,screenY)) {
+				AssetLoader.button.play();
 				myWorld.continueGame();
 			}
 			

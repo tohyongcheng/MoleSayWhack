@@ -14,17 +14,22 @@ import com.deny.GameHelpers.AssetLoader;
 import com.deny.MoleObjects.Mole;
 
 public class MainMenuScreen implements Screen {
-	private static final int GAME_WIDTH = 136;
-	private static final int GAME_HEIGHT = 204;
+	
+	private static final int GAME_WIDTH = (int) Gdx.graphics.getWidth();//544; //136 to 272
+	private static final int GAME_HEIGHT = (int) Gdx.graphics.getHeight(); //204 to 408
+	double scaleW = (double)GAME_WIDTH/544.0;
+	double scaleH = (double) GAME_HEIGHT/816;
 	Game game;
 	
 	OrthographicCamera mainMenuCam;
 	SpriteBatch batcher;
-	Rectangle playBounds;
+	Rectangle startBounds;
 	Rectangle optionsBounds;
+	Rectangle scoreBounds;
 	ShapeRenderer shapeRenderer;
 	Vector3 touchPoint;
-
+	private SpriteBatch batcherMain;
+	
 	public MainMenuScreen(Game game) {
 		this.game = game;
 		this.mainMenuCam = new OrthographicCamera();
@@ -32,15 +37,25 @@ public class MainMenuScreen implements Screen {
 		
 		batcher = new SpriteBatch();
 		
-		
 		//Create bounds. We are to edit the Position and the Width/Height Here!
-		playBounds = new Rectangle(20,40,96, 40);
-		optionsBounds = new Rectangle(20, 100, 96, 40);
+
+		int boxLength = (int) Math.round(((260/2)*scaleW)) ;
+
+		System.out.println(boxLength);
+		startBounds = new Rectangle((int)Math.ceil(GAME_WIDTH/2 - boxLength), (int) (Math.ceil(GAME_HEIGHT/2) + GAME_HEIGHT*0.05*scaleH), (int)(260*scaleW), (int) (91*scaleH));
+		optionsBounds = new Rectangle((int)Math.ceil(GAME_WIDTH/2 - boxLength), (int) (Math.ceil(GAME_HEIGHT/2)+ scaleH*(GAME_HEIGHT*0.05 + 100)), (int)(260*scaleW),(int) (91*scaleH));
+		scoreBounds = new Rectangle((int)Math.ceil(GAME_WIDTH/2 - boxLength), (int) (Math.ceil(GAME_HEIGHT/2) + scaleH*(GAME_HEIGHT*0.05+ 200)),(int)(260*scaleW),(int) (91*scaleH));
 		
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(mainMenuCam.combined);
-		touchPoint = new Vector3();
-
+		
+        batcherMain = new SpriteBatch();
+        // Attach batcher to camera
+        batcher.setProjectionMatrix(mainMenuCam.combined);
+		touchPoint = new Vector3();	
+		AssetLoader.ann.stop();
+		AssetLoader.summer.stop();
+		AssetLoader.summer.loop();
 	}
 	
 	private void draw() {
@@ -48,55 +63,71 @@ public class MainMenuScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
         
-        shapeRenderer.begin(ShapeType.Filled);
-        // Chooses RGB Color of 87, 109, 120 at full opacity
-        shapeRenderer.setColor(87 / 255.0f, 109 / 255.0f, 120 / 255.0f, 1);
+        batcher.begin();
+        // Disable transparency 
+        // This is good for performance when drawing images that do not require transparency.
+        batcher.enableBlending();
+        //put the position here
+        
+        batcher.draw(AssetLoader.background, 0, 0, GAME_WIDTH, GAME_HEIGHT);
+        double Titlewidth = 336*scaleW;
+        double Titleheight = 170*scaleH;
+        batcher.draw(AssetLoader.Title, (int)(Math.ceil(GAME_WIDTH/2 - Titlewidth/2)), (int)(GAME_HEIGHT*0.1*scaleH), (int)Titlewidth, (int)Titleheight);
+        batcher.draw(AssetLoader.sm, (int)(GAME_WIDTH/2 - (359)*scaleW/2), (int)( 284*scaleH), (int)(113*scaleW), (int)(114*scaleH));
+        batcher.draw(AssetLoader.m1, (int)(GAME_WIDTH/2 - (359)*scaleW/2 + 123*scaleW), (int)(274*scaleH), (int)(113*scaleW), (int)(114*scaleH));
+        batcher.draw(AssetLoader.m3, (int)(GAME_WIDTH/2 - (359)*scaleW/2 + 123*scaleW + 123*scaleH), (int)(284*scaleH), (int)(113*scaleW)	, (int)(114*scaleH));
 
-        // Draws the rectangle from myWorld (Using ShapeType.Filled)
+        
+        batcher.draw(AssetLoader.strB, startBounds.x, 
+        		startBounds.y, startBounds.width, startBounds.height);
+        batcher.draw(AssetLoader.optB, optionsBounds.x, optionsBounds.y
+        		, optionsBounds.width, optionsBounds.height);
+        batcher.draw(AssetLoader.hghB, scoreBounds.x, scoreBounds.y, 
+        		scoreBounds.width, scoreBounds.height);
+      
+        batcher.end();
+       /* shapeRenderer.begin(ShapeType.Filled);
+        shapeRenderer.setColor(87 / 255.0f, 109 / 255.0f, 120 / 255.0f, 1);
         shapeRenderer.rect(playBounds.x, playBounds.y,
                 playBounds.width, playBounds.height);
-        
         shapeRenderer.rect(optionsBounds.x, optionsBounds.y,
         		optionsBounds.width, optionsBounds.height);
-
-        shapeRenderer.end();
-		
+        shapeRenderer.end();*/
 	}
-
 
 	private void update() {
 		if(Gdx.input.justTouched()) {
 			mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-			
-			if (playBounds.contains(touchPoint.x, touchPoint.y)) {
+			if (startBounds.contains(touchPoint.x, touchPoint.y)) {
 				game.setScreen(new MultiplayerScreen(game));
+				AssetLoader.button.play();
 				this.dispose();
-				AssetLoader.clicksound.play();
 				return;
 			}
-			
 			if (optionsBounds.contains(touchPoint.x, touchPoint.y)) {
 				game.setScreen(new OptionsScreen(game));
+				AssetLoader.button.play();
 				this.dispose();
-				AssetLoader.clicksound.play();
 				return;
 			}
-			
-			
+			if(scoreBounds.contains(touchPoint.x, touchPoint.y)){
+				game.setScreen(new HighScoreScreen(game));
+				AssetLoader.button.play();
+				this.dispose();
+				return;
+			}
 		}
-		
-	}
-
 	
+		/*AssetLoader.sequencer1.stop();
+		AssetLoader.sequencer1.setTickPosition(0);
+		AssetLoader.sequencer.start();*/
+	}	
 	
 	@Override
 	public void render(float delta) {
 		update();
-		draw();
-		
+		draw();	
 	}
-
-	
 
 	@Override
 	public void resize(int width, int height) {

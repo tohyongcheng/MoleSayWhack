@@ -6,6 +6,7 @@ import java.util.Queue;
 import java.util.Random;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleDeployer;
@@ -23,6 +24,11 @@ import com.deny.Threads.ReadThread;
 import com.deny.Threads.ServerClientThread;
 
 public class GameWorld {
+	private static final int GAME_WIDTH = Gdx.graphics.getWidth();
+	private static final int GAME_HEIGHT = Gdx.graphics.getHeight();
+	private double scaleW = (double) GAME_WIDTH/544;
+	private double scaleH = (double) GAME_HEIGHT/816;
+	
 	//STATICFINAL VARIABLES
 	private final static int NUMBER_OF_MOLES_PER_GRID = 9;
 	private final static int NUMBER_OF_MOLES_PER_DECK = 4;
@@ -56,6 +62,7 @@ public class GameWorld {
 	private Rectangle gameOverMenu;
 	private Rectangle playAgainBounds;
 	private Rectangle exitBounds;
+	
 	
 
 
@@ -99,33 +106,52 @@ public class GameWorld {
 		//Setup Mole Deployers.
 		moleDeployers = new MoleDeployer[NUMBER_OF_DEPLOYERS];
 		for (int i =0; i<NUMBER_OF_DEPLOYERS;i++) {
+			//change here
 			moleDeployers[i] = new MoleDeployer(this, selectedMoles.get(i));
-			moleDeployers[i].getRectangle().set((float)(i*136/3.0), 136f, 45.33f, 30f);
+			moleDeployers[i].getRectangle().set((int)(GAME_WIDTH/2-(340*scaleW/2)+(i*120*scaleW)),(int)(560*scaleH),(int)(100*scaleW),(int)(100*scaleH));
 		}
 		
 		//setup board and overlay
-		board = new Rectangle(0, 0, 136, 136);
-		pauseOverlay = new Rectangle(0,0,136,204);
-		pauseButton = new Rectangle(120,188,16,16);
+		board = new Rectangle(0, 0, (int)(150*scaleW), (int)(150*scaleH));
+		pauseOverlay = new Rectangle(0,0,GAME_WIDTH,GAME_HEIGHT);
+		pauseButton = new Rectangle(10,GAME_HEIGHT -10 - (int)(52*scaleH),(int)(53*scaleW),(int)(52*scaleH));
 		placeHolders = new ArrayList<Rectangle>();
-		for(int i=0;i<3;i++){
-			for(int j=0;j<3;j++) {
-				placeHolders.add(new Rectangle((float) (i*136/3.0), (float)  (j*136/3.0), (float)  45.33, (float)  45.33));
-			}
-		}
+		
+	
+		//Making placeholder RECTANGLES	
+		Rectangle one = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2)), (int)(100*scaleH),(int)(150*scaleW),(int)(150*scaleH));
+		Rectangle two = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2)+150*scaleW), (int)(100*scaleH),(int)(150*scaleW),(int)(150*scaleH));
+		Rectangle three = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2) + 300*scaleW), (int)(100*scaleH),(int)(150*scaleW),(int)(150*scaleH));	
+
+		Rectangle four = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2)), (int)(100*scaleH+150*scaleH ),(int)(150*scaleW),(int)(150*scaleH));
+		Rectangle five = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2) + 150*scaleW), (int)(100*scaleH+150*scaleH ),(int)(150*scaleW),(int)(150*scaleH));
+		Rectangle six = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2) + 300*scaleW), (int)(100*scaleH+150*scaleH ),(int)(150*scaleW),(int)(150*scaleH));
+		
+		Rectangle seven = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2)), (int)(100*scaleH+300*scaleH ),(int)(150*scaleW),(int)(150*scaleH));
+		Rectangle eight = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2) + 150*scaleW), (int)(100*scaleH+300*scaleH ),(int)(150*scaleW),(int)(150*scaleH));
+		Rectangle nine = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2) + 300*scaleW), (int)(100*scaleH+300*scaleH ),(int)(150*scaleW),(int)(150*scaleH));
+		
+		placeHolders.add(one);placeHolders.add(two);placeHolders.add(three);placeHolders.add(four);
+		placeHolders.add(five);placeHolders.add(six);placeHolders.add(seven);placeHolders.add(eight);
+		placeHolders.add(nine);
 		
 		//GameOverMenu
 		gameOverMenu = new Rectangle(0,30, 136, 136);
-		continueButton = new Rectangle(20, 50, 96, 30);
-		playAgainBounds = new Rectangle(20, 50, 96, 30);
-		exitBounds = new Rectangle(20, 100, 96, 30);
+		continueButton = new Rectangle(GAME_WIDTH/2-(int)(82*scaleW/2), GAME_HEIGHT/2, (int)(83*scaleW), (int)(82*scaleH));
+		playAgainBounds = new Rectangle(GAME_WIDTH/2-(int)(82*scaleW/2), GAME_HEIGHT/2, (int)(83*scaleW), (int)(82*scaleH));
+		exitBounds = new Rectangle(GAME_WIDTH/2-(int)(82*scaleW/2), GAME_HEIGHT/2 + (int)(115*scaleH), (int)(83*scaleW), (int)(82*scaleH));
 		
 		//setup random for random spawning
 		this.r = new Random();
+		AssetLoader.summer.stop();
+		AssetLoader.ann.stop();
+		AssetLoader.ann.loop();
+		
 	}
 
     public void update(float delta) {
     	if (gameState == GameState.READY) gameState = GameState.RUNNING;
+    	
     	
     	else if (gameState == GameState.LOSE) {
     		// stop updating everything. 
@@ -144,6 +170,7 @@ public class GameWorld {
     	}
     	
     	else if (gameState == GameState.RESTART) {
+
     		game.setScreen(new PreGameScreen(game, socketHandler));
     		gameScreen.dispose();
     	}
@@ -151,11 +178,12 @@ public class GameWorld {
     	else if (gameState == GameState.EXIT) {    		
     		socketHandler.dispose();
     		socketHandler = null;
+
     		game.setScreen(new MainMenuScreen(game));
     		gameScreen.dispose();
     		
     	}
-    	
+
     }
     
     public void updateRunning(float delta) {
@@ -171,6 +199,7 @@ public class GameWorld {
         	if ((moleGrid[i] == null)) {
         		if (moleQueues[i].peek() != null && moleDelay[i] > DELAY_BETWEEN_MOLE_APPEARANCE ) {
         			moleGrid[i] = moleQueues[i].remove();
+        			AssetLoader.popup.play();
         			moleDelay[i] = 0;
         		} else {
         			moleDelay[i] += delta;
@@ -181,9 +210,10 @@ public class GameWorld {
         for (int i=0; i<NUMBER_OF_MOLES_PER_GRID; i++) {
         	if (moleGrid[i] != null) {
         		moleGrid[i].update(delta);
-        		moleGrid[i].getBoundingCircle().set((float) (placeHolders.get(i).x + 45.33/2), 
-						(float) (placeHolders.get(i).y + 45.33/2), 
-						12f);
+        		//change here
+        		moleGrid[i].getBoundingCircle().set((int)(placeHolders.get(i).x + (30*scaleW)), (int) (placeHolders.get(i).y + (40*scaleH)), (int)(120*scaleW), (int)(120*scaleH)); 
+						
+        	
         		
         		if (moleGrid[i].isDead()) {
 	        		//JVM will automatically clean up unreachable objects
@@ -201,15 +231,19 @@ public class GameWorld {
     	if (moleGrid[pos] == null) {
     		switch(moleType) {
     		case ONETAP:
+    			AssetLoader.popup.play();
     			moleGrid[pos] = new OneHitMole(player);
 				break;
     		case THREETAP:
+    			AssetLoader.popup.play();
     			moleGrid[pos] = new ThreeHitMole(player);
 				break;
 			case FIVETAP:
+				AssetLoader.popup.play();
 				moleGrid[pos] = new FiveHitMole(player);
 				break;
 			case SABOTAGE:
+				AssetLoader.popup.play();
 				moleGrid[pos] = new SabotageMole(player);
 				break;
 			default:

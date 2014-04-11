@@ -22,13 +22,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameHelpers.IPAddressInputListener;
 import com.deny.Threads.ServerClientThread;
 
 public class MultiplayerScreen implements Screen {
 	
-	private static final int GAME_WIDTH = 136;
-	private static final int GAME_HEIGHT = 204;
+	private static final int GAME_WIDTH = Gdx.graphics.getWidth();
+	private static final int GAME_HEIGHT = Gdx.graphics.getHeight();
 	public enum MultiplayerState {
 		READY, CONNECTED, START, RESTART, QUIT
 	}
@@ -53,12 +54,18 @@ public class MultiplayerScreen implements Screen {
 		this.game = game;
 		this.multiplayerCam = new OrthographicCamera();
 		multiplayerCam.setToOrtho(true, GAME_WIDTH, GAME_HEIGHT);
-		backBounds = new Rectangle(0,188,16,16);
-		playBounds = new Rectangle(23,50,90,30);
-		changeAddressBounds = new Rectangle(23,120,90,30);
+        double scaleW = (double) GAME_WIDTH/544;
+        double scaleH = (double) GAME_HEIGHT/816;
+        
+		backBounds = new Rectangle(3,(int)(GAME_HEIGHT-9-82*scaleH),(int)(83*scaleW), (int)(82*scaleH));
+
+		playBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(GAME_HEIGHT/3 - 90*scaleH/2),(int)(260*scaleW), (int)(90*scaleH));
+		changeAddressBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(2*GAME_HEIGHT/3 - 90*scaleH/2),(int)(260*scaleW), (int)(90*scaleH));
+		
 		listener = new IPAddressInputListener(this);
 		
 		font = new BitmapFont();
+		font.setScale(1, -1);
 		batcher = new SpriteBatch();
 		batcher.setProjectionMatrix(multiplayerCam.combined);
 		
@@ -151,11 +158,13 @@ public class MultiplayerScreen implements Screen {
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
 					if (socketHandler !=null) socketHandler.interrupt();
+					AssetLoader.back.play();
 					game.setScreen(new MainMenuScreen(game));
 					return;
 				}
 				
 				else if (changeAddressBounds.contains(touchPoint.x, touchPoint.y)) {
+					AssetLoader.button.play();
 					Gdx.input.getTextInput(listener, "Set IP Address", otherAddress);
 				}
 			}
@@ -166,16 +175,19 @@ public class MultiplayerScreen implements Screen {
 				multiplayerCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (playBounds.contains(touchPoint.x,touchPoint.y)) {
+					AssetLoader.button.play();
 					socketHandler.toChooseMolesScreen();
 					currentState = MultiplayerState.START;
 				}
 				
 				else if (backBounds.contains(touchPoint.x, touchPoint.y)) {
+					AssetLoader.back.play();
 					socketHandler.leaveGameRoom();
 					currentState = MultiplayerState.QUIT;
 				}
 				
 				else if (changeAddressBounds.contains(touchPoint.x, touchPoint.y)) {
+					AssetLoader.button.play();
 					Gdx.input.getTextInput(listener, "Set IP Address", otherAddress);
 				}
 			}
@@ -208,32 +220,29 @@ public class MultiplayerScreen implements Screen {
 		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-        
-        shapeRenderer.begin(ShapeType.Filled);
-        // Chooses RGB Color of 87, 109, 120 at full opacity
-        shapeRenderer.setColor(87 / 255.0f, 109 / 255.0f, 120 / 255.0f, 1);
+        batcher.begin();
+        batcher.enableBlending();
+        batcher.draw(AssetLoader.background, 0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-        // Draws the rectangle from myWorld (Using ShapeType.Filled)
         
         switch (currentState) {
         case CONNECTED:
-        	shapeRenderer.rect(playBounds.x, playBounds.y,
+        	batcher.draw(AssetLoader.strB, playBounds.x, playBounds.y,
 	        		playBounds.width, playBounds.height);
-        	shapeRenderer.rect(changeAddressBounds.x, changeAddressBounds.y,
+        	batcher.draw(AssetLoader.enterIP, changeAddressBounds.x, changeAddressBounds.y,
         			changeAddressBounds.width, changeAddressBounds.height);
         	break;
         case READY:
-        	shapeRenderer.rect(changeAddressBounds.x, changeAddressBounds.y,
+        	batcher.draw(AssetLoader.loading, playBounds.x, playBounds.y,
+	        		playBounds.width, playBounds.height);
+        	batcher.draw(AssetLoader.enterIP, changeAddressBounds.x, changeAddressBounds.y,
         			changeAddressBounds.width, changeAddressBounds.height);
         	break;
         }
         
-        shapeRenderer.rect(backBounds.x, backBounds.y,
+        batcher.draw(AssetLoader.cnl, backBounds.x, backBounds.y,
         		backBounds.width, backBounds.height);
 
-        shapeRenderer.end();
-        
-        batcher.begin();
         font.draw(batcher, myAddress.toString(), 0, 20);
 	    batcher.end();
 	}

@@ -1,6 +1,7 @@
 package com.deny.MoleObjects;
 
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.Player;
 
@@ -35,9 +36,9 @@ public class ThreeHitMole extends Mole
 		return !isDead;
 	}
 	
-	public Circle getBoundingCircle() 
+	public Rectangle getBoundingCircle() 
 	{
-		return this.boundingCircle;
+		return this.boundingRectangle;
 	}
 	
 	//Invoking Mole (super) class methods//

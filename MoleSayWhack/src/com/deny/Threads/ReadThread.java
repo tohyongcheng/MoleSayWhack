@@ -4,13 +4,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import javax.xml.transform.Result;
+
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.net.Socket;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameWorld;
 import com.deny.GameWorld.GameWorld.GameState;
-import com.deny.Screens.MainMenuScreen;
+import com.deny.Screens.DisconnectScreen;
 import com.deny.Screens.MultiplayerScreen;
 import com.deny.Screens.MultiplayerScreen.MultiplayerState;
 import com.deny.Screens.PreGameScreen;
@@ -29,6 +32,8 @@ public class ReadThread  extends Thread{
 	}
 	private ScreenState currentState;
 	
+	
+	//NOT THREAD SAFE
 	public ReadThread(ServerClientThread sh, Socket client) {
 		socketHandler = sh;
 		game = socketHandler.getGame();
@@ -51,7 +56,6 @@ public class ReadThread  extends Thread{
 				String[] messages = message.split(" ");
 				
 				switch(messages[0]) {
-				
 				//GAMESCREEN
 				case "[SPAWN]":
 					MoleType moleType = MoleType.valueOf(messages[1]);
@@ -60,7 +64,7 @@ public class ReadThread  extends Thread{
 					break;
 				case "[CHOOSEMOLESCREEN]":
 					System.out.println("Received message to go to select Moles Screen");
-					socketHandler.getMultiS().setState(MultiplayerState.START);
+					socketHandler.getMultiplayerScreen().setState(MultiplayerState.START);
 					break;
 				case "[GAMEOVER]":
 					System.out.println("Received message that other player has died");
@@ -83,30 +87,45 @@ public class ReadThread  extends Thread{
 					System.out.println("Received message to unpause the game");
 					gameWorld.setGameState(GameState.RUNNING);
 					break;
-					
 				case "[POWERUP]":
+					System.out.println("Received message about invoking a powerup on current player: " + messages[1]);
 					PowerUpType powerUp = PowerUpType.valueOf(messages[1]);
 					gameWorld.invokePowerUp(powerUp);
 					break;
-					
+				case "[OPPONENTHP]":
+					System.out.println("Received message about opponent HP: " + messages[1]);
+					gameWorld.setOpponentHP(Integer.valueOf(messages[1]));
+					break;
 				//PREGAMESCREEN
 				case "[MAINMENUSCREEN]":
 					System.out.println("Received message to go back to main menu!");
-					if (socketHandler.getPreGameS() !=null) socketHandler.getPreGameS().setState(PreGameState.QUIT);
+					if (socketHandler.getPreGameScreen() !=null) socketHandler.getPreGameScreen().setState(PreGameState.QUIT);
 					break;
-					
 				//MULTIPLAYERSCREEN
 				case "[LEAVEMULTIPLAYERSCREEN]":
 					System.out.println("Received message to restart server!");
-					if (socketHandler.getMultiS() !=null) socketHandler.getMultiS().setState(MultiplayerState.RESTART);
+					if (socketHandler.getMultiplayerScreen() !=null) socketHandler.getMultiplayerScreen().setState(MultiplayerState.RESTART);
 					break;
 				}
 			} catch (IOException e) {
 				//e.printStackTrace();
 				System.out.println("Socket Closed");
 			} catch(NullPointerException e) {
-				//DISCONNECT
-				game.setScreen(new MainMenuScreen(game));
+				//IF CLIENT DISCONNECTS, EXIT BACK TO MAIN MENU
+				
+				new Thread(new Runnable() {
+					   @Override
+					   public void run() {
+						  
+					      Gdx.app.postRunnable(new Runnable() {
+					         @Override
+					         public void run() {
+					        	 game.setScreen(new DisconnectScreen(game));
+					         }
+					      });
+					   }
+					}).start();
+				
 				socketHandler.dispose();
 				return;
 			}

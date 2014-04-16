@@ -16,11 +16,11 @@ public enum PowerUpType {
 	DUMMY(10,5);
 	
 	float coolDown;
-	float duration;
+	float effectDuration;
 	
 	PowerUpType(float coolDown, float duration) {
 		this.coolDown = coolDown;
-		this.duration = duration;
+		this.effectDuration = duration;
 	}
 	
 	public PowerUpType next() {
@@ -55,6 +55,10 @@ public enum PowerUpType {
 	
 	public float getCoolDown() {
 		return coolDown;
+	}
+	
+	public float getEffectDuration() {
+		return effectDuration;
 	}
 	
 	

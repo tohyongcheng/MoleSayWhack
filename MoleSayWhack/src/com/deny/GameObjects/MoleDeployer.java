@@ -25,9 +25,10 @@ public class MoleDeployer
 	private float cooldown;
 	private MoleType moleType;
 
-	//ADDED THIS TO INDICATE WHETHER IT IS SELEECTED / COOLDOWN
-	public boolean selected;
-	boolean isAvailable;
+	//ADDED THIS TO INDICATE WHETHER IT IS SELECTED / COOLDOWN
+	private boolean selected;
+	private boolean disabled;
+	private boolean isAvailable;
 
 	public MoleDeployer(GameWorld gw, MoleType moleType) {
 		this.socketHandler = gw.getSocketHandler();
@@ -36,6 +37,7 @@ public class MoleDeployer
 		boundingRectangle = new Rectangle();
 		timeDeployed = 0;
 		cooldown = moleType.getCoolDown();
+		disabled = false;
 	}
 	
 	
@@ -93,6 +95,30 @@ public class MoleDeployer
 			return true;
 		}
 		return false;
+	}
+
+
+	public void setDisabled(boolean b) {
+		disabled = b;
+	}
+	
+	public void setSelected(boolean b) {
+		selected = b;
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void triggerSelected() {
+		if (selected==false)
+			selected = true;
+		else selected = false;
+	}
+
+
+	public boolean isDisabled() {
+		return disabled;
 	}
 	
 	

@@ -18,7 +18,6 @@ public class GameInputHandler implements InputProcessor {
 	private float scaleFactorY;
 	private GameWorld myWorld;
 	private ArrayList<Rectangle> placeHolders;
-	private SpriteBatch batcher;
 	
 	public GameInputHandler(GameWorld myWorld, float scaleFactorX,
 		float scaleFactorY) {
@@ -88,14 +87,14 @@ public class GameInputHandler implements InputProcessor {
 			}
 			
 			for (MoleDeployer md: myWorld.getMoleDeployers()) {
-				md.selected=false;
 				if (md!= null) {
 					if (md.isTouchDown(screenX,screenY)) {
-						md.selected = true;
-						if (md.isAvailable()){
-						AssetLoader.slctd.play();
-						myWorld.setGameState(GameState.DEPLOYMENT);
-						myWorld.setCurrentMoleDeployer(md);}
+						md.triggerSelected();
+						if (md.isAvailable() && !md.isDisabled()) {
+							AssetLoader.slctd.play();
+							myWorld.setGameState(GameState.DEPLOYMENT);
+							myWorld.setCurrentMoleDeployer(md);
+						}
 					}
 				}
 			}
@@ -133,9 +132,7 @@ public class GameInputHandler implements InputProcessor {
 		} 
 		
 		else if (currentState == GameState.PAUSE) {
-			
-			
-			
+			//No inputs allowed till other player resumes game
 		} 
 		
 		else if (currentState == GameState.MENU) {
@@ -152,10 +149,6 @@ public class GameInputHandler implements InputProcessor {
 				AssetLoader.button.play();
 				myWorld.continueGame();
 			}
-			
-			
-			
-			
 		}
 		
 		return false;

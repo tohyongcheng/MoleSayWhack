@@ -13,7 +13,9 @@ public class PowerUpDeployer {
 	private float timeDeployed;
 	private GameWorld gameWorld;
 	private Rectangle boundingRectangle;
-	boolean isAvailable;
+	private boolean isAvailable;
+	private boolean disabled;
+	
 	private ServerClientThread socketHandler;
 	
 	public PowerUpDeployer(GameWorld gameWorld, PowerUpType powerupType){
@@ -50,20 +52,28 @@ public class PowerUpDeployer {
 		isAvailable = false;
 		switch (powerupType){
 		case BLOCKGRID:
+			gameWorld.getSocketHandler().sendPowerUp(powerupType);
 			break;
 		case DISABLEALLPOWERUPS:
+			gameWorld.getSocketHandler().sendPowerUp(powerupType);
 			break;
 		case DISABLEONEMOLEDEPLOYER:
+			gameWorld.getSocketHandler().sendPowerUp(powerupType);
 			break;
 		case DUMMY:
+			gameWorld.getSocketHandler().sendPowerUp(powerupType);
 			break;
 		case EARTHQUAKE:
+			gameWorld.invokePowerUp(powerupType);
 			break;
 		case FOG:
+			gameWorld.getSocketHandler().sendPowerUp(powerupType);
 			break;
 		case INVULNERABILITY:
+			gameWorld.invokePowerUp(powerupType);
 			break;
 		case MOLEKING:
+			gameWorld.getSocketHandler().sendPowerUp(powerupType);
 			break;
 		default:
 			break;
@@ -79,9 +89,15 @@ public class PowerUpDeployer {
 	public boolean isTouchDown(int screenX, int screenY) {
 		if (boundingRectangle.contains(screenX, screenY)) {
 			return true;
-			
-			
 		}
 		return false;
+	}
+	
+	public boolean isDisabled() {
+		return disabled;
+	}
+	
+	public void setDisabled(boolean b) {
+		disabled = b;
 	}
 }

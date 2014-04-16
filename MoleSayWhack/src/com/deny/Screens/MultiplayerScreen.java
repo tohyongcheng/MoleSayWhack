@@ -38,7 +38,7 @@ public class MultiplayerScreen implements Screen {
 	private MultiplayerState currentState;
 	private Game game;
 	private OrthographicCamera multiplayerCam;
-	private SpriteBatch batcher, batcher2;
+	private SpriteBatch batcher;
 	private Rectangle backBounds;
 	private Rectangle playBounds;
 	private Rectangle changeAddressBounds;

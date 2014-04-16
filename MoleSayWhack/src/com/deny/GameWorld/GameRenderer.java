@@ -124,16 +124,16 @@ public class GameRenderer {
 	        batcher.enableBlending();
 	        for (MoleDeployer md: world.getMoleDeployers()) {
 	        	
-	        	if (md!=null && md.selected == false && md.isAvailable() == true) {
+	        	if (md!=null && !md.isSelected() && md.isAvailable() == true) {
 	        		batcher.draw(AssetLoader.dplyOK, md.getRectangle().x, md.getRectangle().y,md.getRectangle().width,md.getRectangle().height);
 	        	}
-	        	else if (md!=null && md.selected == true && md.isAvailable() == true){
+	        	else if (md!=null && md.isSelected() && md.isAvailable() == true){
 	        		batcher.draw(AssetLoader.dplySEL, md.getRectangle().x, md.getRectangle().y,md.getRectangle().width,md.getRectangle().height);
 	        	}
-	        	else if (md!=null && md.selected == true && md.isAvailable() == false){
+	        	else if (md!=null && md.isSelected() && md.isAvailable() == false){
 	        		batcher.draw(AssetLoader.dplyCD, md.getRectangle().x, md.getRectangle().y,md.getRectangle().width,md.getRectangle().height);
 	        	}
-	        	else if(md!=null && md.selected == false && md.isAvailable() == false){
+	        	else if(md!=null && !md.isSelected() && md.isAvailable() == false){
 	        		batcher.draw(AssetLoader.dplyCD, md.getRectangle().x, md.getRectangle().y,md.getRectangle().width,md.getRectangle().height);
 	        	}
 	        }

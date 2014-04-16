@@ -10,8 +10,8 @@ import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameRenderer;
 import com.deny.GameWorld.GameWorld;
-import com.deny.Threads.ServerClientThread;
 import com.deny.Threads.ReadThread.ScreenState;
+import com.deny.Threads.ServerClientThread;
 
 public class GameScreen implements Screen {
 	
@@ -26,8 +26,7 @@ public class GameScreen implements Screen {
 		float screenWidth = Gdx.graphics.getWidth();
 		float screenHeight = Gdx.graphics.getHeight();
 
-		
-		this.game = game;
+		this.setGame(game);
 		this.socketHandler = sH;
 		this.socketHandler.getReadThread().setCurrentState(ScreenState.PREGAME);
 		this.world = new GameWorld(game, this, socketHandler,selectedMoles, selectedPowerUps);
@@ -35,7 +34,6 @@ public class GameScreen implements Screen {
 		
 		Gdx.input.setInputProcessor(new GameInputHandler(world, screenWidth, screenHeight));
 	}
-	
 	
 	@Override
 	public void render(float delta) {
@@ -75,6 +73,16 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void dispose() {		
+	}
+
+
+	public Game getGame() {
+		return game;
+	}
+
+
+	public void setGame(Game game) {
+		this.game = game;
 	}
 	
 

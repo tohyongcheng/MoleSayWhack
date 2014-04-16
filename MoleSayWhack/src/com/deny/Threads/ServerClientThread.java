@@ -12,7 +12,6 @@ import com.badlogic.gdx.net.SocketHints;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpType;
-import com.deny.GameWorld.GameWorld.PowerUpState;
 import com.deny.Screens.MultiplayerScreen;
 import com.deny.Screens.MultiplayerScreen.MultiplayerState;
 import com.deny.Screens.PreGamePowerUpScreen;
@@ -37,7 +36,7 @@ public class ServerClientThread extends Thread {
 	
 	
 	public ServerClientThread(MultiplayerScreen ms, String IPAddress) {
-		this.setMultiS(ms);
+		this.setMultiplayerScreen(ms);
 		this.game = ms.getGame();
 		if (IPAddress.equals("")) address = "localhost";
 		else address = IPAddress;
@@ -66,9 +65,6 @@ public class ServerClientThread extends Thread {
 					return;
 				}
 				else {
-					
-//					System.out.println(address);
-//					System.out.println("I'm a server and I'm waiting for new opponents!");
 					try {
 						serverHints = new ServerSocketHints();
 						serverHints.acceptTimeout = 1000;	//set to 0 for infinite waiting
@@ -89,7 +85,7 @@ public class ServerClientThread extends Thread {
 		
 		if (client.isConnected()) {
 			System.out.println("Connected to other player!");
-			this.getMultiS().setState(MultiplayerState.CONNECTED);
+			this.getMultiplayerScreen().setState(MultiplayerState.CONNECTED);
 		}
 		
 		out = new PrintWriter(client.getOutputStream(), true);
@@ -121,14 +117,6 @@ public class ServerClientThread extends Thread {
 		if (client!=null) client.dispose();
 	}
 	
-	public void setPreGameScreen(PreGameScreen preGameScreen) {
-		setPreGameS(preGameScreen);
-	}
-	
-	public PreGameScreen getPreGameScreen() {
-		return getPreGameS();
-	}
-	
 	public void deployMole(MoleType moleType, int pos) {
 		System.out.println("[SocketHandler] deployed mole! Sending " + "[SPAWN] " + moleType.toString() + " " + pos);
 		out.write(("[SPAWN] " + moleType.toString() + " " + pos+"\n"));
@@ -153,11 +141,11 @@ public class ServerClientThread extends Thread {
 		out.flush();
 	}
 	
-//	public void toMainMenuScreen() {
-//		System.out.println("[SocketHandler] Sending to Change Screen to MainMenuScreen");
-//		out.write("[MAINMENUSCREEN] \n");
-//		out.flush();
-//	}
+	public void toMainMenuScreen() {
+		System.out.println("[SocketHandler] Sending to Change Screen to MainMenuScreen");
+		out.write("[MAINMENUSCREEN] \n");
+		out.flush();
+	}
 	
 	public void gameOver() {
 		System.out.println("[SocketHandler] Sending GameOver");
@@ -184,24 +172,30 @@ public class ServerClientThread extends Thread {
 	}
 	
 	public void sendPowerUp(PowerUpType powerUpType) {
-		System.out.println("[SocketHandler] deployed mole! Sending " + "[SPAWN] " + powerUpType.toString());
-		out.write(("[SPAWN] " + powerUpType.toString()));
+		System.out.println("[SocketHandler] PowerUp Deployed! Sending " + "[SPAWN] " + powerUpType.toString());
+		out.write(("[POWERUP] " + powerUpType.toString()));
+		out.flush();
+	}
+	
+	public void sendHPMessage(int hp) {
+		System.out.println("[SocketHandler] Opponent got hit! Sending " + "[OPPONENTHP] " + hp);
+		out.write(("[OPPONENTHP] " + hp));
 		out.flush();
 	}
 
-	public MultiplayerScreen getMultiS() {
+	public MultiplayerScreen getMultiplayerScreen() {
 		return multiS;
 	}
 
-	public void setMultiS(MultiplayerScreen multiS) {
+	public void setMultiplayerScreen(MultiplayerScreen multiS) {
 		this.multiS = multiS;
 	}
 
-	public PreGameScreen getPreGameS() {
+	public PreGameScreen getPreGameScreen() {
 		return preGameS;
 	}
 
-	public void setPreGameS(PreGameScreen preGameS) {
+	public void setPreGameScreen(PreGameScreen preGameS) {
 		this.preGameS = preGameS;
 	}
 	

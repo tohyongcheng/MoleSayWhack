@@ -7,11 +7,9 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
-import com.deny.MoleObjects.Mole;
 
 public class MainMenuScreen implements Screen {
 
@@ -30,7 +28,6 @@ public class MainMenuScreen implements Screen {
 	Rectangle scoreBounds;
 	ShapeRenderer shapeRenderer;
 	Vector3 touchPoint;
-	private SpriteBatch batcherMain;
 	
 	public MainMenuScreen(Game game) {
 		this.game = game;
@@ -52,7 +49,6 @@ public class MainMenuScreen implements Screen {
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(mainMenuCam.combined);
 		
-        batcherMain = new SpriteBatch();
         // Attach batcher to camera
         batcher.setProjectionMatrix(mainMenuCam.combined);
 		touchPoint = new Vector3();	

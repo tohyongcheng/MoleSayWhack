@@ -46,22 +46,17 @@ public abstract class Mole
 	}
 	
 	public void damage(Player player) {
-		player.damage();
+		if (!player.isInvulnerable()) {
+			player.damage();
+		}
 	}
 	
-	public void update(float delta) 
-	{
-//		if (timeExisted < MOLE_APPEARANCE_TIME && isAlive()) {
-//			timeExisted += delta;
-//		} else if (timeExisted >= MOLE_APPEARANCE_TIME && isAlive()){
-//			damage(player);
-//			isDead = true;
-//		}
+	public void update(float delta) 	{
 	}
+	
 	public TextureRegion getAsset(){
 		switch(moleType){
 		case ONETAP:
-
 			return AssetLoader.m1;
 		case THREETAP:
 			return AssetLoader.m3;
@@ -115,4 +110,5 @@ public abstract class Mole
 	public Color getColor() {
 		return moleType.getColor();
 	}
+
 }

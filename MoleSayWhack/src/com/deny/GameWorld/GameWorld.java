@@ -219,6 +219,18 @@ public class GameWorld {
     	case EXIT:
     		updateExit(delta);
     		break;
+		case HIGHSCORE:
+			break;
+		case POWERUP:
+			break;
+		case RESTART:
+    		game.setScreen(new PreGameScreen(game, socketHandler));
+    		gameScreen.dispose();
+    		break;
+		case WIN:
+			break;
+		default:
+			break;
     	}
     }
     

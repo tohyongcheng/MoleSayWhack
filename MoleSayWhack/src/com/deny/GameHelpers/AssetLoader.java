@@ -21,10 +21,12 @@ public class AssetLoader
 	//The Textures//
 
 	public static Texture texture, logoTexture, win;
-	public static Texture Main1024, Game1024, moleDep1024, lose, PS;
-	public static TextureRegion gameBG, ps, rpl, ext, rsm, psBG, borderVert, borderHor, hmr;
+	public static Texture Main1024, Game1024, moleDep1024, lose, PS, powerup, powerupDep2, powerupDep1;
+	public static TextureRegion powerless, earthquake, moleshower, silencer, molejam, kingmole, mouldy, dummymole, moleshield;
+	public static TextureRegion gameBG, ps, rpl, ext, rsm, psBG, borderVert, borderHor, hmr, titlepuDep;
 	public static TextureRegion background, strB, optB, hghB, Title, m1, m3, m5, sm,
 	enterIP, loading, cnl, mdm1, mdm3, mdm5, mdsm, titleDep, Lose, dplyOK, dplyCD, dplySEL;
+	public static TextureRegion eq, ms, ns, np, nc, sc, fog, km;
 	public static TextureRegion logo, mswlogo, startButtonUp, startButtonDown, winTextR;
 
 	public static TextureRegion bg, Hm, title, startButt, optButt, scoreButt, 
@@ -38,6 +40,70 @@ public class AssetLoader
 	
 	public static void load()
 	{
+		powerupDep1 = new Texture(Gdx.files.internal("data/powerdep1.png"));
+		powerupDep1.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+		
+		powerless = new TextureRegion(powerupDep1, 11,14, 445, 140);
+		powerless.flip(false,true);
+		
+		earthquake = new TextureRegion(powerupDep1, 12, 170, 445, 140);
+		earthquake.flip(false,true);
+		
+		moleshower = new TextureRegion(powerupDep1, 12, 330, 445, 140);
+		moleshower.flip(false,true);
+		
+		silencer = new TextureRegion(powerupDep1, 12, 490, 445, 140);
+		silencer.flip(false,true);
+		
+		molejam = new TextureRegion(powerupDep1, 12, 654, 445, 140);
+		molejam.flip(false,true);
+		
+		moleshield = new TextureRegion(powerupDep1, 12, 815, 445, 140);
+		moleshield.flip(false,true);
+		
+		titlepuDep=  new TextureRegion(powerupDep1, 512,30,230,98);
+		titlepuDep.flip(false,true);
+		
+		powerupDep2 = new Texture(Gdx.files.internal("data/powerdep2.png"));
+		powerupDep2.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+		
+		kingmole = new TextureRegion(powerupDep2, 11, 15, 445, 140);
+		kingmole.flip(false,true);
+		
+		mouldy = new TextureRegion(powerupDep2, 10,173,445,140);
+		mouldy.flip(false, true);
+		
+		dummymole = new TextureRegion(powerupDep2, 11,335, 445, 140);
+		dummymole.flip(false,true);
+		
+		powerup = new Texture(Gdx.files.internal("data/Powerup.png"));
+		powerup.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+		
+		eq = new TextureRegion(powerup, 10, 8, 147, 76);
+		eq.flip(false,true);
+		
+		ms = new TextureRegion(powerup, 10, 575, 147, 76);
+		ms.flip(false, true);
+		
+		nc = new TextureRegion(powerup,10, 190, 147, 76);
+		nc.flip(false,true);
+		
+		np = new TextureRegion(powerup, 10,107, 147, 76);
+		np.flip(false,true);
+		
+		ns = new TextureRegion(powerup, 10,287, 147, 76);
+		ns.flip(false,true);
+		
+		fog = new TextureRegion (powerup, 10,479, 147, 76);
+		fog.flip(false,true);
+		
+		km = new TextureRegion(powerup, 12, 671, 147, 76);
+		km.flip(false,true);
+		
+		sc = new TextureRegion(powerup, 11, 383, 147, 76);
+		sc.flip(false, true);
+		
+		
 		PS = new Texture(Gdx.files.internal("data/pause.png"));
 		PS.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 		

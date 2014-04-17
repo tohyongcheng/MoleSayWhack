@@ -21,8 +21,10 @@ import com.deny.Threads.ServerClientThread;
 
 public class PreGamePowerUpScreen implements Screen {
 	private static final int NO_OF_DEPLOYERS = 3;
-	private static final int GAME_WIDTH = 272;
-	private static final int GAME_HEIGHT = 408;
+	private static final int GAME_WIDTH = Gdx.graphics.getWidth();
+	private static final int GAME_HEIGHT = Gdx.graphics.getHeight();
+	public double scaleW = (double)GAME_WIDTH/544;
+	public double scaleH = (double) GAME_HEIGHT/816;
 
 	public enum PreGameState {
 		READY, COUNTING, GO, QUIT;
@@ -63,7 +65,7 @@ public class PreGamePowerUpScreen implements Screen {
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(mainMenuCam.combined);
 		touchPoint = new Vector3();
-		backBounds = new Rectangle(0,386,32,32);
+		backBounds = new Rectangle(3,(int)(GAME_HEIGHT-9-82*scaleH),(int)(83*scaleW), (int)(82*scaleH));
 
 		
 		selectedPowerUps = new ArrayList<PowerUpType>();
@@ -71,8 +73,7 @@ public class PreGamePowerUpScreen implements Screen {
 
 		for (int i=0; i <NO_OF_DEPLOYERS; i++) {
 			selectedPowerUps.add(PowerUpType.EARTHQUAKE);
-			selectedPowerUpsRectangles.add(new Rectangle( 45f+i*30*2, 40f*2, 30f*2,30f*2));
-	
+			selectedPowerUpsRectangles.add(new Rectangle( (int)(GAME_WIDTH/2 - 474*scaleW/2),(int)(GAME_HEIGHT/4.5 +(i*(178*scaleH+7)-5)) , (int)(474*scaleW),(int)(178*scaleH )));
 		}		
 		
 	}
@@ -86,7 +87,8 @@ public class PreGamePowerUpScreen implements Screen {
         
         batcher.begin();
         batcher.enableBlending();
-        batcher.draw(AssetLoader.bg, 0, 0, 272, 408);
+        batcher.draw(AssetLoader.background, 0, 0, GAME_WIDTH, GAME_HEIGHT);
+        batcher.draw(AssetLoader.titlepuDep, (int)(GAME_WIDTH/2 - (230*scaleW)/2), (int)(GAME_HEIGHT/13), (int)(230*scaleW) , (int)(98*scaleH));
         
 //        for (int i = 0; i< NO_OF_DEPLOYERS; i++) {
 //    	   PowerupType powerupType = selectedPowerUps.get(i);
@@ -95,19 +97,22 @@ public class PreGamePowerUpScreen implements Screen {
 //    	}     
         
         font.draw(batcher, String.valueOf((int)countDownTime), 68*2, 20*2);
-        batcher.draw(AssetLoader.cancel, backBounds.x, backBounds.y,
+        batcher.draw(AssetLoader.cnl, backBounds.x, backBounds.y,
         		backBounds.width, backBounds.height);
         batcher.end();
         
         
         //Draw the PowerupDeployers
         shapeRenderer.begin(ShapeType.Filled);
+        batcher.begin();
+        batcher.enableBlending();
         for (int i = 0; i< NO_OF_DEPLOYERS; i++) {
         	PowerUpType powerUpType = selectedPowerUps.get(i);
+        	
         	Rectangle r = selectedPowerUpsRectangles.get(i);
-    		shapeRenderer.setColor(powerUpType.getColor());
-            shapeRenderer.rect(r.x,r.y,r.width,r.height);
+        	batcher.draw(powerUpType.getAsset(),r.x, r.y, r.width, r.height);
     	}
+        batcher.end();
         shapeRenderer.end();
 		
 	}
@@ -132,6 +137,7 @@ public class PreGamePowerUpScreen implements Screen {
 				mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
+					AssetLoader.back.play();
 					currentState = PreGameState.QUIT;
 				}
 				

@@ -1,6 +1,8 @@
 package com.deny.GameObjects;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.deny.GameHelpers.AssetLoader;
 
 public enum PowerUpType {
 	//POWERUPS
@@ -27,6 +29,42 @@ public enum PowerUpType {
 		return values()[(ordinal()+1) % values().length];
 	}
 	
+	public TextureRegion getAsset(){
+		switch(this){
+		case BLOCKGRID:
+			return AssetLoader.molejam;
+		
+		case DISABLEALLPOWERUPS:
+			return AssetLoader.powerless;
+		
+		case DISABLEONEMOLEDEPLOYER:
+			return AssetLoader.silencer;
+		
+		case DUMMY:
+			return AssetLoader.dummymole;
+			
+		case EARTHQUAKE:
+			return AssetLoader.earthquake;
+			
+		case FOG:
+			return AssetLoader.mouldy;
+			
+		case INVULNERABILITY:
+			return AssetLoader.moleshield;
+		
+		case MOLEKING:
+			return AssetLoader.kingmole;
+		
+		case MOLESHOWER:
+			return AssetLoader.moleshower;
+		
+		default:
+			return AssetLoader.molejam;
+		
+		
+		}
+			
+	}
 	
 	
 	public Color getColor() {

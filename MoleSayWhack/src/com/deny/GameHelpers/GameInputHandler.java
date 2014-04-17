@@ -53,6 +53,7 @@ public class GameInputHandler implements InputProcessor {
 		if (currentState == GameState.DEPLOYMENT) {
 			for (int i=0; i<placeHolders.size(); i++) { 
 				if (placeHolders.get(i).contains(screenX, screenY)) {
+					
 					AssetLoader.sent.play();
 					myWorld.getCurrentMoleDeployer().deployMole(i);
 					myWorld.setCurrentMoleDeployer(null);
@@ -88,9 +89,10 @@ public class GameInputHandler implements InputProcessor {
 			
 			for (MoleDeployer md: myWorld.getMoleDeployers()) {
 				if (md!= null) {
+					md.setSelected(false);
 					if (md.isTouchDown(screenX,screenY)) {
-						md.triggerSelected();
 						if (md.isAvailable() && !md.isDisabled()) {
+							md.setSelected(true);
 							AssetLoader.slctd.play();
 							myWorld.setGameState(GameState.DEPLOYMENT);
 							myWorld.setCurrentMoleDeployer(md);
@@ -101,6 +103,7 @@ public class GameInputHandler implements InputProcessor {
 			
 			for (PowerUpDeployer pd: myWorld.getPowerUpDeployers()) {
 				if (pd!= null) {
+
 					if (pd.isTouchDown(screenX,screenY) && pd.isAvailable()) {
 						pd.deploy();
 					}

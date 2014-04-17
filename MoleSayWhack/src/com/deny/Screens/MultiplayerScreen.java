@@ -251,8 +251,8 @@ public class MultiplayerScreen implements Screen {
         batcher.draw(AssetLoader.cnl, backBounds.x, backBounds.y,
 
         		backBounds.width, backBounds.height);
-
-        font.draw(batcher, myAddress.toString(), 0, 20);
+       
+        AssetLoader.font.draw(batcher, myAddress.toString(), 20, 20);
        
 	    batcher.end();
 	}

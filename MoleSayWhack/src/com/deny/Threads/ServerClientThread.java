@@ -173,13 +173,13 @@ public class ServerClientThread extends Thread {
 	
 	public void sendPowerUp(PowerUpType powerUpType) {
 		System.out.println("[SocketHandler] PowerUp Deployed! Sending " + "[SPAWN] " + powerUpType.toString());
-		out.write(("[POWERUP] " + powerUpType.toString()));
+		out.write(("[POWERUP] " + powerUpType.toString()+"\n"));
 		out.flush();
 	}
 	
 	public void sendHPMessage(int hp) {
 		System.out.println("[SocketHandler] Opponent got hit! Sending " + "[OPPONENTHP] " + hp);
-		out.write(("[OPPONENTHP] " + hp));
+		out.write(("[OPPONENTHP] " + hp+"\n"));
 		out.flush();
 	}
 

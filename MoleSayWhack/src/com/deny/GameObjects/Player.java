@@ -15,6 +15,9 @@ public class Player {
 		this.isDead = false;
 	}
 	
+	public int getHP(){
+		return HP;
+	}
 	public void damage() {
 		if (isAlive()) {
 			HP -= 1;

@@ -1,7 +1,10 @@
 package com.deny.GameObjects;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameWorld.GameWorld;
+import com.deny.PowerUpObjects.PowerUp;
 import com.deny.Threads.ServerClientThread;
 //Deploys powerups
 //initialized at the beginning of the game
@@ -15,6 +18,7 @@ public class PowerUpDeployer {
 	private Rectangle boundingRectangle;
 	private boolean isAvailable;
 	private boolean disabled;
+
 	
 	private ServerClientThread socketHandler;
 	
@@ -25,6 +29,8 @@ public class PowerUpDeployer {
 		this.coolDown = powerupType.getCoolDown();
 		boundingRectangle = new Rectangle();
 		timeDeployed = 0;
+		isAvailable = true;
+		disabled = false;
 	}
 	
 	
@@ -39,6 +45,7 @@ public class PowerUpDeployer {
 		}
 	}
 	
+
 	public boolean isAvailable() {
 		return isAvailable;
 	}
@@ -46,7 +53,41 @@ public class PowerUpDeployer {
 	public PowerUpType getPowerupType(){
 		return powerupType;
 	}
+	public TextureRegion getAsset(){
+		switch (powerupType){
+		case BLOCKGRID:
+			return AssetLoader.ns;
+		
+		case DISABLEALLPOWERUPS:
+			return AssetLoader.np;
+			
+		case DISABLEONEMOLEDEPLOYER:
+			return AssetLoader.nc;
+			
+		case DUMMY:
+			return AssetLoader.sc;
+			
+		case EARTHQUAKE:
+			return AssetLoader.eq;
+			
+		case FOG:
+			return AssetLoader.fog;
+			
+		case INVULNERABILITY:
 	
+			return AssetLoader.inv;
+		
+		case MOLEKING:
+			return AssetLoader.km;
+			
+		case MOLESHOWER:
+			return AssetLoader.ms;
+			
+		default:
+			return AssetLoader.eq;
+		
+		}
+	}
 	public void deploy(){
 		//send message or change gameworld variables
 		isAvailable = false;

@@ -96,7 +96,7 @@ public class PreGamePowerUpScreen implements Screen {
 //    	   batcher.draw(powerupType.getAsset(),r.x, r.y, r.width, r.height);
 //    	}     
         
-        font.draw(batcher, String.valueOf((int)countDownTime), 68*2, 20*2);
+        AssetLoader.font.draw(batcher, String.valueOf((int)countDownTime), GAME_WIDTH/2 - 8, 15);
         batcher.draw(AssetLoader.cnl, backBounds.x, backBounds.y,
         		backBounds.width, backBounds.height);
         batcher.end();

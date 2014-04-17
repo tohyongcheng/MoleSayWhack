@@ -47,6 +47,7 @@ public class GameWorld {
 	private final static int NUMBER_OF_MOLE_DEPLOYERS = 3;
 	private final static int NUMBER_OF_POWERUP_DEPLOYERS = 3;
 	private static final float DELAY_BETWEEN_MOLE_APPEARANCE = 1f;
+	private static final int STARTING_HP_FOR_PLAYER = 5;
 	
 	private Game game;
 	private GameScreen gameScreen;
@@ -106,7 +107,8 @@ public class GameWorld {
 		this.socketHandler = sH;
 		this.readThread = socketHandler.getReadThread();
 		this.readThread.setGameWorld(this);
-		this.player = new Player(5,this);
+		this.player = new Player(STARTING_HP_FOR_PLAYER,this);
+		this.opponentHP = STARTING_HP_FOR_PLAYER;
 		this.selectedMoles = selectedMoles;
 		this.selectedPowerUps = selectedPowerUps;
 		
@@ -146,14 +148,14 @@ public class GameWorld {
 		for (int i =0; i<NUMBER_OF_MOLE_DEPLOYERS;i++) {
 			//change here
 			moleDeployers[i] = new MoleDeployer(this, selectedMoles.get(i));
-			moleDeployers[i].getRectangle().set((int)(GAME_WIDTH/2-(340*scaleW/2)+(i*120*scaleW)),(int)(560*scaleH),(int)(100*scaleW),(int)(100*scaleH));
+			moleDeployers[i].getRectangle().set((int)(GAME_WIDTH/2-(340*scaleW/2)+(i*120*scaleW)),(int)(565*scaleH),(int)(100*scaleW),(int)(100*scaleH));
 		}
 		
 		//Setup Powerup Deployers
 		powerUpDeployers = new PowerUpDeployer[NUMBER_OF_POWERUP_DEPLOYERS];
 		for (int i =0; i<NUMBER_OF_POWERUP_DEPLOYERS;i++) {
 			powerUpDeployers[i] = new PowerUpDeployer(this, selectedPowerUps.get(i));
-			powerUpDeployers[i].getRectangle().set((float)(i*136/3.0), 166f, 45.33f, 20f);
+			powerUpDeployers[i].getRectangle().set((int)(GAME_WIDTH/2-(475*scaleW/2)+(i*165*scaleW)),(int)(670*scaleH),(int)(145*scaleW),(int)(75*scaleH));
 		}
 		
 		//setup board and overlay
@@ -195,7 +197,7 @@ public class GameWorld {
 		
 	}
 
-
+	
     public void update(float delta) {    	
     	switch(gameState) {
     	case READY:
@@ -223,10 +225,6 @@ public class GameWorld {
 			break;
 		case POWERUP:
 			break;
-		case RESTART:
-    		game.setScreen(new PreGameScreen(game, socketHandler));
-    		gameScreen.dispose();
-    		break;
 		case WIN:
 			break;
 		default:
@@ -278,6 +276,15 @@ public class GameWorld {
         for (int i =0; i<NUMBER_OF_MOLE_DEPLOYERS;i++) {
 			moleDeployers[i].update(delta);
 		}
+        
+        BlockMoleGrid.update(delta);
+		DisableAllPowerUps.update(delta);
+		DisableOneMoleDeployer.update(delta);
+		EnableFog.update(delta);
+		GenerateDummyMoles.update(delta);
+		Invulnerability.update(delta);
+		SpawnMoleKing.update(delta);
+		MoleShower.update(delta);
     }
 	
 	public void updateRestart() {

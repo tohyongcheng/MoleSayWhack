@@ -51,6 +51,43 @@ public class GameRenderer {
 
         batcher.draw(AssetLoader.gameBG, 0, 0, (int)(544*scaleW), (int)(816*scaleH));
         
+        // DRAW opponent hp
+       switch(world.getOpponentHP()){
+       case 1:
+    	   batcher.draw(AssetLoader.op1, (int)(10*scaleW), (int)(10*scaleH), (int)(30*scaleW), (int)(25*scaleH));
+    	   break;
+       case 2:
+    	   batcher.draw(AssetLoader.op2, (int)(10*scaleW), (int)(10*scaleH), (int)(47*scaleW), (int)(25*scaleH));
+    	   break;
+       case 3:
+    	   batcher.draw(AssetLoader.op3, (int)(10*scaleW), (int)(10*scaleH), (int)(72*scaleW), (int)(25*scaleH));
+    	   break;
+       case 4:
+    	   batcher.draw(AssetLoader.op4, (int)(10*scaleW), (int)(10*scaleH), (int)(98*scaleW), (int)(25*scaleH));
+    	   break;
+       case 5:
+    	   batcher.draw(AssetLoader.op5, (int)(10*scaleW), (int)(10*scaleH), (int)(112*scaleW), (int)(25*scaleH));
+    	   break;
+       }
+       //DRAW MYHP
+       switch(world.getPlayer().getHP()){
+       case 1:
+    	   batcher.draw(AssetLoader.mh1, (int)((544-123)*scaleW), (int)(10*scaleH), (int)(113*scaleW), (int)(20*scaleH));
+    	   break;
+       case 2:
+    	   batcher.draw(AssetLoader.mh2, (int)((544-123)*scaleW), (int)(10*scaleH), (int)(113*scaleW), (int)(20*scaleH));
+    	   break;
+       case 3:
+    	   batcher.draw(AssetLoader.mh3, (int)((544-123)*scaleW), (int)(10*scaleH), (int)(113*scaleW), (int)(20*scaleH));
+    	   break;
+       case 4:
+    	   batcher.draw(AssetLoader.mh4, (int)((544-123)*scaleW), (int)(10*scaleH), (int)(113*scaleW), (int)(20*scaleH));
+    	   break;
+       case 5:
+    	   batcher.draw(AssetLoader.mh5, (int)((544-123)*scaleW), (int)(10*scaleH), (int)(113*scaleW), (int)(20*scaleH));
+    	   break;
+
+       }
         // Draw MOLES
         for(Mole m : world.getMoleGrid()) {
         	if (m!= null) {
@@ -67,7 +104,21 @@ public class GameRenderer {
         		
         	}
         }
-
+        
+        //Draw POWERUPDEPLOYER
+        for (PowerUpDeployer pd: world.getPowerUpDeployers()) {
+        	if (pd!=null) {
+        		//shapeRenderer.setColor(pd.getPowerupType().getColor());
+        		Rectangle r = pd.getRectangle();
+        		if (pd.isAvailable()){
+        		batcher.draw(pd.getAsset(), r.x, r.y, r.width, r.height);}
+        		else{
+        			//cooldown
+        			batcher.draw(pd.getAsset(), r.x, r.y, r.width, r.height);
+        			batcher.draw(AssetLoader.cdown, r.x, r.y, r.width, r.height);
+        		}
+        	}
+        }
         
         batcher.end();
        
@@ -106,15 +157,7 @@ public class GameRenderer {
 	        	
 	        }
 
-        //Render PowerUps
-        shapeRenderer.begin(ShapeType.Filled);
-        for (PowerUpDeployer pd: world.getPowerUpDeployers()) {
-        	if (pd!=null) {
-        		shapeRenderer.setColor(pd.getPowerupType().getColor());
-        		shapeRenderer.rect(pd.getRectangle().x, pd.getRectangle().y,pd.getRectangle().width,pd.getRectangle().height);
-        	}
-        }
-        shapeRenderer.end();
+
 
         }
        

@@ -14,21 +14,23 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class AssetLoader 
 {
 	//The Textures//
-
+	public static BitmapFont font;
 	public static Texture texture, logoTexture, win;
 	public static Texture Main1024, Game1024, moleDep1024, lose, PS, powerup, powerupDep2, powerupDep1;
 	public static TextureRegion powerless, earthquake, moleshower, silencer, molejam, kingmole, mouldy, dummymole, moleshield;
 	public static TextureRegion gameBG, ps, rpl, ext, rsm, psBG, borderVert, borderHor, hmr, titlepuDep;
 	public static TextureRegion background, strB, optB, hghB, Title, m1, m3, m5, sm,
 	enterIP, loading, cnl, mdm1, mdm3, mdm5, mdsm, titleDep, Lose, dplyOK, dplyCD, dplySEL;
-	public static TextureRegion eq, ms, ns, np, nc, sc, fog, km;
+	public static TextureRegion eq, ms, ns, np, nc, sc, fog, km, inv, cdown;
 	public static TextureRegion logo, mswlogo, startButtonUp, startButtonDown, winTextR;
-
+	
+	public static TextureRegion mh1, mh2, mh3, mh4, mh5, op1, op2, op3, op4, op5;
 	public static TextureRegion bg, Hm, title, startButt, optButt, scoreButt, 
 		mole1, mole3, mole5, moleSabo, pause, play, cancel, replay, ipButt;
 	
@@ -40,6 +42,9 @@ public class AssetLoader
 	
 	public static void load()
 	{
+		font = new BitmapFont(Gdx.files.internal("data/font.fnt"));
+		font.setScale(1f, -1f);
+		
 		powerupDep1 = new Texture(Gdx.files.internal("data/powerdep1.png"));
 		powerupDep1.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 		
@@ -103,7 +108,41 @@ public class AssetLoader
 		sc = new TextureRegion(powerup, 11, 383, 147, 76);
 		sc.flip(false, true);
 		
+		inv = new TextureRegion(powerup, 167,108, 147, 76);
+		inv.flip(false,true);
 		
+		mh1 = new TextureRegion(powerup, 23,882, 113,20);
+		mh1.flip(false,true);
+		
+		mh2 = new TextureRegion(powerup, 23, 850, 113, 20);
+		mh2.flip(false, true);
+		
+		mh3 = new TextureRegion(powerup, 23, 821, 113, 20);
+		mh3.flip(false,true);
+		
+		mh4 = new TextureRegion(powerup, 23, 794, 113, 20);
+		mh4.flip(false,true);
+		
+		mh5 = new TextureRegion(powerup, 23, 762, 113, 20);
+		mh5.flip(false,true);
+		
+		op1 = new TextureRegion(powerup, 279,906, 30, 25);
+		op1. flip(false,true);
+		
+		op2 = new TextureRegion(powerup, 259, 875, 47, 25);
+		op2.flip(false,true);
+		
+		op3 = new TextureRegion(powerup, 237, 837, 72, 25);
+		op3.flip(false,true);
+		
+		op4 = new TextureRegion(powerup, 214, 801, 98, 25);
+		op4.flip(false,true);
+		
+		op5 = new TextureRegion(powerup, 195, 761, 112, 25);
+		op5.flip(false,true);
+		
+		cdown = new TextureRegion(powerup, 168, 12, 146, 75);
+		cdown.flip(false,true);
 		PS = new Texture(Gdx.files.internal("data/pause.png"));
 		PS.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 		

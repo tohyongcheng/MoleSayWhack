@@ -57,35 +57,24 @@ public class PowerUpDeployer {
 		switch (powerupType){
 		case BLOCKGRID:
 			return AssetLoader.ns;
-		
 		case DISABLEALLPOWERUPS:
 			return AssetLoader.np;
-			
 		case DISABLEONEMOLEDEPLOYER:
 			return AssetLoader.nc;
-			
 		case DUMMY:
 			return AssetLoader.sc;
-			
 		case EARTHQUAKE:
 			return AssetLoader.eq;
-			
 		case FOG:
 			return AssetLoader.fog;
-			
 		case INVULNERABILITY:
-	
 			return AssetLoader.inv;
-		
 		case MOLEKING:
 			return AssetLoader.km;
-			
 		case MOLESHOWER:
 			return AssetLoader.ms;
-			
 		default:
 			return AssetLoader.eq;
-		
 		}
 	}
 	public void deploy(){

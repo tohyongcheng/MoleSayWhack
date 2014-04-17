@@ -20,9 +20,11 @@ public class Player {
 	}
 	public void damage() {
 		if (isAlive()) {
-			HP -= 1;
-			gameWorld.getSocketHandler().sendHPMessage(HP);
-			System.out.println("player hp -1! Current player HP is "+ HP);
+			if (!isInvulnerable()) {
+				HP -= 1;
+				gameWorld.getSocketHandler().sendHPMessage(HP);
+				System.out.println("player hp -1! Current player HP is "+ HP);
+			}
 			if (HP==0) {
 				System.out.println("Player is dead!");
 				isDead = true;
@@ -48,6 +50,7 @@ public class Player {
 	
 	public void setInvulnerability(boolean b) {
 		isInvulnerable = b;
+		System.out.println("Player's invulnerability is now " + b);
 	}
 
 }

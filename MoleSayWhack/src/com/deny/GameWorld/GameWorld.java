@@ -1,9 +1,9 @@
 package com.deny.GameWorld;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -43,7 +43,7 @@ public class GameWorld {
 	private double scaleH = (double) GAME_HEIGHT/816;
 	
 	//STATIC FINAL VARIABLES
-	private final static int NUMBER_OF_MOLES_PER_GRID = 9;
+	private final static int NUMBER_OF_GRIDS = 9;
 	private final static int NUMBER_OF_MOLE_DEPLOYERS = 3;
 	private final static int NUMBER_OF_POWERUP_DEPLOYERS = 3;
 	private static final float DELAY_BETWEEN_MOLE_APPEARANCE = 1f;
@@ -60,7 +60,7 @@ public class GameWorld {
 	private ReadThread readThread;
 	private Mole[] moleGrid;
 	private Mole[] moleDeck;
-	private Queue<Mole>[] moleQueues;
+	private LinkedBlockingQueue<Mole>[] moleQueues;
 	private Rectangle board;
 	private ArrayList<Rectangle> placeHolders;
 	private ServerClientThread socketHandler;
@@ -86,20 +86,31 @@ public class GameWorld {
 	private boolean hasFog;
 	private boolean[] blockedGrids;
 	
-
 	//Generate random spawns
 	private float runningTime;
 	private Random r;
 	
-	
+	//LOCKS
+	private Object gameStateLock;
+	private Object fogLock;
+	private Object[] moleGridsLock;
 	
 	public enum GameState {
-		READY, RUNNING, DEPLOYMENT, WIN, LOSE, HIGHSCORE, PAUSE, MENU, EXIT, RESTART, POWERUP;
+		READY, RUNNING, DEPLOYMENT, WIN, LOSE, PAUSE, MENU, EXIT, RESTART;
 	}
 
 
 	@SuppressWarnings("unchecked")
 	public GameWorld(Game game, GameScreen gameScreen, ServerClientThread sH, ArrayList<MoleType> selectedMoles, ArrayList<PowerUpType> selectedPowerUps) {
+		
+		//Initialize Locks
+		gameStateLock = new Object();
+		fogLock = new Object();
+		moleGridsLock = new Object[NUMBER_OF_GRIDS];
+		for (int i=0; i<NUMBER_OF_GRIDS;i++) {
+			moleGridsLock[i] = new Object();
+		}
+		
 		this.game = game;
 		this.gameScreen = gameScreen;
 		
@@ -113,13 +124,13 @@ public class GameWorld {
 		this.selectedPowerUps = selectedPowerUps;
 		
 		//Setup GameState, Grid and Delays.
-		gameState = GameState.READY;
-		moleGrid = new Mole[NUMBER_OF_MOLES_PER_GRID];
-		moleDeck = new Mole[NUMBER_OF_MOLE_DEPLOYERS];
-		moleQueues = (Queue<Mole>[]) new LinkedList<?>[NUMBER_OF_MOLES_PER_GRID];
-		moleDelay = new float[NUMBER_OF_MOLES_PER_GRID];
-		for(int i=0; i<NUMBER_OF_MOLES_PER_GRID; i++ ) {
-			moleQueues[i] = new LinkedList<Mole>();
+		setGameState(GameState.READY);
+		moleGrid = new Mole[NUMBER_OF_GRIDS];
+		moleQueues = (LinkedBlockingQueue<Mole>[]) new LinkedBlockingQueue<?>[NUMBER_OF_GRIDS];
+		
+		moleDelay = new float[NUMBER_OF_GRIDS];
+		for(int i=0; i<NUMBER_OF_GRIDS; i++ ) {
+			moleQueues[i] = new LinkedBlockingQueue<Mole>();
 			moleDelay[i] = 1f;
 		}
 		
@@ -137,8 +148,8 @@ public class GameWorld {
 		
 		//Setup PowerUp Boolean Variables
 		hasFog = false;
-		blockedGrids = new boolean[NUMBER_OF_MOLES_PER_GRID];
-		for (int i =0; i<NUMBER_OF_MOLES_PER_GRID;i++) {
+		blockedGrids = new boolean[NUMBER_OF_GRIDS];
+		for (int i =0; i<NUMBER_OF_GRIDS;i++) {
 			blockedGrids[i] = false;
 		}
 
@@ -187,7 +198,6 @@ public class GameWorld {
 		continueButton = new Rectangle(GAME_WIDTH/2-(int)(82*scaleW/2), GAME_HEIGHT/2, (int)(83*scaleW), (int)(82*scaleH));
 		playAgainBounds = new Rectangle(GAME_WIDTH/2-(int)(82*scaleW/2), GAME_HEIGHT/2, (int)(83*scaleW), (int)(82*scaleH));
 		exitBounds = new Rectangle(GAME_WIDTH/2-(int)(82*scaleW/2), GAME_HEIGHT/2 + (int)(115*scaleH), (int)(83*scaleW), (int)(82*scaleH));
-
 		
 		//setup random for random spawning
 		this.r = new Random();
@@ -199,9 +209,9 @@ public class GameWorld {
 
 	
     public void update(float delta) {    	
-    	switch(gameState) {
+    	switch(getGameState()) {
     	case READY:
-    		gameState = GameState.RUNNING;
+    		setGameState(GameState.RUNNING);
     		break;
     	case LOSE:
     		break;
@@ -221,10 +231,6 @@ public class GameWorld {
     	case EXIT:
     		updateExit(delta);
     		break;
-		case HIGHSCORE:
-			break;
-		case POWERUP:
-			break;
 		case WIN:
 			break;
 		default:
@@ -237,17 +243,26 @@ public class GameWorld {
 		socketHandler = null;
 		game.setScreen(new MainMenuScreen(game));
 		gameScreen.dispose();
+		BlockMoleGrid.unload();
+		DisableAllPowerUps.unload();
+		DisableOneMoleDeployer.unload();
+		Earthquake.unload();
+		EnableFog.unload();
+		GenerateDummyMoles.unload();
+		Invulnerability.unload();
+		SpawnMoleKing.unload();
+		MoleShower.unload();
 	}
 
 	public void updateRunning(float delta) {
     	if (player.isDead()) {
-    		gameState = GameState.LOSE;
+    		setGameState(GameState.LOSE);
     		System.out.println("GameState changed to LOSE");
     		socketHandler.gameOver();
     		AssetLoader.gameover.play();
     	}
     	
-    	for (int i=0; i<NUMBER_OF_MOLES_PER_GRID; i++) {
+    	for (int i=0; i<NUMBER_OF_GRIDS; i++) {
         	if ((moleGrid[i] == null)) {
         		if (moleQueues[i].peek() != null && moleDelay[i] > DELAY_BETWEEN_MOLE_APPEARANCE ) {
         			moleGrid[i] = moleQueues[i].remove();
@@ -259,7 +274,7 @@ public class GameWorld {
         	}
         }
         
-        for (int i=0; i<NUMBER_OF_MOLES_PER_GRID; i++) {
+        for (int i=0; i<NUMBER_OF_GRIDS; i++) {
         	if (moleGrid[i] != null) {
         		moleGrid[i].update(delta);
 
@@ -275,6 +290,10 @@ public class GameWorld {
         
         for (int i =0; i<NUMBER_OF_MOLE_DEPLOYERS;i++) {
 			moleDeployers[i].update(delta);
+		}
+        
+        for (int i =0; i<NUMBER_OF_POWERUP_DEPLOYERS;i++) {
+			powerUpDeployers[i].update(delta);
 		}
         
         BlockMoleGrid.update(delta);
@@ -293,57 +312,28 @@ public class GameWorld {
 	}
     
     public void spawnMole(MoleType moleType, int pos) {
-    	if (moleGrid[pos] == null) {
-    		switch(moleType) {
-    		case ONETAP:
-    			AssetLoader.popup.play();
-    			moleGrid[pos] = new OneHitMole(player);
-				break;
-    		case THREETAP:
-    			AssetLoader.popup.play();
-    			moleGrid[pos] = new ThreeHitMole(player);
-				break;
-			case FIVETAP:
-				AssetLoader.popup.play();
-				moleGrid[pos] = new FiveHitMole(player);
-				break;
-			case SABOTAGE:
-				AssetLoader.popup.play();
-				moleGrid[pos] = new SabotageMole(player);
-				break;
-			case MOLEKING:
-				moleGrid[pos] = new MoleKing(player);
-				break;
-			case DUMMY: 
-				moleGrid[pos] = new DummyMole(player);
-				break;
-			default:
-				break;
-    		}
-    	} else {
-    		switch(moleType) {
-    		case ONETAP:
-    			moleQueues[pos].add(new OneHitMole(player));
-				break;
-    		case THREETAP:
-    			moleQueues[pos].add(new ThreeHitMole(player));
-				break;
-			case FIVETAP:
-				moleQueues[pos].add(new FiveHitMole(player));
-				break;
-			case SABOTAGE:
-				moleQueues[pos].add(new SabotageMole(player));
-				break;
-			case MOLEKING:
-				moleQueues[pos].add(new MoleKing(player));
-				break;
-			case DUMMY:
-				moleQueues[pos].add(new DummyMole(player));
-				break;
-			default:
-				break;
-    		}
-    	}
+		switch(moleType) {
+		case ONETAP:
+			moleQueues[pos].add(new OneHitMole(player));
+			break;
+		case THREETAP:
+			moleQueues[pos].add(new ThreeHitMole(player));
+			break;
+		case FIVETAP:
+			moleQueues[pos].add(new FiveHitMole(player));
+			break;
+		case SABOTAGE:
+			moleQueues[pos].add(new SabotageMole(player));
+			break;
+		case MOLEKING:
+			moleQueues[pos].add(new MoleKing(player));
+			break;
+		case DUMMY:
+			moleQueues[pos].add(new DummyMole(player));
+			break;
+		default:
+			break;
+		}
     }
     
     public Rectangle getBoard() {
@@ -351,7 +341,7 @@ public class GameWorld {
     }
     
 	public static int getNumberOfMolesPerGrid() {
-		return NUMBER_OF_MOLES_PER_GRID;
+		return NUMBER_OF_GRIDS;
 	}
 
 	public static int getNumberOfMoleDeployers() {
@@ -360,10 +350,6 @@ public class GameWorld {
 	
 	public static int getNumberOfPowerUpDeployers() {
 		return NUMBER_OF_POWERUP_DEPLOYERS;
-	}
-
-	public GameState getGameState() {
-		return gameState;
 	}
 
 	public Player getPlayer() {
@@ -404,9 +390,16 @@ public class GameWorld {
 		return moleDeployers;
 	}
 
-	public void setGameState(GameState gameState) {
-		System.out.println("GameState changed to " + gameState.toString());
-		this.gameState = gameState;
+	public void setGameState(final GameState gs) {
+		synchronized(gameStateLock) {
+			gameState = gs;
+		}
+	}
+	
+	public GameState getGameState() {
+		synchronized(gameStateLock) {
+			return gameState;
+		}
 	}
 
 	public void setCurrentMoleDeployer(MoleDeployer md) {
@@ -446,7 +439,7 @@ public class GameWorld {
 
 	public void pauseGame() {
 		socketHandler.pauseGame();
-		gameState = GameState.MENU;
+		setGameState(GameState.MENU);
 	}
 
 	public Rectangle getContinueButton() {
@@ -492,6 +485,12 @@ public class GameWorld {
 		case MOLESHOWER:
 			MoleShower.invoke();
 			break;
+		case EARTHQUAKE:
+			Earthquake.invoke();
+			break;
+		case INVULNERABILITY:
+			Invulnerability.invoke();
+			break;
 		default:
 			break;
 		}
@@ -503,6 +502,10 @@ public class GameWorld {
 
 	public void setFog(boolean b) {
 		this.hasFog = true;
+	}
+	
+	public boolean getFog() {
+		return hasFog;
 	}
 
 	public void setOpponentHP(int hp) {

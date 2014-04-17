@@ -44,12 +44,10 @@ public class ReadThread  extends Thread{
 	
 	public void run() {
 		System.out.println("ReadThread running");
-		
 		while(true) {
 			if (isInterrupted()) {
 				return;
 			}
-			
 			try {
 				String message = in.readLine();
 				System.out.println("Received Message: " + message);
@@ -111,22 +109,8 @@ public class ReadThread  extends Thread{
 				//e.printStackTrace();
 				System.out.println("Socket Closed");
 			} catch(NullPointerException e) {
-				//IF CLIENT DISCONNECTS, EXIT BACK TO MAIN MENU
 				
-				new Thread(new Runnable() {
-					   @Override
-					   public void run() {
-						  
-					      Gdx.app.postRunnable(new Runnable() {
-					         @Override
-					         public void run() {
-					        	 game.setScreen(new DisconnectScreen(game));
-					         }
-					      });
-					   }
-					}).start();
-				
-				socketHandler.dispose();
+				goToDisconnectedScreen();
 				return;
 			}
 		}
@@ -146,5 +130,22 @@ public class ReadThread  extends Thread{
 
 	public void setGameWorld(GameWorld gameWorld) {
 		this.gameWorld = gameWorld;
+	}
+	
+	public void goToDisconnectedScreen() {
+		new Thread(new Runnable() {
+			   @Override
+			   public void run() {
+				  
+			      Gdx.app.postRunnable(new Runnable() {
+			         @Override
+			         public void run() {
+			        	 game.setScreen(new DisconnectScreen(game));
+			         }
+			      });
+			   }
+			}).start();
+		
+		socketHandler.dispose();
 	}
 }

@@ -23,5 +23,11 @@ public abstract class PowerUp {
 		return inEffect;
 	}
 	
-	
+	public static void unload() {
+		inEffect = false;
+		runningTime = 0;
+		powerUpType = null;
+		effectDuration = 0;
+		gameWorld = null;
+	}
 }

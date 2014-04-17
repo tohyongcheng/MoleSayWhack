@@ -29,6 +29,7 @@ public class Earthquake extends PowerUp {
 	 */
 	
 	public static void invoke() {
+		System.out.println("Invoke Earthquake!");
 		new Thread(new Runnable() {
 			public void run() {
 				Gdx.app.postRunnable(new Runnable() {

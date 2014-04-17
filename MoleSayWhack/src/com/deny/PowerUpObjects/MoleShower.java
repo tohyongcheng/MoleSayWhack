@@ -31,7 +31,6 @@ public class MoleShower extends PowerUp {
 				});
 			}
 		}).start();
-		
 	}
 	
 	public static void update(float delta) {

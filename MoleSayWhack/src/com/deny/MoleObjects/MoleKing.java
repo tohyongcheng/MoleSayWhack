@@ -15,7 +15,7 @@ import com.deny.GameObjects.Player;
  */
 public class MoleKing extends Mole 
 {
-	
+	protected final long MOLE_APPEARANCE_TIME = (long) 10f;
 	
 	public MoleKing(Player player) 
 	{
@@ -64,7 +64,9 @@ public class MoleKing extends Mole
 		// havent been killed by player. damage the player//
 		else if (timeExisted >= MOLE_APPEARANCE_TIME && isAlive())
 		{
-			damage(player);
+			while(player.getHP() > 0) {
+				damage(player);
+			}
 			isDead = true;
 		}
 	}

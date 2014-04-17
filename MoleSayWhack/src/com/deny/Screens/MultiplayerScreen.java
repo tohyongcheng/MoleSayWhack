@@ -1,6 +1,5 @@
 package com.deny.Screens;
 
-import java.awt.TextArea;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -19,11 +18,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameHelpers.IPAddressInputListener;
+import com.deny.GameObjects.MoleType;
 import com.deny.Threads.ServerClientThread;
 
 public class MultiplayerScreen implements Screen {
@@ -258,8 +257,16 @@ public class MultiplayerScreen implements Screen {
 	}
 	
 
-	public void setState(MultiplayerState s) {
-		currentState =s;
+	public void setState(final MultiplayerState s) {
+		new Thread(new Runnable() {
+			public void run() {
+				Gdx.app.postRunnable(new Runnable() {
+					public void run() {
+						currentState = s;
+					}
+				});
+			}
+		}).start();
 	}
 
 	public String getIPAddress() {

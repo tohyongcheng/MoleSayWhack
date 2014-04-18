@@ -201,7 +201,8 @@ public class GameWorld {
 		this.r = new Random();
 		AssetLoader.summer.stop();
 		AssetLoader.ann.stop();
-		AssetLoader.ann.loop();
+		AssetLoader.ann.setLooping(true);
+		AssetLoader.ann.play();
 		
 	}
 

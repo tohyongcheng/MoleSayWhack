@@ -55,7 +55,8 @@ public class MainMenuScreen implements Screen {
 
 		AssetLoader.ann.stop();
 		AssetLoader.summer.stop();
-		AssetLoader.summer.loop();
+		AssetLoader.summer.setLooping(true);
+		AssetLoader.summer.play();
 
 	}
 	

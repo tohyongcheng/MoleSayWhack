@@ -64,6 +64,8 @@ public abstract class Mole
 			return AssetLoader.m5;
 		case SABOTAGE:
 			return AssetLoader.sm;
+		case MOLEKING:
+			return AssetLoader.king;
 		default:
 			return AssetLoader.m1;
 

@@ -11,6 +11,7 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -25,7 +26,7 @@ public class AssetLoader
 	public static Texture Main1024, Game1024, moleDep1024, lose, PS, powerup, powerupDep2, powerupDep1;
 	public static TextureRegion powerless, earthquake, moleshower, silencer, molejam, kingmole, mouldy, dummymole, moleshield;
 	public static TextureRegion gameBG, ps, rpl, ext, rsm, psBG, borderVert, borderHor, hmr, titlepuDep;
-	public static TextureRegion background, strB, optB, hghB, Title, m1, m3, m5, sm,
+	public static TextureRegion background, strB, optB, hghB, Title, m1, m3, m5, sm,king,
 	enterIP, loading, cnl, mdm1, mdm3, mdm5, mdsm, titleDep, Lose, dplyOK, dplyCD, dplySEL;
 	public static TextureRegion eq, ms, ns, np, nc, sc, fog, km, inv, cdown;
 	public static TextureRegion logo, mswlogo, startButtonUp, startButtonDown, winTextR;
@@ -36,8 +37,8 @@ public class AssetLoader
 	
 	//128 x 128
 
-	public static Sound  hit, explode, clicksound, gameover, button, back,summer, ann, sent, slctd, popup;
-
+	public static Sound  hit, explode, clicksound, gameover, button, back, sent, slctd, popup;
+	public static Music summer, ann;
 
 	
 	public static void load()
@@ -206,6 +207,8 @@ public class AssetLoader
 		dplyCD = new TextureRegion(Game1024, 689, 185, 99, 95);
 		dplyCD.flip(false,true);
 		
+		
+		
 		Main1024 = new Texture(Gdx.files.internal("data/1024Main.png"));
 		Main1024.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 		
@@ -214,6 +217,9 @@ public class AssetLoader
 		
 		Title = new TextureRegion(Main1024, 545, 0, 336, 170);
 		Title.flip (false,true);
+		
+		king = new TextureRegion(Main1024, 35, 845, 138, 138);
+		king.flip(false,true);
 		
 		strB = new TextureRegion(Main1024, 545, 172, 260,89 );
 		strB.flip(false,true);
@@ -318,9 +324,9 @@ public class AssetLoader
         //buttons for back
         back = Gdx.audio.newSound(Gdx.files.internal("data/button-09.wav"));
         //main screen and every other screen
-        summer = Gdx.audio.newSound(Gdx.files.internal("data/summer.mp3"));
+        summer = Gdx.audio.newMusic(Gdx.files.internal("data/summer.mp3"));
         //in game music
-        ann = Gdx.audio.newSound(Gdx.files.internal("data/ann.mp3"));
+        ann = Gdx.audio.newMusic(Gdx.files.internal("data/ann.mp3"));
         sent = Gdx.audio.newSound(Gdx.files.internal("data/button-7.wav"));
         slctd = Gdx.audio.newSound(Gdx.files.internal("data/button-28.wav"));
         popup =Gdx.audio.newSound(Gdx.files.internal("data/button-10.wav"));
@@ -330,7 +336,12 @@ public class AssetLoader
 	public static void dispose() {
         // We must dispose of the texture when we are finished.
 		logoTexture.dispose();
-
+		font.dispose();
+		texture.dispose(); logoTexture.dispose(); win.dispose();
+		Main1024.dispose(); Game1024.dispose(); moleDep1024.dispose(); lose.dispose();
+		PS.dispose(); powerup.dispose(); powerupDep2.dispose(); powerupDep1.dispose();
+		hit.dispose(); explode.dispose(); clicksound.dispose(); gameover.dispose();
+		button.dispose(); back.dispose();summer.dispose(); ann.dispose(); sent.dispose(); slctd.dispose(); popup.dispose();
 //        // Dispose sounds
 //        dead.dispose();
 //        flap.dispose();

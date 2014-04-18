@@ -2,8 +2,8 @@ package com.deny.GameHelpers;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameObjects.MoleDeployer;
 import com.deny.GameObjects.PowerUpDeployer;
@@ -30,7 +30,10 @@ public class GameInputHandler implements InputProcessor {
 	
 	@Override
 	public boolean keyDown(int keycode) {
-		return false;
+		if(keycode == Keys.BACK){
+	           myWorld.setGameState(GameState.MENU);
+	        }
+	        return false;
 	}
 
 	@Override

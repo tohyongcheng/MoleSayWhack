@@ -13,6 +13,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -110,7 +111,10 @@ public class MultiplayerScreen implements Screen {
         
         // Print the contents of our array to a string.  Yeah, should have used StringBuilder
 
-        myAddress = addresses.get(1);
+        myAddress = "";
+        for (int i=0; i<addresses.size();i++) {
+        	myAddress += addresses.get(i) + "\n";
+        }
 	}
 	
 	@Override
@@ -159,7 +163,14 @@ public class MultiplayerScreen implements Screen {
 	public void update() {	
 		
 		switch (getState()) {
-		case READY:			
+		case READY:		
+			
+			if(Gdx.input.isKeyPressed(Keys.BACK)) {
+				AssetLoader.back.play();
+				setState(MultiplayerState.QUIT);
+				return;
+			}
+			
 			if(Gdx.input.justTouched()) {
 				multiplayerCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
@@ -178,7 +189,14 @@ public class MultiplayerScreen implements Screen {
 			break;
 		
 		case CONNECTED:
-			if(Gdx.input.justTouched()) {
+			
+			if(Gdx.input.isKeyPressed(Keys.BACK)) {
+				AssetLoader.back.play();
+				socketHandler.leaveGameRoom();
+				setState(MultiplayerState.QUIT);
+			}
+			
+			else if(Gdx.input.justTouched()) {
 				multiplayerCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (playBounds.contains(touchPoint.x,touchPoint.y)) {

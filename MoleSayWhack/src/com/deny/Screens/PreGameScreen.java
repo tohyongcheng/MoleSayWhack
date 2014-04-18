@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
+import com.deny.Screens.MultiplayerScreen.MultiplayerState;
 import com.deny.Threads.ServerClientThread;
 
 public class PreGameScreen implements Screen {
@@ -39,7 +41,7 @@ public class PreGameScreen implements Screen {
 	private ServerClientThread socketHandler;
 	private ArrayList<MoleType> selectedMoles;
 	private ArrayList<Rectangle> selectedMolesRectangles;
-	private float countDownTime = 1f;
+	private float countDownTime = 20f;
 	private PreGameState currentState;
 	
 	
@@ -120,7 +122,12 @@ public class PreGameScreen implements Screen {
 				countDownTime -= delta;
 			}
 			
-			if(Gdx.input.justTouched()) {
+			if(Gdx.input.isKeyPressed(Keys.BACK)) {
+				AssetLoader.back.play();
+				setState(PreGameState.QUIT);
+			}
+			
+			else if(Gdx.input.justTouched()) {
 				mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
@@ -140,11 +147,10 @@ public class PreGameScreen implements Screen {
 			}
 			break;
 		case QUIT:
-			game.setScreen(new MainMenuScreen(game));
-//			socketHandler.toMainMenuScreen();
 			socketHandler.dispose();
 			socketHandler = null;
 			dispose();
+			game.setScreen(new MainMenuScreen(game));
 			break;
 			
 		case GO:

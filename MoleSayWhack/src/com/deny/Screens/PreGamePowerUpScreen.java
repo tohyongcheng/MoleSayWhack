@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpType;
+import com.deny.Screens.MultiplayerScreen.MultiplayerState;
 import com.deny.Threads.ServerClientThread;
 
 public class PreGamePowerUpScreen implements Screen {
@@ -42,7 +44,7 @@ public class PreGamePowerUpScreen implements Screen {
 	private ArrayList<MoleType> selectedMoles;
 	private ArrayList<PowerUpType> selectedPowerUps;
 	private ArrayList<Rectangle> selectedPowerUpsRectangles;
-	private float countDownTime = 5f;
+	private float countDownTime = 20f;
 	private PreGameState currentState;
 	private Object preGameStateLock = new Object();
 
@@ -88,12 +90,7 @@ public class PreGamePowerUpScreen implements Screen {
         batcher.enableBlending();
         batcher.draw(AssetLoader.background, 0, 0, GAME_WIDTH, GAME_HEIGHT);
         batcher.draw(AssetLoader.titlepuDep, (int)(GAME_WIDTH/2 - (230*scaleW)/2), (int)(GAME_HEIGHT/13), (int)(230*scaleW) , (int)(98*scaleH));
-        
-//        for (int i = 0; i< NO_OF_DEPLOYERS; i++) {
-//    	   PowerupType powerupType = selectedPowerUps.get(i);
-//    	   Rectangle r = selectedPowerUpsRectangles.get(i);
-//    	   batcher.draw(powerupType.getAsset(),r.x, r.y, r.width, r.height);
-//    	}     
+          
         
         AssetLoader.font.draw(batcher, String.valueOf((int)countDownTime), GAME_WIDTH/2 - 8, 15);
         batcher.draw(AssetLoader.cnl, backBounds.x, backBounds.y,
@@ -131,8 +128,13 @@ public class PreGamePowerUpScreen implements Screen {
 			} else {
 				countDownTime -= delta;
 			}
+			if(Gdx.input.isKeyPressed(Keys.BACK)) {
+				AssetLoader.back.play();
+				setState(PreGameState.QUIT);
+				return;
+			}
 			
-			if(Gdx.input.justTouched()) {
+			else if(Gdx.input.justTouched()) {
 				mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {

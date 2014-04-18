@@ -62,6 +62,7 @@ public class OptionsScreen implements Screen {
 	public OptionsScreen(Game game) {
 		this.game = game;
 		this.mainMenuCam = new OrthographicCamera();
+		setState(OptionsScreenState.RUNNING);
 		mainMenuCam.setToOrtho(true, GAME_WIDTH, GAME_HEIGHT);
 		
 		batcher = new SpriteBatch();

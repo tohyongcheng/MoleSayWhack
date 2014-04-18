@@ -2,6 +2,7 @@ package com.deny.Screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -30,9 +31,11 @@ public class MainMenuScreen implements Screen {
 	Vector3 touchPoint;
 	
 	public MainMenuScreen(Game game) {
+		
 		this.game = game;
 		this.mainMenuCam = new OrthographicCamera();
 		mainMenuCam.setToOrtho(true, GAME_WIDTH, GAME_HEIGHT);
+		
 		
 		batcher = new SpriteBatch();
 		
@@ -100,7 +103,12 @@ public class MainMenuScreen implements Screen {
 	}
 
 	private void update() {
-		if(Gdx.input.justTouched()) {
+		
+		if(Gdx.input.isKeyPressed(Keys.BACK)) {
+			Gdx.app.exit();
+		}
+		
+		else if(Gdx.input.justTouched()) {
 			mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 			if (startBounds.contains(touchPoint.x, touchPoint.y)) {
 				game.setScreen(new MultiplayerScreen(game));

@@ -1,6 +1,7 @@
 package com.deny.molewhack;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.Screens.SplashScreen;
 
@@ -12,6 +13,7 @@ public class WMGame extends Game {
 		AssetLoader.load();
 		System.out.println("Game created");
 		setScreen(new SplashScreen(this));
+		Gdx.input.setCatchBackKey(true);
 //		setScreen(new MainMenuScreen(this));
 //		setScreen(new GameScreen());
 	}

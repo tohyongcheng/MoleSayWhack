@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameWorld.GameWorld;
-import com.deny.PowerUpObjects.PowerUp;
 import com.deny.Threads.ServerClientThread;
 //Deploys powerups
 //initialized at the beginning of the game
@@ -82,7 +81,7 @@ public class PowerUpDeployer {
 		isAvailable = false;
 		switch (powerupType){
 		case BLOCKGRID:
-			gameWorld.getSocketHandler().sendPowerUp(powerupType);
+			gameWorld.invokePowerUp(powerupType);
 			break;
 		case DISABLEALLPOWERUPS:
 			gameWorld.getSocketHandler().sendPowerUp(powerupType);

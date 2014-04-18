@@ -16,6 +16,9 @@ import com.deny.GameObjects.MoleDeployer;
 import com.deny.GameObjects.PowerUpDeployer;
 import com.deny.GameWorld.GameWorld.GameState;
 import com.deny.MoleObjects.Mole;
+import com.deny.PowerUpObjects.DisableAllPowerUps;
+import com.deny.PowerUpObjects.EnableFog;
+import com.deny.PowerUpObjects.Invulnerability;
 
 public class GameRenderer {
 	
@@ -136,7 +139,31 @@ public class GameRenderer {
         batcher.draw(AssetLoader.borderVert, first.x-(int)(15*scaleW), first.y - (int)(21*scaleH), (int)(30*scaleW), (int)(489*scaleH));
         batcher.draw(AssetLoader.borderVert, second.x-(int)(15*scaleW), second.y - (int)(21*scaleH), (int)(30*scaleW), (int)(489*scaleH));
         batcher.end();
-          
+        
+        
+          //DRAW ANY PU EFFECTS
+        batcher.begin();
+        batcher.enableBlending();
+        if (EnableFog.isInEffect()){
+        	//draw the fog
+        	System.out.println("FOG");
+        	batcher.draw(AssetLoader.fogEffect, world.getPlaceHolders().get(0).x,world.getPlaceHolders().get(0).y, (int)(450*scaleW), (int)(450*scaleH));
+        }
+        
+        if (DisableAllPowerUps.isInEffect()){
+        	//add the gray box overlay
+        	  for (PowerUpDeployer pd: world.getPowerUpDeployers()) {
+        		  Rectangle r = pd.getRectangle();
+        		  batcher.draw(AssetLoader.cdown, r.x, r.y, r.width, r.height);
+      		}
+        	  
+        }
+        
+        if(Invulnerability.isInEffect()){
+        	//draw the circular shield
+        	batcher.draw(AssetLoader.shield, GAME_WIDTH/2 -(int) (529/2 * scaleW), (int)(15*scaleH), (int)(529*scaleW), (int)(556*scaleH));
+        }
+        batcher.end();
         //CONDITIONS
         batcher.begin();
         if (world.getGameState() == GameState.RUNNING ) {

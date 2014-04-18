@@ -4,6 +4,7 @@ import java.util.Queue;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
+import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameWorld;
 import com.deny.MoleObjects.Mole;
@@ -30,6 +31,7 @@ public class Earthquake extends PowerUp {
 	
 	public static void invoke() {
 		System.out.println("Invoke Earthquake!");
+		AssetLoader.earthQk.play();
 		new Thread(new Runnable() {
 			public void run() {
 				Gdx.app.postRunnable(new Runnable() {

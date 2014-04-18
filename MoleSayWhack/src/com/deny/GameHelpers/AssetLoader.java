@@ -22,27 +22,33 @@ public class AssetLoader
 {
 	//The Textures//
 	public static BitmapFont font;
-	public static Texture texture, logoTexture, win;
+	public static Texture texture, logoTexture, win, invulnerable;
 	public static Texture Main1024, Game1024, moleDep1024, lose, PS, powerup, powerupDep2, powerupDep1;
 	public static TextureRegion powerless, earthquake, moleshower, silencer, molejam, kingmole, mouldy, dummymole, moleshield;
-	public static TextureRegion gameBG, ps, rpl, ext, rsm, psBG, borderVert, borderHor, hmr, titlepuDep;
+	public static TextureRegion gameBG, ps, rpl, ext, rsm, psBG, borderVert, borderHor, hmr, titlepuDep, shield;
 	public static TextureRegion background, strB, optB, hghB, Title, m1, m3, m5, sm,king,
 	enterIP, loading, cnl, mdm1, mdm3, mdm5, mdsm, titleDep, Lose, dplyOK, dplyCD, dplySEL;
 	public static TextureRegion eq, ms, ns, np, nc, sc, fog, km, inv, cdown;
 	public static TextureRegion logo, mswlogo, startButtonUp, startButtonDown, winTextR;
-	
+	public static TextureRegion fogEffect;
 	public static TextureRegion mh1, mh2, mh3, mh4, mh5, op1, op2, op3, op4, op5;
 	public static TextureRegion bg, Hm, title, startButt, optButt, scoreButt, 
 		mole1, mole3, mole5, moleSabo, pause, play, cancel, replay, ipButt;
 	
 	//128 x 128
 
-	public static Sound  hit, explode, clicksound, gameover, button, back, sent, slctd, popup;
+	public static Sound  shieldS, hit, explode, clicksound, gameover, button, back, sent, slctd, popup, earthQk,fogg, block;
 	public static Music summer, ann;
 
 	
 	public static void load()
 	{
+		invulnerable = new Texture(Gdx.files.internal("data/invulnerability.png"));
+		invulnerable.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+		
+		shield = new TextureRegion(invulnerable, 9, 9, 529, 556);
+		shield.flip(false,true);
+		
 		font = new BitmapFont(Gdx.files.internal("data/font.fnt"));
 		font.setScale(1f, -1f);
 		
@@ -82,6 +88,7 @@ public class AssetLoader
 		dummymole = new TextureRegion(powerupDep2, 11,335, 445, 140);
 		dummymole.flip(false,true);
 		
+		fogEffect = new TextureRegion(powerupDep2, 452,457, 546, 551);
 		powerup = new Texture(Gdx.files.internal("data/Powerup.png"));
 		powerup.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 		
@@ -330,7 +337,10 @@ public class AssetLoader
         sent = Gdx.audio.newSound(Gdx.files.internal("data/button-7.wav"));
         slctd = Gdx.audio.newSound(Gdx.files.internal("data/button-28.wav"));
         popup =Gdx.audio.newSound(Gdx.files.internal("data/button-10.wav"));
-
+        earthQk = Gdx.audio.newSound(Gdx.files.internal("data/grenade.mp3"));
+        fogg = Gdx.audio.newSound(Gdx.files.internal("data/fog.mp3"));
+        block= Gdx.audio.newSound(Gdx.files.internal("data/buzzer.mp3"));
+        shieldS = Gdx.audio.newSound(Gdx.files.internal("data/shield.mp3"));
 	}
 	
 	public static void dispose() {

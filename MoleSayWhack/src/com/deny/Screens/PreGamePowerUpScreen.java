@@ -42,7 +42,7 @@ public class PreGamePowerUpScreen implements Screen {
 	private ArrayList<MoleType> selectedMoles;
 	private ArrayList<PowerUpType> selectedPowerUps;
 	private ArrayList<Rectangle> selectedPowerUpsRectangles;
-	private float countDownTime = 10f;
+	private float countDownTime = 5f;
 	private PreGameState currentState;
 	private Object preGameStateLock = new Object();
 

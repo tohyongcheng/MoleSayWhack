@@ -133,6 +133,7 @@ public class GameWorld {
 		}
 		
 		//Setup Powerups
+		
 		BlockMoleGrid.load(this);
 		DisableAllPowerUps.load(this);
 		DisableOneMoleDeployer.load(this);

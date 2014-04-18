@@ -3,6 +3,7 @@ package com.deny.PowerUpObjects;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
+import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.PowerUpDeployer;
 import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameWorld;
@@ -32,6 +33,8 @@ public class DisableAllPowerUps extends PowerUp{
 			}
 		}).start();
 		inEffect = true;
+		//play sounds at invoke.
+		AssetLoader.block.play();
 	}
 
 	public static void update(float delta) {

@@ -39,7 +39,7 @@ public class PreGameScreen implements Screen {
 	private ServerClientThread socketHandler;
 	private ArrayList<MoleType> selectedMoles;
 	private ArrayList<Rectangle> selectedMolesRectangles;
-	private float countDownTime = 10f;
+	private float countDownTime = 1f;
 	private PreGameState currentState;
 	
 	

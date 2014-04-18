@@ -16,7 +16,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpType;
-import com.deny.Threads.ReadThread.ScreenState;
 import com.deny.Threads.ServerClientThread;
 
 public class PreGamePowerUpScreen implements Screen {
@@ -45,6 +44,7 @@ public class PreGamePowerUpScreen implements Screen {
 	private ArrayList<Rectangle> selectedPowerUpsRectangles;
 	private float countDownTime = 10f;
 	private PreGameState currentState;
+	private Object preGameStateLock = new Object();
 
 	public PreGamePowerUpScreen(Game game, ServerClientThread socketHandler, ArrayList<MoleType> selectedMoles) {
 		this.game = game;
@@ -53,8 +53,7 @@ public class PreGamePowerUpScreen implements Screen {
 		
 		this.mainMenuCam = new OrthographicCamera();
 		socketHandler.setPreGamePowerUpScreen(this);
-		socketHandler.getReadThread().setCurrentState(ScreenState.PREGAMEPOWERUP);
-		currentState = PreGameState.READY;
+		setState(PreGameState.READY);
 		mainMenuCam.setToOrtho(true, GAME_WIDTH, GAME_HEIGHT);
 		
 		batcher = new SpriteBatch();
@@ -120,15 +119,15 @@ public class PreGamePowerUpScreen implements Screen {
 
 	private void update(float delta) {
 		
-		switch(currentState) {
+		switch(getState()) {
 		
 		case READY:
-			currentState = PreGameState.COUNTING;
+			setState(PreGameState.COUNTING);
 			break;
 			
 		case COUNTING:
 			if (countDownTime <= 0 ) {
-				currentState = PreGameState.GO;
+				setState(PreGameState.GO);
 			} else {
 				countDownTime -= delta;
 			}
@@ -138,7 +137,7 @@ public class PreGamePowerUpScreen implements Screen {
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
 					AssetLoader.back.play();
-					currentState = PreGameState.QUIT;
+					setState(PreGameState.QUIT);
 				}
 				
 				for (int i =0; i<NO_OF_DEPLOYERS; i++) {
@@ -211,6 +210,14 @@ public class PreGamePowerUpScreen implements Screen {
 	}
 	
 	public void setState(PreGameState preGameState) {
-		this.currentState = preGameState; 
+		synchronized(preGameStateLock) {
+			this.currentState = preGameState;
+		}
+	}
+	
+	public PreGameState getState() {
+		synchronized(preGameStateLock){ 
+			return currentState;
+		}
 	}
 }

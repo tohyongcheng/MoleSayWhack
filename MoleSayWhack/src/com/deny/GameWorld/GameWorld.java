@@ -91,9 +91,10 @@ public class GameWorld {
 	private Random r;
 	
 	//LOCKS
-	private Object gameStateLock;
-	private Object fogLock;
-	private Object[] moleGridsLock;
+	private Object gameStateLock = new Object();
+	private Object fogLock = new Object();
+	private Object[] moleGridsLock = new Object[NUMBER_OF_GRIDS];
+	private Object opponentHPLock = new Object();
 	
 	public enum GameState {
 		READY, RUNNING, DEPLOYMENT, WIN, LOSE, PAUSE, MENU, EXIT, RESTART;
@@ -104,9 +105,6 @@ public class GameWorld {
 	public GameWorld(Game game, GameScreen gameScreen, ServerClientThread sH, ArrayList<MoleType> selectedMoles, ArrayList<PowerUpType> selectedPowerUps) {
 		
 		//Initialize Locks
-		gameStateLock = new Object();
-		fogLock = new Object();
-		moleGridsLock = new Object[NUMBER_OF_GRIDS];
 		for (int i=0; i<NUMBER_OF_GRIDS;i++) {
 			moleGridsLock[i] = new Object();
 		}
@@ -119,7 +117,7 @@ public class GameWorld {
 		this.readThread = socketHandler.getReadThread();
 		this.readThread.setGameWorld(this);
 		this.player = new Player(STARTING_HP_FOR_PLAYER,this);
-		this.opponentHP = STARTING_HP_FOR_PLAYER;
+		setOpponentHP(STARTING_HP_FOR_PLAYER);
 		this.selectedMoles = selectedMoles;
 		this.selectedPowerUps = selectedPowerUps;
 		
@@ -509,10 +507,14 @@ public class GameWorld {
 	}
 
 	public void setOpponentHP(int hp) {
-		opponentHP = hp;
+		synchronized(opponentHPLock) {
+			opponentHP = hp;
+		}
 	}
 	
 	public int getOpponentHP() {
-		return opponentHP;
+		synchronized(opponentHPLock) {
+			return opponentHP;
+		}
 	}
 }

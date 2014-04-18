@@ -105,6 +105,8 @@ public class PowerUpDeployer {
 		case MOLEKING:
 			gameWorld.getSocketHandler().sendPowerUp(powerupType);
 			break;
+		case MOLESHOWER:
+			gameWorld.getSocketHandler().sendPowerUp(powerupType);
 		default:
 			break;
 		

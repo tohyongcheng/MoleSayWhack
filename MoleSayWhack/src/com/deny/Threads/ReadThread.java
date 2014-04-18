@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import javax.xml.transform.Result;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.net.Socket;
@@ -27,10 +25,6 @@ public class ReadThread  extends Thread{
 	private GameWorld gameWorld;
 	private PreGameScreen preGameScreen;
 	private MultiplayerScreen multiPlayerScreen;
-	public enum ScreenState{
-		MULTIPLAYER, PREGAME, GAME, PREGAMEPOWERUP
-	}
-	private ScreenState currentState;
 	
 	
 	//NOT THREAD SAFE
@@ -39,7 +33,6 @@ public class ReadThread  extends Thread{
 		game = socketHandler.getGame();
 		this.client = client;
 		in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-		this.currentState = ScreenState.MULTIPLAYER;
 	}
 	
 	public void run() {
@@ -94,11 +87,11 @@ public class ReadThread  extends Thread{
 					System.out.println("Received message about opponent HP: " + messages[1]);
 					gameWorld.setOpponentHP(Integer.valueOf(messages[1]));
 					break;
-				//PREGAMESCREEN
-				case "[MAINMENUSCREEN]":
-					System.out.println("Received message to go back to main menu!");
-					if (socketHandler.getPreGameScreen() !=null) socketHandler.getPreGameScreen().setState(PreGameState.QUIT);
-					break;
+//				//PREGAMESCREEN
+//				case "[MAINMENUSCREEN]":
+//					System.out.println("Received message to go back to main menu!");
+//					if (socketHandler.getPreGameScreen() !=null) socketHandler.getPreGameScreen().setState(PreGameState.QUIT);
+//					break;
 				//MULTIPLAYERSCREEN
 				case "[LEAVEMULTIPLAYERSCREEN]":
 					System.out.println("Received message to restart server!");
@@ -116,13 +109,6 @@ public class ReadThread  extends Thread{
 		}
 	}
 
-	public ScreenState getCurrentState() {
-		return currentState;
-	}
-
-	public void setCurrentState(ScreenState currentState) {
-		this.currentState = currentState;
-	}
 
 	public GameWorld getGameWorld() {
 		return gameWorld;

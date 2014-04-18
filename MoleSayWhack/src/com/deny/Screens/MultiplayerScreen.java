@@ -35,6 +35,8 @@ public class MultiplayerScreen implements Screen {
 		READY, CONNECTED, START, RESTART, QUIT
 	}
 	private MultiplayerState currentState;
+	private Object multiplayerStateLock = new Object();
+	
 	private Game game;
 	private OrthographicCamera multiplayerCam;
 	private SpriteBatch batcher;
@@ -48,7 +50,8 @@ public class MultiplayerScreen implements Screen {
 	private Preferences prefs;
 	private IPAddressInputListener listener;
 	private BitmapFont font;
-	Vector3 touchPoint;
+	
+	private Vector3 touchPoint;
 	
 	
 	public MultiplayerScreen(Game game) {
@@ -84,7 +87,7 @@ public class MultiplayerScreen implements Screen {
 		//Sockets!
 		socketHandler = new ServerClientThread(this, otherAddress);
 		socketHandler.start();
-		currentState = MultiplayerState.READY;
+		setState(MultiplayerState.READY);
 		
 		 // The following code loops through the available network interfaces
         // Keep in mind, there can be multiple interfaces per device, for example
@@ -155,7 +158,7 @@ public class MultiplayerScreen implements Screen {
 	
 	public void update() {	
 		
-		switch (currentState) {
+		switch (getState()) {
 		case READY:			
 			if(Gdx.input.justTouched()) {
 				multiplayerCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -181,13 +184,13 @@ public class MultiplayerScreen implements Screen {
 				if (playBounds.contains(touchPoint.x,touchPoint.y)) {
 					AssetLoader.button.play();
 					socketHandler.toChooseMolesScreen();
-					currentState = MultiplayerState.START;
+					setState(MultiplayerState.START);
 				}
 				
 				else if (backBounds.contains(touchPoint.x, touchPoint.y)) {
 					AssetLoader.back.play();
 					socketHandler.leaveGameRoom();
-					currentState = MultiplayerState.QUIT;
+					setState(MultiplayerState.QUIT);
 				}
 				
 				else if (changeAddressBounds.contains(touchPoint.x, touchPoint.y)) {
@@ -199,7 +202,6 @@ public class MultiplayerScreen implements Screen {
 			
 		case QUIT:
 			if (socketHandler !=null) {
-//				socketHandler.toMainMenuScreen();
 				socketHandler.interrupt();
 				socketHandler.dispose();
 			}
@@ -209,7 +211,7 @@ public class MultiplayerScreen implements Screen {
 			
 		case RESTART:
 			restartSocketHandler();
-			currentState = MultiplayerState.READY;
+			setState(MultiplayerState.READY);
 			break;
 			
 		case START:
@@ -230,43 +232,42 @@ public class MultiplayerScreen implements Screen {
         batcher.draw(AssetLoader.background, 0, 0, GAME_WIDTH, GAME_HEIGHT);
 
         
-        switch (currentState) {
+        switch (getState()) {
         case CONNECTED:
-        	batcher.draw(AssetLoader.strB, playBounds.x, playBounds.y,
-	        		playBounds.width, playBounds.height);
-        	batcher.draw(AssetLoader.enterIP, changeAddressBounds.x, changeAddressBounds.y,
-        			changeAddressBounds.width, changeAddressBounds.height);
+        	batcher.draw(AssetLoader.strB, playBounds.x, playBounds.y,playBounds.width, playBounds.height);
+        	batcher.draw(AssetLoader.enterIP, changeAddressBounds.x, changeAddressBounds.y,changeAddressBounds.width, changeAddressBounds.height);
         	break;
         case READY:
-        	batcher.draw(AssetLoader.loading, playBounds.x, playBounds.y,
-	        		playBounds.width, playBounds.height);
-        	batcher.draw(AssetLoader.enterIP, changeAddressBounds.x, changeAddressBounds.y,
-
-        			changeAddressBounds.width, changeAddressBounds.height);
+        	batcher.draw(AssetLoader.loading, playBounds.x, playBounds.y,playBounds.width, playBounds.height);
+        	batcher.draw(AssetLoader.enterIP, changeAddressBounds.x, changeAddressBounds.y,changeAddressBounds.width, changeAddressBounds.height);
         	break;
+		case QUIT:
+			break;
+		case RESTART:
+			break;
+		case START:
+			break;
+		default:
+			break;
         }
         
 
-        batcher.draw(AssetLoader.cnl, backBounds.x, backBounds.y,
-
-        		backBounds.width, backBounds.height);
-       
+        batcher.draw(AssetLoader.cnl, backBounds.x, backBounds.y,backBounds.width, backBounds.height);
         AssetLoader.font.draw(batcher, myAddress.toString(), 20, 20);
-       
 	    batcher.end();
 	}
 	
 
 	public void setState(final MultiplayerState s) {
-		new Thread(new Runnable() {
-			public void run() {
-				Gdx.app.postRunnable(new Runnable() {
-					public void run() {
-						currentState = s;
-					}
-				});
-			}
-		}).start();
+		synchronized(multiplayerStateLock) {
+			currentState = s;
+		}
+	}
+	
+	public MultiplayerState getState() {
+		synchronized(multiplayerStateLock) {
+			return currentState;
+		}
 	}
 
 	public String getIPAddress() {
@@ -287,7 +288,7 @@ public class MultiplayerScreen implements Screen {
 		}
 		socketHandler = (new ServerClientThread(this, otherAddress));
 		socketHandler.start();
-		currentState = MultiplayerState.READY;
+		setState(MultiplayerState.READY);
 	}
 
 	public ServerClientThread getSocketHandler() {

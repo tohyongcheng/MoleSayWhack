@@ -203,6 +203,7 @@ public class OptionsScreen implements Screen {
 	public void setName(String name) {
 		this.name = name;
 		prefs.putString("name", name );
+		prefs.flush();
 	}
 
 	public boolean isEnableBGM() {
@@ -212,6 +213,7 @@ public class OptionsScreen implements Screen {
 	public void setEnableBGM(boolean enableBGM) {
 		this.enableBGM = enableBGM;
 		prefs.putBoolean("enableBGM", enableBGM);
+		prefs.flush();
 	}
 
 	public boolean isEnableSFX() {
@@ -221,6 +223,7 @@ public class OptionsScreen implements Screen {
 	public void setEnableSFX(boolean enableSFX) {
 		this.enableSFX = enableSFX;
 		prefs.putBoolean("enableSFX", enableSFX);
+		prefs.flush();
 	}
 
 	public AuthenticationType getAuthType() {
@@ -229,5 +232,7 @@ public class OptionsScreen implements Screen {
 
 	public void setAuthType(AuthenticationType authType) {
 		this.authType = authType;
+		prefs.putString("authType", authType.toString());
+		prefs.flush();
 	}
 }

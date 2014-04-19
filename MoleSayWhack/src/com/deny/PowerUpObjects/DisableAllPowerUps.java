@@ -8,7 +8,7 @@ import com.deny.GameObjects.PowerUpDeployer;
 import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameWorld;
 
-public class DisableAllPowerUps {
+public class DisableAllPowerUps extends PowerUp {
 	static float runningTime;
 	static float effectDuration;
 	static boolean inEffect;

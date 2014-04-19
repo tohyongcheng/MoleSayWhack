@@ -7,7 +7,7 @@ import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameWorld;
 
-public class SpawnMoleKing {
+public class SpawnMoleKing extends PowerUp {
 	
 	static float runningTime;
 	static float effectDuration;

@@ -7,7 +7,7 @@ import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameWorld;
 
-public class EnableFog {
+public class EnableFog extends PowerUp {
 	static float runningTime;
 	static float effectDuration;
 	static boolean inEffect;

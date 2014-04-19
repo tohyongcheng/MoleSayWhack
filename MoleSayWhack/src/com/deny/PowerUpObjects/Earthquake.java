@@ -9,7 +9,7 @@ import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameWorld;
 import com.deny.MoleObjects.Mole;
 
-public class Earthquake {
+public class Earthquake extends PowerUp {
 	
 	static float runningTime;
 	static float effectDuration;

@@ -7,7 +7,7 @@ import com.deny.GameObjects.MoleDeployer;
 import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameWorld;
 
-public class DisableOneMoleDeployer  {
+public class DisableOneMoleDeployer extends PowerUp {
 	
 	static float runningTime;
 	static float effectDuration;

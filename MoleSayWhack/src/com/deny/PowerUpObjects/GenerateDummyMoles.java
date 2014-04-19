@@ -7,7 +7,7 @@ import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameWorld;
 
-public class GenerateDummyMoles {
+public class GenerateDummyMoles extends PowerUp {
 	static float runningTime;
 	static float effectDuration;
 	static boolean inEffect;

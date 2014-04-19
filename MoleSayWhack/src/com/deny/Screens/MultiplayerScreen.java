@@ -43,6 +43,7 @@ public class MultiplayerScreen implements Screen {
 	private SpriteBatch batcher;
 	private Rectangle backBounds;
 	private Rectangle playBounds;
+	private Rectangle refreshBounds;
 	private Rectangle changeAddressBounds;
 	private ServerClientThread socketHandler;
 	private ShapeRenderer shapeRenderer;
@@ -64,8 +65,11 @@ public class MultiplayerScreen implements Screen {
         double scaleH = (double) GAME_HEIGHT/816;
         
 		backBounds = new Rectangle(3,(int)(GAME_HEIGHT-9-82*scaleH),(int)(83*scaleW), (int)(82*scaleH));
-
 		playBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(GAME_HEIGHT/3 - 90*scaleH/2),(int)(260*scaleW), (int)(90*scaleH));
+		
+		//NATALIE: INPUT THE POSITION OF THE RECTANGLE
+		refreshBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(300),(int)(260*scaleW), (int)(90*scaleH));
+		
 		changeAddressBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(2*GAME_HEIGHT/3 - 90*scaleH/2),(int)(260*scaleW), (int)(90*scaleH));
 		
 
@@ -83,7 +87,7 @@ public class MultiplayerScreen implements Screen {
 		
 		//Preferences
 		prefs = Gdx.app.getPreferences("Multiplayer");
-		otherAddress = (prefs.getString("IPAddress", ""));
+		otherAddress = (prefs.getString("IPAddress", "127.0.0.1"));
 				
 		//Sockets!
 		socketHandler = new ServerClientThread(this, otherAddress);
@@ -110,7 +114,6 @@ public class MultiplayerScreen implements Screen {
         }
         
         // Print the contents of our array to a string.  Yeah, should have used StringBuilder
-
         myAddress = "";
         for (int i=0; i<addresses.size();i++) {
         	myAddress += addresses.get(i) + "\n";
@@ -164,21 +167,23 @@ public class MultiplayerScreen implements Screen {
 		
 		switch (getState()) {
 		case READY:		
-			
 			if(Gdx.input.isKeyPressed(Keys.BACK)) {
 				AssetLoader.back.play();
 				setState(MultiplayerState.QUIT);
-				return;
 			}
 			
-			if(Gdx.input.justTouched()) {
+			else if(Gdx.input.justTouched()) {
 				multiplayerCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
 					if (socketHandler !=null) socketHandler.interrupt();
 					AssetLoader.back.play();
 					game.setScreen(new MainMenuScreen(game));
-					return;
+				}
+				
+				else if (refreshBounds.contains(touchPoint.x,touchPoint.y)) {
+					setState(MultiplayerState.RESTART);
+					AssetLoader.button.play();
 				}
 				
 				else if (changeAddressBounds.contains(touchPoint.x, touchPoint.y)) {
@@ -203,6 +208,11 @@ public class MultiplayerScreen implements Screen {
 					AssetLoader.button.play();
 					socketHandler.toChooseMolesScreen();
 					setState(MultiplayerState.START);
+				}
+				
+				else if (refreshBounds.contains(touchPoint.x,touchPoint.y)) {
+					setState(MultiplayerState.RESTART);
+					AssetLoader.button.play();
 				}
 				
 				else if (backBounds.contains(touchPoint.x, touchPoint.y)) {
@@ -253,10 +263,12 @@ public class MultiplayerScreen implements Screen {
         switch (getState()) {
         case CONNECTED:
         	batcher.draw(AssetLoader.strB, playBounds.x, playBounds.y,playBounds.width, playBounds.height);
+        	batcher.draw(AssetLoader.strB, refreshBounds.x, refreshBounds.y,refreshBounds.width, refreshBounds.height);
         	batcher.draw(AssetLoader.enterIP, changeAddressBounds.x, changeAddressBounds.y,changeAddressBounds.width, changeAddressBounds.height);
         	break;
         case READY:
         	batcher.draw(AssetLoader.loading, playBounds.x, playBounds.y,playBounds.width, playBounds.height);
+        	batcher.draw(AssetLoader.strB, refreshBounds.x, refreshBounds.y,refreshBounds.width, refreshBounds.height);
         	batcher.draw(AssetLoader.enterIP, changeAddressBounds.x, changeAddressBounds.y,changeAddressBounds.width, changeAddressBounds.height);
         	break;
 		case QUIT:
@@ -268,7 +280,6 @@ public class MultiplayerScreen implements Screen {
 		default:
 			break;
         }
-        
 
         batcher.draw(AssetLoader.cnl, backBounds.x, backBounds.y,backBounds.width, backBounds.height);
         AssetLoader.font.draw(batcher, myAddress.toString(), 20, 20);

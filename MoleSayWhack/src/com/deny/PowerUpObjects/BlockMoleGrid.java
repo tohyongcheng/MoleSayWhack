@@ -6,7 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameWorld;
 
-public class BlockMoleGrid {
+public class BlockMoleGrid extends PowerUp {
 
 	static float runningTime;
 	static float effectDuration;

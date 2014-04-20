@@ -17,10 +17,10 @@ public enum PowerUpType {
 	BLOCKGRID(10,5),
 	DUMMY(10,5);
 	
-	float coolDown;
-	float effectDuration;
+	private float coolDown;
+	private float effectDuration;
 	
-	PowerUpType(float coolDown, float duration) {
+	private PowerUpType(float coolDown, float duration) {
 		this.coolDown = coolDown;
 		this.effectDuration = duration;
 	}

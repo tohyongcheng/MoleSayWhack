@@ -7,7 +7,7 @@ import com.deny.GameHelpers.AssetLoader;
 public enum PowerUpType {
 	//POWERUPS
 		
-	EARTHQUAKE(10,0),
+	EARTHQUAKE(10,1),
 	MOLESHOWER(10,5),
 	MOLEKING(20,10),
 	DISABLEONEMOLEDEPLOYER(10,5),

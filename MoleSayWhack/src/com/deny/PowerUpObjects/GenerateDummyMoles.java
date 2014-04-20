@@ -3,6 +3,7 @@ package com.deny.PowerUpObjects;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
+import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameWorld;
@@ -43,13 +44,22 @@ public class GenerateDummyMoles extends PowerUp {
 	
 	public static void invoke() {
 		inEffect = true;
+		AssetLoader.dummy.play();
+		//generates 6 dummy moles
+		gameWorld.generateRandomSpawns(effectDuration,  MoleType.DUMMY);
+		gameWorld.generateRandomSpawns(effectDuration,  MoleType.DUMMY);
+		gameWorld.generateRandomSpawns(effectDuration,  MoleType.DUMMY);
+		gameWorld.generateRandomSpawns(effectDuration,  MoleType.DUMMY);
+		gameWorld.generateRandomSpawns(effectDuration,  MoleType.DUMMY);
+		gameWorld.generateRandomSpawns(effectDuration, MoleType.DUMMY);
 	}
 	
 	public static void update(float delta) {
-		if (isInEffect()) {			
+		if (isInEffect()) {
 			if (runningTime > effectDuration) {
+		        runningTime = 0;
 				inEffect = false;
-				gameWorld.generateRandomSpawns(effectDuration, delta, MoleType.DUMMY);
+
 			} else{
 				runningTime += delta;
 			}

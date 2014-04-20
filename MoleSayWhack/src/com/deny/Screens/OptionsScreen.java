@@ -8,11 +8,13 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameHelpers.NameInputListener;
+import com.deny.Threads.ServerClientThread;
 
 public class OptionsScreen implements Screen {
 	private static final int GAME_WIDTH = Gdx.graphics.getWidth();
@@ -32,7 +34,7 @@ public class OptionsScreen implements Screen {
 
 
 	public enum AuthenticationType {
-		NONE, RSA;
+		NOPROTOCOL, T2,T3,T4,T5;
 		//NATALIE, ADD THE AUTHENTICATION TYPES HERE
 		
 		public AuthenticationType next() {
@@ -57,10 +59,11 @@ public class OptionsScreen implements Screen {
 	private Rectangle changeSFXBtn;
 	private Rectangle changeAuthBtn;
 	
-	
+
 
 	public OptionsScreen(Game game) {
 		this.game = game;
+		this.optionsState = optionsState.RUNNING;
 		this.mainMenuCam = new OrthographicCamera();
 		setState(OptionsScreenState.RUNNING);
 		mainMenuCam.setToOrtho(true, GAME_WIDTH, GAME_HEIGHT);
@@ -77,20 +80,44 @@ public class OptionsScreen implements Screen {
 		backBounds = new Rectangle(3,(int)(GAME_HEIGHT-9-82*scaleH),(int)(83*scaleW), (int)(82*scaleH));
 		
 		//NATALIE, put the position of buttons into the rectangles.
-		changeNameBtn = new Rectangle();
-		changeBGMBtn = new Rectangle();
-		changeSFXBtn = new Rectangle();
-		changeAuthBtn = new Rectangle();
+		changeNameBtn = new Rectangle((int)(136*scaleW),(int)(scaleH* 181), (int)(scaleW*264), (int)(scaleH*93));
+		changeBGMBtn = new Rectangle((int)(136*scaleW),(int)(scaleH* 315), (int)(scaleW*264), (int)(scaleH*93));
+		changeSFXBtn = new Rectangle((int)(136*scaleW),(int)(scaleH* 458), (int)(scaleW*264), (int)(scaleH*93));
+		changeAuthBtn = new Rectangle((int)(136*scaleW),(int)(scaleH* 596), (int)(scaleW*264), (int)(scaleH*93));
 		
 		//Setup options
 		prefs = Gdx.app.getPreferences("Options");
 		name = (prefs.getString("Name", "Player"));
 		enableBGM = prefs.getBoolean("enableBGM", true);
 		enableSFX = prefs.getBoolean("enableSFX", true);
-		authType = AuthenticationType.valueOf(prefs.getString("authType", "NONE"));
+		authType = AuthenticationType.NOPROTOCOL;
 		
 		
 	}
+	
+	//EDIT THIS
+	
+	public TextureRegion getAsset(){
+		switch (authType){
+		case NOPROTOCOL:
+			return AssetLoader.noprotocol;
+			
+		case T2:
+			return AssetLoader.t2;
+		case T3:
+			return AssetLoader.t3;
+			
+		case T4:
+			return AssetLoader.t4;
+
+		case T5:
+			return AssetLoader.t5;
+		default:
+			return AssetLoader.noprotocol;
+		
+		}
+	}
+	
 	
 	public void draw() {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -100,11 +127,15 @@ public class OptionsScreen implements Screen {
         batcher.begin();
         batcher.enableBlending();
 
-        batcher.draw(AssetLoader.background, 0, 0, GAME_WIDTH, GAME_HEIGHT);
+        batcher.draw(AssetLoader.optBG, 0, 0, GAME_WIDTH, GAME_HEIGHT);
         
         //ADD OPTIONS BUTTONS HERE
+        batcher.draw(AssetLoader.changename, changeNameBtn.x, changeNameBtn.y, changeNameBtn.width, changeNameBtn.height);
+        batcher.draw(AssetLoader.changemusic, changeBGMBtn.x, changeBGMBtn.y, changeBGMBtn.width, changeBGMBtn.height);
+        batcher.draw(AssetLoader.changefx, changeSFXBtn.x, changeSFXBtn.y, changeSFXBtn.width, changeSFXBtn.height);
+        batcher.draw(getAsset(), changeAuthBtn.x, changeAuthBtn.y, changeAuthBtn.width, changeAuthBtn.height);
         
-        batcher.draw(AssetLoader.cnl, backBounds.x, backBounds.y,backBounds.width, backBounds.height);
+        batcher.draw(AssetLoader.ext, backBounds.x, backBounds.y,backBounds.width, backBounds.height);
         batcher.end();
 	}
 	
@@ -116,25 +147,33 @@ public class OptionsScreen implements Screen {
 				mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
+					AssetLoader.back.play();
 					setState(OptionsScreenState.BACK);
 				}
 				
 				else if (changeNameBtn.contains(touchPoint.x, touchPoint.y)) {
+					AssetLoader.button.play();
 					Gdx.input.getTextInput(listener, "Set your name: ", name);
 				}
 				
 				else if (changeBGMBtn.contains(touchPoint.x, touchPoint.y)) {
+					AssetLoader.button.play();
 					setEnableBGM(!enableBGM);
 					
 				}
 				
 				else if (changeSFXBtn.contains(touchPoint.x, touchPoint.y)) {
+					AssetLoader.button.play();
 					setEnableSFX(!enableSFX);
 					
 				}
 				
 				else if (changeAuthBtn.contains(touchPoint.x, touchPoint.y)) {
+					AssetLoader.button.play();
 					setAuthType(authType.next());
+					//set the serverClientThread auth Type
+					ServerClientThread.authType = getAuthType();
+					System.out.println("Authentication protocol is changed to : " + authType.toString() );
 				}
 			}
 			break;

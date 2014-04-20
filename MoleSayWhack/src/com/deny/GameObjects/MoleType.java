@@ -35,8 +35,8 @@ public enum MoleType {
 			return AssetLoader.mdsm;
 		case MOLEKING:
 			return AssetLoader.king;
-//		case DUMMY:
-//			return AssetLoader.dummyMole;
+		case DUMMY:
+			return AssetLoader.dummyMOLE;
 		default:
 			return AssetLoader.mdm1;
 		} 

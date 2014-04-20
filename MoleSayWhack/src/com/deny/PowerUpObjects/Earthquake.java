@@ -52,6 +52,7 @@ public class Earthquake extends PowerUp {
 	 */
 	
 	public static void invoke() {
+		inEffect = true;
 		System.out.println("Invoke Earthquake!");
 		AssetLoader.earthQk.play();
 		new Thread(new Runnable() {
@@ -70,5 +71,17 @@ public class Earthquake extends PowerUp {
 			}
 		}).start();
 		
+	}
+	
+	public static void update(float delta) {
+		if (isInEffect()) {			
+			if (runningTime > effectDuration) {
+				inEffect = false;
+				runningTime = 0;
+				resetRunningTime();
+			} else{
+				runningTime += delta;
+			}
+		}
 	}
 }

@@ -120,6 +120,6 @@ public class MoleDeployer
 	public boolean isDisabled() {
 		return disabled;
 	}
-	
+
 	
 }

@@ -3,6 +3,7 @@ package com.deny.PowerUpObjects;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
+import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameWorld;
@@ -44,6 +45,7 @@ public class SpawnMoleKing extends PowerUp {
 
 	public static void invoke() {
 		inEffect = true;
+		AssetLoader.kinglaugh.play();
 		new Thread(new Runnable() {
 			public void run() {
 				Gdx.app.postRunnable(new Runnable() {

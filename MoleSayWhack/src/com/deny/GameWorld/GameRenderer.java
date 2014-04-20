@@ -1,5 +1,7 @@
 package com.deny.GameWorld;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -13,11 +15,16 @@ import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameHelpers.GameInputHandler;
 
 import com.deny.GameObjects.MoleDeployer;
+import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpDeployer;
 import com.deny.GameWorld.GameWorld.GameState;
 import com.deny.MoleObjects.Mole;
+import com.deny.PowerUpObjects.BlockMoleGrid;
 import com.deny.PowerUpObjects.DisableAllPowerUps;
+import com.deny.PowerUpObjects.DisableOneMoleDeployer;
+import com.deny.PowerUpObjects.Earthquake;
 import com.deny.PowerUpObjects.EnableFog;
+import com.deny.PowerUpObjects.GenerateDummyMoles;
 import com.deny.PowerUpObjects.Invulnerability;
 
 public class GameRenderer {
@@ -51,7 +58,7 @@ public class GameRenderer {
         
         batcher.begin();
         batcher.enableBlending();
-
+       
         batcher.draw(AssetLoader.gameBG, 0, 0, (int)(544*scaleW), (int)(816*scaleH));
         
         // DRAW opponent hp
@@ -94,8 +101,13 @@ public class GameRenderer {
         // Draw MOLES
         for(Mole m : world.getMoleGrid()) {
         	if (m!= null) {
+        		if (m.getMoleType() == MoleType.DUMMY){
+        			System.out.println("Dummy rendering");
+        			batcher.draw(AssetLoader.dummyMOLE, m.getBoundingCircle().x - (int)(17*scaleW), m.getBoundingCircle().y - (int)(17*scaleH), m.getBoundingCircle().width, m.getBoundingCircle().height );
+        		}
+        		else{
         		batcher.draw(m.getAsset(), m.getBoundingCircle().x - (int)(17*scaleW), m.getBoundingCircle().y - (int)(17*scaleH), m.getBoundingCircle().width, m.getBoundingCircle().height );
-        		
+        		}
         	}
         }
        //Draw MOLEDEPLOYER
@@ -144,6 +156,11 @@ public class GameRenderer {
           //DRAW ANY PU EFFECTS
         batcher.begin();
         batcher.enableBlending();
+        if (Earthquake.isInEffect()){
+        	for (Rectangle r : world.getPlaceHolders()){
+        		batcher.draw(AssetLoader.hmr, r.x+ (int)(scaleW*20), r.y+(int)(scaleH*20), (int)(90*scaleW),(int)(69*scaleH));
+        	}
+        }
         if (EnableFog.isInEffect()){
         	//draw the fog
         	System.out.println("FOG");
@@ -161,8 +178,21 @@ public class GameRenderer {
         
         if(Invulnerability.isInEffect()){
         	//draw the circular shield
-        	batcher.draw(AssetLoader.shield, GAME_WIDTH/2 -(int) (529/2 * scaleW), (int)(15*scaleH), (int)(529*scaleW), (int)(556*scaleH));
+        	batcher.draw(AssetLoader.shield, GAME_WIDTH/2 -(int) (529/2 * scaleW) + 8, (int)(15*scaleH), (int)(529*scaleW), (int)(556*scaleH));
         }
+        
+        if(BlockMoleGrid.isInEffect()){
+        	ArrayList<Rectangle> arrays = world.getPlaceHolders();
+        	boolean[] bool = world.getBlockedGrids();
+        	for (int i =0; i<bool.length; i++){
+        		if (bool[i] == true){
+        			batcher.draw(AssetLoader.blockgrid, arrays.get(i).x-(int)(15*scaleW), arrays.get(i).y, 141,129);
+        		}
+        	}
+        }
+
+        
+     
         batcher.end();
         //CONDITIONS
         batcher.begin();
@@ -274,7 +304,19 @@ public class GameRenderer {
 			batcher.draw(AssetLoader.rsm,continueButton.x,continueButton.y,continueButton.width,continueButton.height);
 			
         }
+        if (DisableOneMoleDeployer.isInEffect() && ((world.getGameState() != GameState.WIN)
+        		&& (world.getGameState() != GameState.LOSE) && (world.getGameState() != GameState.PAUSE))){
+       	 for (MoleDeployer md: world.getMoleDeployers()){
+       		 System.out.println(md.isDisabled());
+       		 
+       		 if (md.isDisabled()){
+       			 System.out.println("i am dsiabled");
+       			 batcher.draw(AssetLoader.dplyCD, md.getRectangle().x, md.getRectangle().y,md.getRectangle().width,md.getRectangle().height);
+       		 }
+       	 }
+       }
         
+  
         batcher.end();
     
 

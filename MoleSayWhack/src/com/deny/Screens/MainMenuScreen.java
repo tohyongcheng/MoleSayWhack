@@ -45,8 +45,8 @@ public class MainMenuScreen implements Screen {
 		int boxLength = (int) Math.round(((260/2)*scaleW)) ;
 
 		System.out.println(boxLength);
-		startBounds = new Rectangle((int)Math.ceil(GAME_WIDTH/2 - boxLength), (int) (Math.ceil(GAME_HEIGHT/2) + GAME_HEIGHT*0.05*scaleH), (int)(260*scaleW), (int) (91*scaleH));
-		optionsBounds = new Rectangle((int)Math.ceil(GAME_WIDTH/2 - boxLength), (int) (Math.ceil(GAME_HEIGHT/2)+ scaleH*(GAME_HEIGHT*0.05 + 100)), (int)(260*scaleW),(int) (91*scaleH));
+		startBounds = new Rectangle((int)Math.ceil(GAME_WIDTH/2 - boxLength), (int) (Math.ceil(GAME_HEIGHT/2) + GAME_HEIGHT*0.1*scaleH), (int)(260*scaleW), (int) (91*scaleH));
+		optionsBounds = new Rectangle((int)Math.ceil(GAME_WIDTH/2 - boxLength), (int) (Math.ceil(GAME_HEIGHT/2)+ scaleH*(GAME_HEIGHT*0.1 + 120)), (int)(260*scaleW),(int) (91*scaleH));
 		scoreBounds = new Rectangle((int)Math.ceil(GAME_WIDTH/2 - boxLength), (int) (Math.ceil(GAME_HEIGHT/2) + scaleH*(GAME_HEIGHT*0.05+ 200)),(int)(260*scaleW),(int) (91*scaleH));
 
 		shapeRenderer = new ShapeRenderer();
@@ -88,9 +88,9 @@ public class MainMenuScreen implements Screen {
         		startBounds.y, startBounds.width, startBounds.height);
         batcher.draw(AssetLoader.optB, optionsBounds.x, optionsBounds.y
         		, optionsBounds.width, optionsBounds.height);
-        batcher.draw(AssetLoader.hghB, scoreBounds.x, scoreBounds.y, 
+        /*batcher.draw(AssetLoader.hghB, scoreBounds.x, scoreBounds.y, 
         		scoreBounds.width, scoreBounds.height);
-      
+      */
 
         batcher.end();
        /* shapeRenderer.begin(ShapeType.Filled);
@@ -111,8 +111,12 @@ public class MainMenuScreen implements Screen {
 		else if(Gdx.input.justTouched()) {
 			mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 			if (startBounds.contains(touchPoint.x, touchPoint.y)) {
-				game.setScreen(new MultiplayerScreen(game));
 				AssetLoader.button.play();
+				
+				
+				game.setScreen(new MultiplayerScreen(game));
+				
+				
 				this.dispose();
 				return;
 			}
@@ -122,12 +126,12 @@ public class MainMenuScreen implements Screen {
 				this.dispose();
 				return;
 			}
-			if(scoreBounds.contains(touchPoint.x, touchPoint.y)){
+/*			if(scoreBounds.contains(touchPoint.x, touchPoint.y)){
 				game.setScreen(new HighScoreScreen(game));
 				AssetLoader.button.play();
 				this.dispose();
 				return;
-			}
+			}*/
 		}
 	}	
 	

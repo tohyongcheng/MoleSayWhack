@@ -203,6 +203,7 @@ public class GameWorld {
 		AssetLoader.summer.stop();
 		AssetLoader.ann.stop();
 		AssetLoader.ann.setLooping(true);
+		AssetLoader.ann.setVolume(0.7f);
 		AssetLoader.ann.play();
 		
 	}
@@ -266,7 +267,7 @@ public class GameWorld {
         	if ((moleGrid[i] == null)) {
         		if (moleQueues[i].peek() != null && moleDelay[i] > DELAY_BETWEEN_MOLE_APPEARANCE ) {
         			moleGrid[i] = moleQueues[i].remove();
-        			AssetLoader.popup.play();
+        			if (moleGrid[i].getMoleType() != MoleType.MOLEKING) AssetLoader.popup.play();
         			moleDelay[i] = 0;
         		} else {
         			moleDelay[i] += delta;
@@ -301,6 +302,7 @@ public class GameWorld {
 		DisableOneMoleDeployer.update(delta);
 		EnableFog.update(delta);
 		GenerateDummyMoles.update(delta);
+		Earthquake.update(delta);
 		Invulnerability.update(delta);
 		SpawnMoleKing.update(delta);
 		MoleShower.update(delta);
@@ -376,14 +378,13 @@ public class GameWorld {
 		return placeHolders;
 	}
     
-	public void generateRandomSpawns(float duration, float delta, MoleType moleType) {
+	public void generateRandomSpawns(float duration,  MoleType moleType) {
 		//Generate random spawns
-        runningTime += delta;
+
         int pos = r.nextInt(9);
-        if(runningTime > duration) {
-        	runningTime = 0;
-        	spawnMole(moleType, pos);
-        }
+        runningTime = 0;
+        spawnMole(moleType, pos);
+
 	}
 	
 	public MoleDeployer[] getMoleDeployers() {

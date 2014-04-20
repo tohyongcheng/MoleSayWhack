@@ -26,7 +26,7 @@ public class DisconnectScreen implements Screen {
 	private Game game;
 	private OrthographicCamera mainMenuCam;
 	private SpriteBatch batcher;
-	private BitmapFont font;
+
 	private ShapeRenderer shapeRenderer;
 	private Vector3 touchPoint;
 	private DisconnectScreenStates currentState;
@@ -39,8 +39,7 @@ public class DisconnectScreen implements Screen {
 		
 		batcher = new SpriteBatch();
 		batcher.setProjectionMatrix(mainMenuCam.combined);
-		font = new BitmapFont();
-		font.setScale(1, -1);
+
 		
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(mainMenuCam.combined);
@@ -48,13 +47,15 @@ public class DisconnectScreen implements Screen {
 	}
 	
 	private void draw() {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		//Gdx.gl.glClearColor(0, 0, 0, 1);
+       // Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
         
         batcher.begin();
         batcher.enableBlending();
-        batcher.draw(AssetLoader.background, 0, 0, GAME_WIDTH, GAME_HEIGHT);
-        font.draw(batcher,"You got Disconnected!", 68*2, 20*2);
+        batcher.draw(AssetLoader.dc, 0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+ 
+        
         batcher.end();
 	}
 

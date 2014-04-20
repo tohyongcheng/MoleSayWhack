@@ -3,6 +3,11 @@ package com.deny.Threads;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.security.Key;
+
+import javax.crypto.Cipher;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -14,9 +19,12 @@ import com.deny.GameWorld.GameWorld.GameState;
 import com.deny.Screens.DisconnectScreen;
 import com.deny.Screens.MultiplayerScreen;
 import com.deny.Screens.MultiplayerScreen.MultiplayerState;
+import com.deny.Screens.OptionsScreen.AuthenticationType;
 import com.deny.Screens.PreGameScreen;
 import com.deny.Screens.PreGameScreen.PreGameState;
 
+import sun.misc.BASE64Decoder;			//Base64 decoding
+import sun.misc.BASE64Encoder;
 public class ReadThread  extends Thread{
 	private Game game;
 	private Socket client;
@@ -25,13 +33,28 @@ public class ReadThread  extends Thread{
 	private GameWorld gameWorld;
 	private PreGameScreen preGameScreen;
 	private MultiplayerScreen multiPlayerScreen;
-	
+	private Cipher cipher;
+	private ObjectInputStream inObject;
+	private Key  symmetricKey;
+	private AuthenticationType authType;
 	
 	//NOT THREAD SAFE
 	public ReadThread(ServerClientThread sh, Socket client) {
 		socketHandler = sh;
 		game = socketHandler.getGame();
 		this.client = client;
+		authType = ServerClientThread.authType;
+		if(authType == AuthenticationType.T3 || authType == AuthenticationType.T4){
+			symmetricKey = sh.getKey();
+		}
+	
+		try {
+			cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+			inObject = new ObjectInputStream(client.getInputStream());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 	}
 	
@@ -42,15 +65,39 @@ public class ReadThread  extends Thread{
 				return;
 			}
 			try {
-				String message = in.readLine();
+				//DECRYPT HERE
+				String message = "";
+				if (authType == AuthenticationType.T3 || authType == AuthenticationType.T4){
+					try {
+						System.out.println("Doing Decryption:");
+						Object messageObject = inObject.readObject();
+						String messageString = (String) messageObject;
+						@SuppressWarnings("restriction")
+						byte[] messageByte = new BASE64Decoder().decodeBuffer(messageString);
+						
+						cipher.init(Cipher.DECRYPT_MODE, symmetricKey);
+						
+						byte[] newMessageByte = cipher.doFinal(messageByte);
+						String messageTemp = new String(newMessageByte, "UTF-8");
+						message = messageTemp.substring(0);
+					} catch (Exception e) {
+						goToDisconnectedScreen();
+						return;
+					}
+					
+				}
+				else{
+				message = in.readLine();
+				}
 				System.out.println("Received Message: " + message);
 				String[] messages = message.split(" ");
-				
+
 				switch(messages[0]) {
 				//GAMESCREEN
 				case "[SPAWN]":
-					MoleType moleType = MoleType.valueOf(messages[1]);
-					int pos =  Integer.valueOf(messages[2]);
+					MoleType moleType = MoleType.valueOf(messages[1].trim());
+					System.out.println(messages[2]);
+					int pos =  	Integer.valueOf(messages[2].trim());
 					gameWorld.spawnMole(moleType,pos);
 					break;
 				case "[CHOOSEMOLESCREEN]":
@@ -80,12 +127,14 @@ public class ReadThread  extends Thread{
 					break;
 				case "[POWERUP]":
 					System.out.println("Received message about invoking a powerup on current player: " + messages[1]);
-					PowerUpType powerUp = PowerUpType.valueOf(messages[1]);
+
+					PowerUpType powerUp = PowerUpType.valueOf(messages[1].trim());
 					gameWorld.invokePowerUp(powerUp);
 					break;
 				case "[OPPONENTHP]":
 					System.out.println("Received message about opponent HP: " + messages[1]);
-					gameWorld.setOpponentHP(Integer.valueOf(messages[1]));
+					char hp = messages[1].charAt(0);
+					gameWorld.setOpponentHP(Character.getNumericValue(hp));
 					break;
 //				//PREGAMESCREEN
 //				case "[MAINMENUSCREEN]":
@@ -98,6 +147,7 @@ public class ReadThread  extends Thread{
 					if (socketHandler.getMultiplayerScreen() !=null) socketHandler.getMultiplayerScreen().setState(MultiplayerState.RESTART);
 					break;
 				}
+				
 			} catch (IOException e) {
 				//e.printStackTrace();
 				System.out.println("Socket Closed");
@@ -106,6 +156,7 @@ public class ReadThread  extends Thread{
 				goToDisconnectedScreen();
 				return;
 			}
+			
 		}
 	}
 

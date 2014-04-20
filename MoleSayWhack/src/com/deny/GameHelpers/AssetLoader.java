@@ -22,27 +22,68 @@ public class AssetLoader
 {
 	//The Textures//
 	public static BitmapFont font;
-	public static Texture texture, logoTexture, win, invulnerable;
+	public static Texture texture, logoTexture, win, invulnerable, mismatch, optionsSC;
+	public static TextureRegion optBG, changename, changemusic, changefx, noprotocol, t2, t3, t4, t5, refresh;
 	public static Texture Main1024, Game1024, moleDep1024, lose, PS, powerup, powerupDep2, powerupDep1;
 	public static TextureRegion powerless, earthquake, moleshower, silencer, molejam, kingmole, mouldy, dummymole, moleshield;
 	public static TextureRegion gameBG, ps, rpl, ext, rsm, psBG, borderVert, borderHor, hmr, titlepuDep, shield;
 	public static TextureRegion background, strB, optB, hghB, Title, m1, m3, m5, sm,king,
-	enterIP, loading, cnl, mdm1, mdm3, mdm5, mdsm, titleDep, Lose, dplyOK, dplyCD, dplySEL;
+	enterIP, loading, cnl, mdm1, mdm3, mdm5, mdsm, titleDep, Lose, dplyOK, dplyCD, dplySEL, blockgrid;
 	public static TextureRegion eq, ms, ns, np, nc, sc, fog, km, inv, cdown;
 	public static TextureRegion logo, mswlogo, startButtonUp, startButtonDown, winTextR;
-	public static TextureRegion fogEffect;
+	public static TextureRegion fogEffect, dummyMOLE, dc;
 	public static TextureRegion mh1, mh2, mh3, mh4, mh5, op1, op2, op3, op4, op5;
-	public static TextureRegion bg, Hm, title, startButt, optButt, scoreButt, 
+	public static TextureRegion bg, Hm, title, startButt, optButt, scoreButt, mp, 
 		mole1, mole3, mole5, moleSabo, pause, play, cancel, replay, ipButt;
 	
 	//128 x 128
 
-	public static Sound  shieldS, hit, explode, clicksound, gameover, button, back, sent, slctd, popup, earthQk,fogg, block;
+	public static Sound  dummy, shower, blockG, shieldS,kinglaugh, hit, explode, clicksound, gameover, 
+	button, back, sent, slctd, popup, earthQk,fogg, block;
 	public static Music summer, ann;
 
 	
 	public static void load()
 	{
+		optionsSC = new Texture(Gdx.files.internal("data/optionsSC.png"));
+		optionsSC.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+		
+		optBG = new TextureRegion(optionsSC, 0, 0,  544, 816);
+		optBG.flip(false, true);
+		
+		refresh = new TextureRegion(optionsSC, 556,937,260,87);
+		refresh.flip(false,true);
+		
+		changename = new TextureRegion(optionsSC, 558, 829, 258, 90);
+		changename.flip(false, true);
+		
+		changemusic = new TextureRegion(optionsSC, 558, 717, 258, 90);
+		changemusic.flip(false,true);
+		
+		changefx = new TextureRegion(optionsSC, 558, 605, 258, 90);
+		changefx.flip(false, true);
+		
+		noprotocol = new TextureRegion(optionsSC, 558, 494, 258, 90);
+		noprotocol.flip(false,true);
+		
+		t2 = new TextureRegion(optionsSC, 558,46, 258,90);
+		t2.flip(false,true);
+		
+		t3 = new TextureRegion(optionsSC, 558,158, 258, 90);
+		t3.flip(false,true);
+		
+		t4 = new TextureRegion(optionsSC, 558,271, 258, 90);
+		t4.flip(false,true);
+		
+		t5 = new TextureRegion(optionsSC, 556, 381, 258, 90);
+		t5.flip(false,true);
+		
+		mismatch = new Texture(Gdx.files.internal("data/mp.png"));
+		mismatch.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+		
+		mp = new TextureRegion(mismatch	, 0, 0, 544, 816);
+		mp.flip(false,true);
+		
 		invulnerable = new Texture(Gdx.files.internal("data/invulnerability.png"));
 		invulnerable.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 		
@@ -75,6 +116,12 @@ public class AssetLoader
 		
 		titlepuDep=  new TextureRegion(powerupDep1, 512,30,230,98);
 		titlepuDep.flip(false,true);
+		
+		blockgrid = new TextureRegion(powerupDep1, 485,160, 141,129);
+		blockgrid.flip(false, true);
+		
+		dummyMOLE = new TextureRegion(powerupDep1, 494,316, 113,114);
+		dummyMOLE.flip(false,true);
 		
 		powerupDep2 = new Texture(Gdx.files.internal("data/powerdep2.png"));
 		powerupDep2.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
@@ -151,6 +198,10 @@ public class AssetLoader
 		
 		cdown = new TextureRegion(powerup, 168, 12, 146, 75);
 		cdown.flip(false,true);
+		
+		dc = new TextureRegion(powerup, 479, 0, 544, 816);
+		dc.flip(false,true);
+		
 		PS = new Texture(Gdx.files.internal("data/pause.png"));
 		PS.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 		
@@ -341,18 +392,24 @@ public class AssetLoader
         fogg = Gdx.audio.newSound(Gdx.files.internal("data/fog.mp3"));
         block= Gdx.audio.newSound(Gdx.files.internal("data/buzzer.mp3"));
         shieldS = Gdx.audio.newSound(Gdx.files.internal("data/shield.mp3"));
+        kinglaugh = Gdx.audio.newSound(Gdx.files.internal("data/king.mp3"));
+        blockG = Gdx.audio.newSound(Gdx.files.internal("data/block.mp3"));
+       shower = Gdx.audio.newSound(Gdx.files.internal("data/shower.mp3"));
+       dummy = Gdx.audio.newSound(Gdx.files.internal("data/dummy.mp3"));
 	}
 	
 	public static void dispose() {
         // We must dispose of the texture when we are finished.
 		logoTexture.dispose();
 		font.dispose();
-		texture.dispose(); logoTexture.dispose(); win.dispose();
+		texture.dispose(); logoTexture.dispose(); win.dispose();mismatch.dispose();optionsSC.dispose();
 		Main1024.dispose(); Game1024.dispose(); moleDep1024.dispose(); lose.dispose();
 		PS.dispose(); powerup.dispose(); powerupDep2.dispose(); powerupDep1.dispose();
 		hit.dispose(); explode.dispose(); clicksound.dispose(); gameover.dispose();
 		button.dispose(); back.dispose();summer.dispose(); ann.dispose(); sent.dispose(); slctd.dispose(); popup.dispose();
-//        // Dispose sounds
+		 dummy.dispose(); shower.dispose(); blockG.dispose(); shieldS.dispose();kinglaugh.dispose();
+		 earthQk.dispose();fogg.dispose(); block.dispose();
+		//        // Dispose sounds
 //        dead.dispose();
 //        flap.dispose();
 //        coin.dispose();

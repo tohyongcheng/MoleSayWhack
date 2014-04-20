@@ -112,5 +112,7 @@ public abstract class Mole
 	public Color getColor() {
 		return moleType.getColor();
 	}
-
+public MoleType getMoleType(){
+	return moleType;
+}
 }

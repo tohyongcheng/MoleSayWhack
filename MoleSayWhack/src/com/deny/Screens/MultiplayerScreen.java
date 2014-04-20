@@ -33,7 +33,7 @@ public class MultiplayerScreen implements Screen {
 	private static final int GAME_HEIGHT = Gdx.graphics.getHeight();
 
 	public enum MultiplayerState {
-		READY, CONNECTED, START, RESTART, QUIT
+		READY, CONNECTED, START, RESTART, QUIT, PROTOCOLMISMATCH
 	}
 	private MultiplayerState currentState;
 	private Object multiplayerStateLock = new Object();
@@ -65,12 +65,12 @@ public class MultiplayerScreen implements Screen {
         double scaleH = (double) GAME_HEIGHT/816;
         
 		backBounds = new Rectangle(3,(int)(GAME_HEIGHT-9-82*scaleH),(int)(83*scaleW), (int)(82*scaleH));
-		playBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(GAME_HEIGHT/3 - 90*scaleH/2),(int)(260*scaleW), (int)(90*scaleH));
+		playBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(3*GAME_HEIGHT/6 - 90*scaleH/2 - 50*scaleH),(int)(260*scaleW), (int)(90*scaleH));
 		
 		//NATALIE: INPUT THE POSITION OF THE RECTANGLE
-		refreshBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(300),(int)(260*scaleW), (int)(90*scaleH));
+		refreshBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(4*GAME_HEIGHT/6 - 90*scaleH/2 - 50*scaleH),(int)(260*scaleW), (int)(90*scaleH));
 		
-		changeAddressBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(2*GAME_HEIGHT/3 - 90*scaleH/2),(int)(260*scaleW), (int)(90*scaleH));
+		changeAddressBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(5*GAME_HEIGHT/6 - 90*scaleH/2 - 50*scaleH),(int)(260*scaleW), (int)(90*scaleH));
 		
 
 		listener = new IPAddressInputListener(this);
@@ -195,6 +195,7 @@ public class MultiplayerScreen implements Screen {
 		
 		case CONNECTED:
 			
+
 			if(Gdx.input.isKeyPressed(Keys.BACK)) {
 				AssetLoader.back.play();
 				socketHandler.leaveGameRoom();
@@ -202,6 +203,7 @@ public class MultiplayerScreen implements Screen {
 			}
 			
 			else if(Gdx.input.justTouched()) {
+
 				multiplayerCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (playBounds.contains(touchPoint.x,touchPoint.y)) {
@@ -227,11 +229,28 @@ public class MultiplayerScreen implements Screen {
 				}
 			}
 			break;
+		case PROTOCOLMISMATCH:
+			
+			if(Gdx.input.justTouched()) {
+			if (socketHandler !=null) {
+				socketHandler.interrupt();
+				socketHandler.dispose();
+			}
+			System.out.println("Disconnected because protocol type does not match. Please try again");
+			game.setScreen(new MainMenuScreen(game));
+			dispose();
+			
+			}
+			break;
 			
 		case QUIT:
 			if (socketHandler !=null) {
 				socketHandler.interrupt();
 				socketHandler.dispose();
+			}
+			
+			if(ServerClientThread.authenticityStatus == false){
+				System.out.println("Disconnected because there is intruder! Please try again. ");
 			}
 			game.setScreen(new MainMenuScreen(game));
 			dispose();
@@ -263,13 +282,17 @@ public class MultiplayerScreen implements Screen {
         switch (getState()) {
         case CONNECTED:
         	batcher.draw(AssetLoader.strB, playBounds.x, playBounds.y,playBounds.width, playBounds.height);
-        	batcher.draw(AssetLoader.strB, refreshBounds.x, refreshBounds.y,refreshBounds.width, refreshBounds.height);
+        	batcher.draw(AssetLoader.refresh, refreshBounds.x, refreshBounds.y,refreshBounds.width, refreshBounds.height);
         	batcher.draw(AssetLoader.enterIP, changeAddressBounds.x, changeAddressBounds.y,changeAddressBounds.width, changeAddressBounds.height);
+            AssetLoader.font.draw(batcher, "My address is: ", 20, 20);
+            AssetLoader.font.drawMultiLine(batcher, myAddress.toString(), 20, 50);
         	break;
         case READY:
         	batcher.draw(AssetLoader.loading, playBounds.x, playBounds.y,playBounds.width, playBounds.height);
-        	batcher.draw(AssetLoader.strB, refreshBounds.x, refreshBounds.y,refreshBounds.width, refreshBounds.height);
+        	batcher.draw(AssetLoader.refresh, refreshBounds.x, refreshBounds.y,refreshBounds.width, refreshBounds.height);
         	batcher.draw(AssetLoader.enterIP, changeAddressBounds.x, changeAddressBounds.y,changeAddressBounds.width, changeAddressBounds.height);
+            AssetLoader.font.draw(batcher, "My address is: ", 20, 20);
+            AssetLoader.font.drawMultiLine(batcher, myAddress.toString(), 20, 50);
         	break;
 		case QUIT:
 			break;
@@ -277,12 +300,15 @@ public class MultiplayerScreen implements Screen {
 			break;
 		case START:
 			break;
+		case PROTOCOLMISMATCH:
+			batcher.draw(AssetLoader.mp, 0, 0, GAME_WIDTH, GAME_HEIGHT);
 		default:
 			break;
         }
 
         batcher.draw(AssetLoader.cnl, backBounds.x, backBounds.y,backBounds.width, backBounds.height);
-        AssetLoader.font.draw(batcher, myAddress.toString(), 20, 20);
+
+
 	    batcher.end();
 	}
 	

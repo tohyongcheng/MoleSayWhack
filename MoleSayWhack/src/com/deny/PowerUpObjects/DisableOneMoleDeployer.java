@@ -3,6 +3,7 @@ package com.deny.PowerUpObjects;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
+import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleDeployer;
 import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameWorld;
@@ -50,11 +51,13 @@ public class DisableOneMoleDeployer extends PowerUp {
 						//Set a random Mole Deployer to be disabled
 						MoleDeployer[] moleDeployers = gameWorld.getMoleDeployers();
 						moleDeployers[r.nextInt(2)].setDisabled(true);
+
 					}
 				});
 			}
 		}).start();
 		inEffect = true;
+		AssetLoader.block.play();
 		
 	}
 	

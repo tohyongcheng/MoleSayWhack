@@ -39,12 +39,13 @@ public class GenerateDummyMoles extends PowerUp {
 		r = new Random();
 		powerUpType = PowerUpType.DUMMY;
 		effectDuration = powerUpType.getEffectDuration();
+		loadPreferences();
 	}
 
 	
 	public static void invoke() {
 		inEffect = true;
-		AssetLoader.dummy.play();
+		if (enableSFX) AssetLoader.dummy.play();
 		//generates 6 dummy moles
 		gameWorld.generateRandomSpawns(effectDuration,  MoleType.DUMMY);
 		gameWorld.generateRandomSpawns(effectDuration,  MoleType.DUMMY);

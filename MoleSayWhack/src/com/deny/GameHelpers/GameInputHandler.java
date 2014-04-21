@@ -3,7 +3,9 @@ package com.deny.GameHelpers;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameObjects.MoleDeployer;
 import com.deny.GameObjects.PowerUpDeployer;
@@ -18,12 +20,20 @@ public class GameInputHandler implements InputProcessor {
 	private float scaleFactorY;
 	private GameWorld myWorld;
 	private ArrayList<Rectangle> placeHolders;
+	private Preferences prefs;
+	private boolean enableBGM;
+	private boolean enableSFX;
 	
 	public GameInputHandler(GameWorld myWorld, float scaleFactorX, float scaleFactorY) {
 		this.myWorld = myWorld;
 		this.scaleFactorX = scaleFactorX;
 		this.scaleFactorY = scaleFactorY;
 		placeHolders = myWorld.getPlaceHolders();
+		
+		//Get options
+		prefs = Gdx.app.getPreferences("Options");
+		enableBGM = prefs.getBoolean("enableBGM", true);
+		enableSFX = prefs.getBoolean("enableSFX", true);
 	}
 	
 	
@@ -56,7 +66,7 @@ public class GameInputHandler implements InputProcessor {
 			for (int i=0; i<placeHolders.size(); i++) { 
 				if (placeHolders.get(i).contains(screenX, screenY)) {
 					
-					AssetLoader.sent.play();
+					if (enableSFX) AssetLoader.sent.play();
 					myWorld.getCurrentMoleDeployer().deployMole(i);
 					myWorld.setCurrentMoleDeployer(null);
 					myWorld.setGameState(GameState.READY);
@@ -73,7 +83,7 @@ public class GameInputHandler implements InputProcessor {
 			}
 			
 			if (myWorld.getPauseButton().contains(screenX,screenY)) {
-				AssetLoader.button.play();
+				if (enableSFX) AssetLoader.button.play();
 				myWorld.getSocketHandler().exitGame();
 				myWorld.setGameState(GameState.MENU);
 			}
@@ -94,7 +104,6 @@ public class GameInputHandler implements InputProcessor {
 			for(Mole m: myWorld.getMoleGrid()) {
 				if (m!=null) {
 					moleT = m;
-					//to draw hammer
 					moleTouched = m.isTouchDown(screenX, screenY);
 				}
 			}
@@ -105,7 +114,7 @@ public class GameInputHandler implements InputProcessor {
 					if (md.isTouchDown(screenX,screenY)) {
 						if (md.isAvailable() && !md.isDisabled()) {
 							md.setSelected(true);
-							AssetLoader.slctd.play();
+							if (enableSFX) AssetLoader.slctd.play();
 							myWorld.setGameState(GameState.DEPLOYMENT);
 							myWorld.setCurrentMoleDeployer(md);
 						}
@@ -123,7 +132,7 @@ public class GameInputHandler implements InputProcessor {
 			}
 			
 			if (myWorld.getPauseButton().contains(screenX,screenY)) {
-				AssetLoader.button.play();
+				if (enableSFX) AssetLoader.button.play();
 				myWorld.pauseGame();
 			}
 		} 
@@ -133,13 +142,13 @@ public class GameInputHandler implements InputProcessor {
 			Rectangle exitBounds = myWorld.getExitBounds();
 			
 			if (playAgainBounds.contains(screenX,screenY)) {
-				AssetLoader.button.play();
+				if (enableSFX) AssetLoader.button.play();
 				myWorld.getSocketHandler().restartGame();
 				myWorld.setGameState(GameState.RESTART);
 			}
 			
 			if (exitBounds.contains(screenX,screenY)) {
-				AssetLoader.back.play();
+				if (enableSFX) AssetLoader.back.play();
 				//TODO: put this inside GameWorld instead?
 				myWorld.getSocketHandler().exitGame();
 				myWorld.setGameState(GameState.EXIT);
@@ -155,13 +164,13 @@ public class GameInputHandler implements InputProcessor {
 			Rectangle exitBounds = myWorld.getExitBounds();
 			if (exitBounds.contains(screenX,screenY)) {
 				//TODO: put this inside GameWorld instead?
-				AssetLoader.back.play();
+				if (enableSFX) AssetLoader.back.play();
 				myWorld.exitGame();
 			}
 			
 			Rectangle continueButton = myWorld.getContinueButton();
 			if (continueButton.contains(screenX,screenY)) {
-				AssetLoader.button.play();
+				if (enableSFX) AssetLoader.button.play();
 				myWorld.continueGame();
 			}
 		}

@@ -7,6 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleDeployer;
@@ -49,6 +50,12 @@ public class GameWorld {
 	private static final float DELAY_BETWEEN_MOLE_APPEARANCE = 1f;
 	private static final int STARTING_HP_FOR_PLAYER = 5;
 	
+	//PREFERENCES
+	private Preferences prefs;
+	private boolean enableBGM;
+	private boolean enableSFX;
+	
+	//GAME
 	private Game game;
 	private GameScreen gameScreen;
 	
@@ -92,8 +99,6 @@ public class GameWorld {
 	
 	//LOCKS
 	private Object gameStateLock = new Object();
-	private Object fogLock = new Object();
-	private Object[] moleGridsLock = new Object[NUMBER_OF_GRIDS];
 	private Object opponentHPLock = new Object();
 	
 	public enum GameState {
@@ -104,13 +109,13 @@ public class GameWorld {
 	@SuppressWarnings("unchecked")
 	public GameWorld(Game game, GameScreen gameScreen, ServerClientThread sH, ArrayList<MoleType> selectedMoles, ArrayList<PowerUpType> selectedPowerUps) {
 		
-		//Initialize Locks
-		for (int i=0; i<NUMBER_OF_GRIDS;i++) {
-			moleGridsLock[i] = new Object();
-		}
-		
 		this.game = game;
 		this.gameScreen = gameScreen;
+		
+		//Get options
+		prefs = Gdx.app.getPreferences("Options");
+		enableBGM = prefs.getBoolean("enableBGM", true);
+		enableSFX = prefs.getBoolean("enableSFX", true);
 		
 		//Setup player and threads
 		this.socketHandler = sH;
@@ -118,6 +123,7 @@ public class GameWorld {
 		this.readThread.setGameWorld(this);
 		this.player = new Player(STARTING_HP_FOR_PLAYER,this);
 		setOpponentHP(STARTING_HP_FOR_PLAYER);
+		
 		this.selectedMoles = selectedMoles;
 		this.selectedPowerUps = selectedPowerUps;
 		
@@ -200,11 +206,14 @@ public class GameWorld {
 		
 		//setup random for random spawning
 		this.r = new Random();
-		AssetLoader.summer.stop();
-		AssetLoader.ann.stop();
-		AssetLoader.ann.setLooping(true);
-		AssetLoader.ann.setVolume(0.7f);
-		AssetLoader.ann.play();
+		
+		if (enableBGM) {
+			AssetLoader.summer.stop();
+			AssetLoader.ann.stop();
+			AssetLoader.ann.setLooping(true);
+			AssetLoader.ann.setVolume(0.7f);
+			AssetLoader.ann.play();
+		}
 		
 	}
 
@@ -260,14 +269,16 @@ public class GameWorld {
     		setGameState(GameState.LOSE);
     		System.out.println("GameState changed to LOSE");
     		socketHandler.gameOver();
-    		AssetLoader.gameover.play();
+    		if (enableSFX) AssetLoader.gameover.play();
     	}
     	
     	for (int i=0; i<NUMBER_OF_GRIDS; i++) {
         	if ((moleGrid[i] == null)) {
         		if (moleQueues[i].peek() != null && moleDelay[i] > DELAY_BETWEEN_MOLE_APPEARANCE ) {
         			moleGrid[i] = moleQueues[i].remove();
-        			if (moleGrid[i].getMoleType() != MoleType.MOLEKING) AssetLoader.popup.play();
+        			if (moleGrid[i].getMoleType() != MoleType.MOLEKING) { 
+        				if (enableSFX) AssetLoader.popup.play();
+        			}
         			moleDelay[i] = 0;
         		} else {
         			moleDelay[i] += delta;

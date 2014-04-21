@@ -403,8 +403,8 @@ public class AssetLoader
         shieldS = Gdx.audio.newSound(Gdx.files.internal("data/shield.mp3"));
         kinglaugh = Gdx.audio.newSound(Gdx.files.internal("data/king.mp3"));
         blockG = Gdx.audio.newSound(Gdx.files.internal("data/block.mp3"));
-       shower = Gdx.audio.newSound(Gdx.files.internal("data/shower.mp3"));
-       dummy = Gdx.audio.newSound(Gdx.files.internal("data/dummy.mp3"));
+        shower = Gdx.audio.newSound(Gdx.files.internal("data/shower.mp3"));
+        dummy = Gdx.audio.newSound(Gdx.files.internal("data/dummy.mp3"));
 	}
 	
 	public static void dispose() {

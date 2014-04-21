@@ -161,7 +161,7 @@ public class MultiplayerScreen implements Screen {
 		switch (getState()) {
 		case READY:		
 			if(Gdx.input.isKeyPressed(Keys.BACK)) {
-				AssetLoader.back.play();
+				if (enableSFX) AssetLoader.back.play();
 				setState(MultiplayerState.QUIT);
 			}
 			
@@ -170,17 +170,17 @@ public class MultiplayerScreen implements Screen {
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
 					if (socketHandler !=null) socketHandler.interrupt();
-					AssetLoader.back.play();
+					if (enableSFX)  AssetLoader.back.play();
 					game.setScreen(new MainMenuScreen(game));
 				}
 				
 				else if (refreshBounds.contains(touchPoint.x,touchPoint.y)) {
 					setState(MultiplayerState.RESTART);
-					AssetLoader.button.play();
+					if (enableSFX) AssetLoader.button.play();
 				}
 				
 				else if (changeAddressBounds.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.button.play();
+					if (enableSFX) AssetLoader.button.play();
 					Gdx.input.getTextInput(listener, "Set IP Address", otherAddress);
 				}
 			}
@@ -190,7 +190,7 @@ public class MultiplayerScreen implements Screen {
 			
 
 			if(Gdx.input.isKeyPressed(Keys.BACK)) {
-				AssetLoader.back.play();
+				if (enableSFX) AssetLoader.back.play();
 				socketHandler.leaveGameRoom();
 				setState(MultiplayerState.QUIT);
 			}
@@ -200,24 +200,24 @@ public class MultiplayerScreen implements Screen {
 				multiplayerCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (playBounds.contains(touchPoint.x,touchPoint.y)) {
-					AssetLoader.button.play();
+					if (enableSFX) AssetLoader.button.play();
 					socketHandler.toChooseMolesScreen();
 					setState(MultiplayerState.START);
 				}
 				
 				else if (refreshBounds.contains(touchPoint.x,touchPoint.y)) {
 					setState(MultiplayerState.RESTART);
-					AssetLoader.button.play();
+					if (enableSFX) AssetLoader.button.play();
 				}
 				
 				else if (backBounds.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.back.play();
+					if (enableSFX) AssetLoader.back.play();
 					socketHandler.leaveGameRoom();
 					setState(MultiplayerState.QUIT);
 				}
 				
 				else if (changeAddressBounds.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.button.play();
+					if (enableSFX) AssetLoader.button.play();
 					Gdx.input.getTextInput(listener, "Set IP Address", otherAddress);
 				}
 			}

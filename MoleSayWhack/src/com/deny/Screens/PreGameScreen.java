@@ -4,18 +4,17 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
-import com.deny.Screens.MultiplayerScreen.MultiplayerState;
 import com.deny.Threads.ServerClientThread;
 
 public class PreGameScreen implements Screen {
@@ -42,6 +41,9 @@ public class PreGameScreen implements Screen {
 	private ArrayList<Rectangle> selectedMolesRectangles;
 	private float countDownTime = 20f;
 	private PreGameState currentState;
+	private Preferences prefs;
+	private boolean enableBGM;
+	private boolean enableSFX;
 	
 	
 	private Object preGameStateLock = new Object();
@@ -72,7 +74,10 @@ public class PreGameScreen implements Screen {
 			selectedMolesRectangles.add(new Rectangle( (int)(GAME_WIDTH/2 - 474*scaleW/2),(int)(GAME_HEIGHT/4.5 +(i*(178*scaleH+7)-5)) , (int)(474*scaleW),(int)(178*scaleH )));
 
 		}		
-		
+		//Get options
+		prefs = Gdx.app.getPreferences("Options");
+		enableBGM = prefs.getBoolean("enableBGM", true);
+		enableSFX = prefs.getBoolean("enableSFX", true);
 	}
 	
 	public void draw() {
@@ -120,7 +125,7 @@ public class PreGameScreen implements Screen {
 			}
 			
 			if(Gdx.input.isKeyPressed(Keys.BACK)) {
-				AssetLoader.back.play();
+				if (enableSFX) AssetLoader.back.play();
 				setState(PreGameState.QUIT);
 			}
 			
@@ -128,17 +133,16 @@ public class PreGameScreen implements Screen {
 				mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.back.play();
+					if (enableSFX) AssetLoader.back.play();
 					setState(PreGameState.QUIT);
 				}
 				
 				for (int i =0; i<NO_OF_DEPLOYERS; i++) {
 					if (selectedMolesRectangles.get(i).contains(touchPoint.x, touchPoint.y)) {
-						//AssetLoader.button.play();
 						MoleType nextMoleType = selectedMoles.get(i).next();
 						selectedMoles.remove(i);
 						selectedMoles.add(i,nextMoleType);
-						AssetLoader.clicksound.play();
+						if (enableSFX) AssetLoader.clicksound.play();
 					}
 				}
 			}

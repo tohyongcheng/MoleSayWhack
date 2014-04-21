@@ -19,7 +19,8 @@ public class NameInputListener implements TextInputListener {
 
 	@Override
 	public void canceled() {
-		
+		return;
 	}
+
 
 }

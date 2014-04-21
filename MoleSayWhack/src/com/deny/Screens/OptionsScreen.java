@@ -153,27 +153,27 @@ public class OptionsScreen implements Screen {
 				mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.back.play();
+					if (enableSFX) AssetLoader.back.play();
 					setState(OptionsScreenState.BACK);
 				}
 				
 				else if (changeNameBtn.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.button.play();
+					if (enableSFX)AssetLoader.button.play();
 					Gdx.input.getTextInput(listener, "Set your name: ", name);
 				}
 				
 				else if (changeBGMBtn.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.button.play();
+					if (enableSFX)AssetLoader.button.play();
 					setEnableBGM(!enableBGM);
 				}
 				
 				else if (changeSFXBtn.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.button.play();
+					if (enableSFX)AssetLoader.button.play();
 					setEnableSFX(!enableSFX);
 				}
 				
 				else if (changeAuthBtn.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.button.play();
+					if (enableSFX)AssetLoader.button.play();
 					setAuthType(authType.next());
 					
 					//set the serverClientThread authType
@@ -255,6 +255,15 @@ public class OptionsScreen implements Screen {
 	}
 
 	public void setEnableBGM(boolean enableBGM) {
+		if (enableBGM == false ){
+			AssetLoader.ann.stop();
+			AssetLoader.summer.stop();
+		} else {
+			AssetLoader.ann.stop();
+			AssetLoader.summer.stop();
+			AssetLoader.summer.setLooping(true);
+			AssetLoader.summer.play();
+		}
 		this.enableBGM = enableBGM;
 		prefs.putBoolean("enableBGM", enableBGM);
 		prefs.flush();

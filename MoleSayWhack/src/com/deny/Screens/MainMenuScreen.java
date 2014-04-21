@@ -22,7 +22,6 @@ public class MainMenuScreen implements Screen {
 	double scaleW = (double)GAME_WIDTH/544.0;
 	double scaleH = (double) GAME_HEIGHT/816;
 	private Game game;
-	private Preferences prefs;
 	private OrthographicCamera mainMenuCam;
 	private SpriteBatch batcher;
 	private Rectangle startBounds;
@@ -30,6 +29,7 @@ public class MainMenuScreen implements Screen {
 	private Rectangle scoreBounds;
 	private ShapeRenderer shapeRenderer;
 	private Vector3 touchPoint;
+	private Preferences prefs;
 	private boolean enableBGM;
 	private boolean enableSFX;
 	
@@ -43,8 +43,6 @@ public class MainMenuScreen implements Screen {
 		batcher = new SpriteBatch();
 		
 		//Create bounds. We are to edit the Position and the Width/Height Here!
-
-
 		int boxLength = (int) Math.round(((260/2)*scaleW)) ;
 
 		System.out.println(boxLength);

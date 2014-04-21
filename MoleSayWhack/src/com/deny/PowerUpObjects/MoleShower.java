@@ -40,6 +40,7 @@ public class MoleShower extends PowerUp {
 		r = new Random();
 		powerUpType = PowerUpType.MOLESHOWER;
 		effectDuration = powerUpType.getEffectDuration();
+		loadPreferences();
 	}
 
 	
@@ -55,7 +56,7 @@ public class MoleShower extends PowerUp {
 				});
 			}
 		}).start();
-		AssetLoader.shower.play();
+		if (enableSFX) AssetLoader.shower.play();
 
 	}
 	

@@ -41,6 +41,7 @@ public class Earthquake extends PowerUp {
 		r = new Random();
 		powerUpType = PowerUpType.EARTHQUAKE;
 		effectDuration = powerUpType.getEffectDuration();
+		loadPreferences();
 	}
 
 	/**
@@ -54,7 +55,6 @@ public class Earthquake extends PowerUp {
 	public static void invoke() {
 		inEffect = true;
 		System.out.println("Invoke Earthquake!");
-		AssetLoader.earthQk.play();
 		new Thread(new Runnable() {
 			public void run() {
 				Gdx.app.postRunnable(new Runnable() {
@@ -70,7 +70,7 @@ public class Earthquake extends PowerUp {
 				});
 			}
 		}).start();
-		
+		if (enableSFX) AssetLoader.earthQk.play();
 	}
 	
 	public static void update(float delta) {

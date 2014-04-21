@@ -2,6 +2,7 @@ package com.deny.Screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -26,7 +27,9 @@ public class DisconnectScreen implements Screen {
 	private Game game;
 	private OrthographicCamera mainMenuCam;
 	private SpriteBatch batcher;
-
+	private Preferences prefs;
+	private boolean enableBGM;
+	private boolean enableSFX;
 	private ShapeRenderer shapeRenderer;
 	private Vector3 touchPoint;
 	private DisconnectScreenStates currentState;
@@ -44,6 +47,11 @@ public class DisconnectScreen implements Screen {
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(mainMenuCam.combined);
 		touchPoint = new Vector3();
+		
+		//Get options
+		prefs = Gdx.app.getPreferences("Options");
+		enableBGM = prefs.getBoolean("enableBGM", true);
+		enableSFX = prefs.getBoolean("enableSFX", true);
 	}
 	
 	private void draw() {
@@ -67,7 +75,7 @@ public class DisconnectScreen implements Screen {
 			break;
 		case START:
 			if(Gdx.input.justTouched()) {
-				AssetLoader.back.play();
+				if (enableSFX) AssetLoader.back.play();
 				currentState = DisconnectScreenStates.QUIT;
 			}
 			break;

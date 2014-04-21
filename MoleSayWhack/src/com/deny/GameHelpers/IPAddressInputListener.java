@@ -22,7 +22,7 @@ public class IPAddressInputListener implements TextInputListener {
 
 	@Override
 	public void canceled() {
-		
+		return;
 	}
 
 }

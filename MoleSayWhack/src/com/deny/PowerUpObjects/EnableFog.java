@@ -39,6 +39,7 @@ public class EnableFog extends PowerUp {
 		r = new Random();
 		powerUpType = PowerUpType.FOG;
 		effectDuration = powerUpType.getEffectDuration();
+		loadPreferences();
 	}
 
 	
@@ -55,7 +56,7 @@ public class EnableFog extends PowerUp {
 		}).start();
 		inEffect = true;
 		//play sounds at invoke.
-    	AssetLoader.fogg.play();
+		if (enableSFX) AssetLoader.fogg.play();
 		
 	}
 

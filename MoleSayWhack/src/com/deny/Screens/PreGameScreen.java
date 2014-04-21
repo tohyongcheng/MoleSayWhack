@@ -34,7 +34,6 @@ public class PreGameScreen implements Screen {
 	private Game game;
 	private OrthographicCamera mainMenuCam;
 	private SpriteBatch batcher;
-	private BitmapFont font;
 	private ShapeRenderer shapeRenderer;
 	private Vector3 touchPoint;
 	private Rectangle backBounds;
@@ -57,8 +56,7 @@ public class PreGameScreen implements Screen {
 		
 		batcher = new SpriteBatch();
 		batcher.setProjectionMatrix(mainMenuCam.combined);
-		font = new BitmapFont();
-		font.setScale(1, -1);
+
 
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(mainMenuCam.combined);
@@ -71,14 +69,13 @@ public class PreGameScreen implements Screen {
 
 		for (int i=0; i <NO_OF_DEPLOYERS; i++) {
 			selectedMoles.add(MoleType.ONETAP);
-
 			selectedMolesRectangles.add(new Rectangle( (int)(GAME_WIDTH/2 - 474*scaleW/2),(int)(GAME_HEIGHT/4.5 +(i*(178*scaleH+7)-5)) , (int)(474*scaleW),(int)(178*scaleH )));
 
 		}		
 		
 	}
 	
-	private void draw() {
+	public void draw() {
 		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
@@ -107,7 +104,7 @@ public class PreGameScreen implements Screen {
 	}
 
 
-	private void update(float delta) {
+	public void update(float delta) {
 		
 		switch(getState()) {
 		

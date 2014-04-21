@@ -19,8 +19,7 @@ public class GameInputHandler implements InputProcessor {
 	private GameWorld myWorld;
 	private ArrayList<Rectangle> placeHolders;
 	
-	public GameInputHandler(GameWorld myWorld, float scaleFactorX,
-		float scaleFactorY) {
+	public GameInputHandler(GameWorld myWorld, float scaleFactorX, float scaleFactorY) {
 		this.myWorld = myWorld;
 		this.scaleFactorX = scaleFactorX;
 		this.scaleFactorY = scaleFactorY;
@@ -78,6 +77,16 @@ public class GameInputHandler implements InputProcessor {
 				myWorld.getSocketHandler().exitGame();
 				myWorld.setGameState(GameState.MENU);
 			}
+			
+			for (PowerUpDeployer pd: myWorld.getPowerUpDeployers()) {
+				if (pd!= null) {
+					if (pd.isTouchDown(screenX,screenY) && pd.isAvailable()) {
+						pd.deploy();
+						myWorld.setGameState(GameState.RUNNING);
+					}
+				}
+			}
+			
 		} 
 		
 		else if (currentState == GameState.RUNNING ){

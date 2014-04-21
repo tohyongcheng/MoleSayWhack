@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.security.Key;
 
 import javax.crypto.Cipher;
@@ -12,6 +11,7 @@ import javax.crypto.Cipher;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.net.Socket;
+import com.badlogic.gdx.utils.Base64Coder;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameWorld;
@@ -21,10 +21,7 @@ import com.deny.Screens.MultiplayerScreen;
 import com.deny.Screens.MultiplayerScreen.MultiplayerState;
 import com.deny.Screens.OptionsScreen.AuthenticationType;
 import com.deny.Screens.PreGameScreen;
-import com.deny.Screens.PreGameScreen.PreGameState;
 
-import sun.misc.BASE64Decoder;			//Base64 decoding
-import sun.misc.BASE64Encoder;
 public class ReadThread  extends Thread{
 	private Game game;
 	private Socket client;
@@ -73,7 +70,7 @@ public class ReadThread  extends Thread{
 						Object messageObject = inObject.readObject();
 						String messageString = (String) messageObject;
 						@SuppressWarnings("restriction")
-						byte[] messageByte = new BASE64Decoder().decodeBuffer(messageString);
+						byte[] messageByte = Base64Coder.decode(messageString);
 						
 						cipher.init(Cipher.DECRYPT_MODE, symmetricKey);
 						

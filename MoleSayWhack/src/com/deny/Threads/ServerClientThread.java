@@ -36,10 +36,8 @@ public class ServerClientThread extends Thread {
 	private String address = "localhost";
 	private int port = 5000;
 	private ServerSocketHints serverHints;
-	
 	private Socket client;
 	private ServerSocket server;
-	
 	private SocketHints clientHints;
 	private SocketHints serverClientHints;
 	private boolean isServer = false;
@@ -56,16 +54,16 @@ public class ServerClientThread extends Thread {
 	
 	public static AuthenticationType authType = AuthenticationType.NOPROTOCOL;
 	public static boolean authenticityStatus = true;
-	
+
 	private Key SymmetricKey;
-	
+
 	public Key getKey(){
 		return SymmetricKey;
 	}
 	public ServerClientThread(MultiplayerScreen ms, String IPAddress) {
 		this.setMultiplayerScreen(ms);
 		this.game = ms.getGame();
-		
+
 		try {
 			cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
 		} catch (NoSuchAlgorithmException e) {
@@ -75,12 +73,12 @@ public class ServerClientThread extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		if (IPAddress.equals("")) address = "localhost";
 		else address = IPAddress;
 	}
-	
-	
+
+
 	public void run() {
 
 
@@ -88,7 +86,7 @@ public class ServerClientThread extends Thread {
 		clientHints = new SocketHints();
 		//Cannot be too long
 		clientHints.connectTimeout = 100;
-		
+
 		try {
 			System.out.println("Trying to find existing server to join...");
 			//THIS IS UR SERVER
@@ -99,7 +97,7 @@ public class ServerClientThread extends Thread {
 			isClient = false;
 			isServer = true;
 		}
-		
+
 		if (isServer) {
 			serverClientHints = new SocketHints();
 			serverClientHints.connectTimeout = 10000;
@@ -116,18 +114,18 @@ public class ServerClientThread extends Thread {
 						if (server == null)
 							server = Gdx.net.newServerSocket(Protocol.TCP, port , serverHints);
 						client = server.accept(serverClientHints);
-						
+
 						//stop any more incoming connections after it is connected.
 						server.dispose();
 						break;
 					} catch (GdxRuntimeException e) {
 						//System.out.println("Error with creating ServerSocket");
 					}
-					
+
 				}
 			}
 		}
-		
+
 		if (client.isConnected()) {
 			System.out.println("Connected to other player!");
 			this.getMultiplayerScreen().setState(MultiplayerState.CONNECTED);
@@ -144,7 +142,7 @@ public class ServerClientThread extends Thread {
 				String myProtocol = authType.toString();
 				pw.println(myProtocol);
 				pw.flush();
-				
+
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -154,16 +152,16 @@ public class ServerClientThread extends Thread {
 			clientProtocol = clientProtocol.trim();
 			System.out.println(clientProtocol.matches(authType.toString()));
 			if (clientProtocol.matches(authType.toString())){
-			
+
 				matchedProtocol = true;
 			}
 			else{
 				matchedProtocol = false;
 				multiS.setState(MultiplayerState.PROTOCOLMISMATCH);
-				
+
 			}
 		}
-		
+
 		if (isClient){
 			PrintWriter pw = new PrintWriter(client.getOutputStream());
 			String protocol = authType.toString();
@@ -180,7 +178,7 @@ public class ServerClientThread extends Thread {
 
 			serverProtocol = serverProtocol.trim();
 			if (serverProtocol.matches(authType.toString())){
-				
+
 				matchedProtocol = true;
 			}
 			else{
@@ -188,244 +186,242 @@ public class ServerClientThread extends Thread {
 				multiS.setState(MultiplayerState.PROTOCOLMISMATCH);
 			}
 		}
-		
+
 		//DOING AUTHENTICATION PROTOCOL HERE, ONLY IF PROTOCOL MATCHES, if not, then quit to main menu
 		if (matchedProtocol){
-		if (authType == AuthenticationType.T2 && isServer){
-			T2Server t2 = new T2Server(client, serverPassword, clientPassword);
-			try {
-				boolean authenticity = t2.doAuthentication();
-				System.out.println("The T2 protocol status is: "+ authenticity);
-				if (authenticity) {
-					System.out.println("Authentication granted.");
+			if (authType == AuthenticationType.T2 && isServer){
+				T2Server t2 = new T2Server(client, serverPassword, clientPassword);
+				try {
+					boolean authenticity = t2.doAuthentication();
+					System.out.println("The T2 protocol status is: "+ authenticity);
+					if (authenticity) {
+						System.out.println("Authentication granted.");
 
+					}
+					else{
+						System.out.println("There's intruder!");
+						authenticityStatus = false;
+						multiS.setState(MultiplayerState.TRUDY);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				else{
-					System.out.println("There's intruder!");
-					authenticityStatus = false;
-					multiS.setState(MultiplayerState.TRUDY);
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
-		
-		else if (authType == AuthenticationType.T2 && isClient){
-			T2Client t2 = new T2Client(client,clientPassword, serverPassword);
-			try {
-				boolean authenticity = t2.doAuthentication();
-				System.out.println("The T2 protocol status is: "+ authenticity);
-				if (authenticity) {
-					System.out.println("Authentication granted.");
-					
-			
-				}
-				else{
-					System.out.println("There's intruder!");
-					authenticityStatus = false;
-					multiS.setState(MultiplayerState.TRUDY);
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		else if (authType == AuthenticationType.T3 && isServer){
-			T3Server t3 = new T3Server(client, serverPassword, clientPassword);
-			try {
-				boolean authenticity = t3.doAuthentication();
-				System.out.println("The T3 protocol status is: "+ authenticity);
-				if (authenticity) {
-					SymmetricKey = T3Server.symmetricKey;
-					System.out.println("Authentication granted.");
-					
-				}
-				else{
-					System.out.println("There's intruder!");
-					authenticityStatus = false;
-					multiS.setState(MultiplayerState.TRUDY);
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		else if (authType == AuthenticationType.T3 && isClient){
-			T3Client t3 = new T3Client(client, clientPassword,serverPassword );
-			try {
-				boolean authenticity = t3.doAuthentication();
-				System.out.println("The T3 protocol status is: "+ authenticity);
-				if (authenticity) {
-					SymmetricKey = T3Client.symmetricKey;
-					System.out.println("Authentication granted.");
-				}
-				else{
-					System.out.println("There's intruder!");
-					authenticityStatus = false;
-					multiS.setState(MultiplayerState.TRUDY);
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		else if (authType == AuthenticationType.T4 && isServer){
-			T4Server t4 = new T4Server(client, serverPassword, clientPassword);
-			try {
-				boolean authenticity = t4.doAuthentication();
-		
-				System.out.println("The T4 protocol status is: "+ authenticity);
-				if (authenticity) {
-					SymmetricKey = T4Server.symmetricKey;
-					System.out.println("Authentication granted.");
-				}
-				else{
-					System.out.println("There's intruder!");
-					authenticityStatus = false;
-					multiS.setState(MultiplayerState.TRUDY);
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
-		else if (authType == AuthenticationType.T4 && isClient){
-			T4Client t4 = new T4Client(client, clientPassword, serverPassword);
-			try {
-				boolean authenticity = t4.doAuthentication();
-		
-				System.out.println("The T4 protocol status is: "+ authenticity);
-				if (authenticity) {
-					SymmetricKey = T4Client.symmetricKey;
-					System.out.println("Authentication granted.");
-				}
-				else{
-					System.out.println("There's intruder!");
-					authenticityStatus = false;
-					multiS.setState(MultiplayerState.TRUDY);
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
-		
-		else if (authType == AuthenticationType.T5 && isServer){
-			T5Server t5 = new T5Server(client);
-			try {
-				boolean authenticity = t5.doAuthentication();
-		
-				System.out.println("The T5 protocol status is: "+ authenticity);
-				if (authenticity) {
-					SymmetricKey = T5Server.symmetricKey;
-					System.out.println("Authentication granted.");
-				}
-				else{
-					authenticityStatus = false;
-					multiS.setState(MultiplayerState.TRUDY);
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
-		
-		else if (authType == AuthenticationType.T5 && isClient){
-			T5Client t5 = new T5Client(client);
-			try {
-				boolean authenticity = t5.doAuthentication();
-			
-				System.out.println("The T5 protocol status is: "+ authenticity);
-				if (authenticity) {
-					SymmetricKey = T5Client.symmetricKey;
-					System.out.println("Authentication granted.");
-					
-			
-			
-				}
-				else{
-					authenticityStatus = false;
-					multiS.setState(MultiplayerState.TRUDY);
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		else if (authType == AuthenticationType.TRUDY && isServer){
-			TrudyServer tr = new TrudyServer(client);
-			try {
-				boolean authenticity = tr.doAuthentication();
-		
-				System.out.println("The TRUDY protocol status is: "+ authenticity);
-				if (authenticity) {
-					System.out.println("Authentication granted.");
-				}
-				else{
-					authenticityStatus = false;
-					multiS.setState(MultiplayerState.TRUDY);
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
-		
-		else if (authType == AuthenticationType.TRUDY && isClient){
-			TrudyClient td = new TrudyClient(client);
-			try {
-				boolean authenticity = td.doAuthentication();
-			
-				System.out.println("The TRUDY protocol status is: "+ authenticity);
-				if (authenticity) {
 
-					System.out.println("Authentication granted.");
+			}
+
+			else if (authType == AuthenticationType.T2 && isClient){
+				T2Client t2 = new T2Client(client,clientPassword, serverPassword);
+				try {
+					boolean authenticity = t2.doAuthentication();
+					System.out.println("The T2 protocol status is: "+ authenticity);
+					if (authenticity) {
+						System.out.println("Authentication granted.");
+					}
+					else{
+						System.out.println("There's intruder!");
+						authenticityStatus = false;
+						multiS.setState(MultiplayerState.TRUDY);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				else{
-					authenticityStatus = false;
-					multiS.setState(MultiplayerState.TRUDY);
+			}
+
+			else if (authType == AuthenticationType.T3 && isServer){
+				T3Server t3 = new T3Server(client, serverPassword, clientPassword);
+				try {
+					boolean authenticity = t3.doAuthentication();
+					System.out.println("The T3 protocol status is: "+ authenticity);
+					if (authenticity) {
+						SymmetricKey = T3Server.symmetricKey;
+						System.out.println("Authentication granted.");
+
+					}
+					else{
+						System.out.println("There's intruder!");
+						authenticityStatus = false;
+						multiS.setState(MultiplayerState.TRUDY);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			} catch (Exception e) {
+			}
+
+			else if (authType == AuthenticationType.T3 && isClient){
+				T3Client t3 = new T3Client(client, clientPassword,serverPassword );
+				try {
+					boolean authenticity = t3.doAuthentication();
+					System.out.println("The T3 protocol status is: "+ authenticity);
+					if (authenticity) {
+						SymmetricKey = T3Client.symmetricKey;
+						System.out.println("Authentication granted.");
+					}
+					else{
+						System.out.println("There's intruder!");
+						authenticityStatus = false;
+						multiS.setState(MultiplayerState.TRUDY);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			else if (authType == AuthenticationType.T4 && isServer){
+				T4Server t4 = new T4Server(client, serverPassword, clientPassword);
+				try {
+					boolean authenticity = t4.doAuthentication();
+
+					System.out.println("The T4 protocol status is: "+ authenticity);
+					if (authenticity) {
+						SymmetricKey = T4Server.symmetricKey;
+						System.out.println("Authentication granted.");
+					}
+					else{
+						System.out.println("There's intruder!");
+						authenticityStatus = false;
+						multiS.setState(MultiplayerState.TRUDY);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+			else if (authType == AuthenticationType.T4 && isClient){
+				T4Client t4 = new T4Client(client, clientPassword, serverPassword);
+				try {
+					boolean authenticity = t4.doAuthentication();
+
+					System.out.println("The T4 protocol status is: "+ authenticity);
+					if (authenticity) {
+						SymmetricKey = T4Client.symmetricKey;
+						System.out.println("Authentication granted.");
+					}
+					else{
+						System.out.println("There's intruder!");
+						authenticityStatus = false;
+						multiS.setState(MultiplayerState.TRUDY);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+			else if (authType == AuthenticationType.T5 && isServer){
+				T5Server t5 = new T5Server(client);
+				try {
+					boolean authenticity = t5.doAuthentication();
+
+					System.out.println("The T5 protocol status is: "+ authenticity);
+					if (authenticity) {
+						SymmetricKey = T5Server.symmetricKey;
+						System.out.println("Authentication granted.");
+					}
+					else{
+						authenticityStatus = false;
+						multiS.setState(MultiplayerState.TRUDY);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+			else if (authType == AuthenticationType.T5 && isClient){
+				T5Client t5 = new T5Client(client);
+				try {
+					boolean authenticity = t5.doAuthentication();
+
+					System.out.println("The T5 protocol status is: "+ authenticity);
+					if (authenticity) {
+						SymmetricKey = T5Client.symmetricKey;
+						System.out.println("Authentication granted.");
+
+
+
+					}
+					else{
+						authenticityStatus = false;
+						multiS.setState(MultiplayerState.TRUDY);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else if (authType == AuthenticationType.TRUDY && isServer){
+				TrudyServer tr = new TrudyServer(client);
+				try {
+					boolean authenticity = tr.doAuthentication();
+
+					System.out.println("The TRUDY protocol status is: "+ authenticity);
+					if (authenticity) {
+						System.out.println("Authentication granted.");
+					}
+					else{
+						authenticityStatus = false;
+						multiS.setState(MultiplayerState.TRUDY);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+			else if (authType == AuthenticationType.TRUDY && isClient){
+				TrudyClient td = new TrudyClient(client);
+				try {
+					boolean authenticity = td.doAuthentication();
+
+					System.out.println("The TRUDY protocol status is: "+ authenticity);
+					if (authenticity) {
+
+						System.out.println("Authentication granted.");
+					}
+					else{
+						authenticityStatus = false;
+						multiS.setState(MultiplayerState.TRUDY);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			else if(authType == AuthenticationType.NOPROTOCOL){
+				System.out.println("NO AUTHENTICATION REQUIRED");
+			}
+
+
+
+
+			try {
+				outObject = new ObjectOutputStream(client.getOutputStream());
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-		
-		else if(authType == AuthenticationType.NOPROTOCOL){
-			System.out.println("NO AUTHENTICATION REQUIRED");
-		}
-	
-		
-		
-		
-		try {
-			outObject = new ObjectOutputStream(client.getOutputStream());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if(authenticityStatus){
-		out = new PrintWriter(client.getOutputStream(), true);
-		readThread = new ReadThread(this,client);
-		readThread.start();
-		}
+			if(authenticityStatus){
+				out = new PrintWriter(client.getOutputStream(), true);
+				readThread = new ReadThread(this,client);
+				readThread.start();
+			}
 		}
 	}
-	
-	
+
+
 	public ServerSocket getServerSocket() {
 		return server;
 	}
-	
+
 	public Socket getClientSocket() {
 		return client;
 	}
@@ -437,186 +433,186 @@ public class ServerClientThread extends Thread {
 	public void setReadThread(ReadThread readThread) {
 		this.readThread = readThread;
 	}
-	
+
 	public void dispose() {
 		if (readThread != null) readThread.interrupt();
-		
+
 		if (server!=null) server.dispose();
 		if (client!=null) client.dispose();
 	}
-	
+
 	//ENCRYPT HERE
 	public void deployMole(MoleType moleType, int pos) {
 		System.out.println("[SocketHandler] deployed mole! Sending " + "[SPAWN] " + moleType.toString() + " " + pos);
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
 			String toWrite = "[SPAWN] " + moleType.toString() + " " + pos+"\n";
-			
+
 			try {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
 				@SuppressWarnings("restriction")
 				BASE64Encoder encode = new BASE64Encoder();
-				
+
 				@SuppressWarnings("restriction")
 				String encryptedValue = encode.encode(cipherText);
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
-				} catch (Exception e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
+
+
 		}
 		else{
-		
-		out.write(("[SPAWN] " + moleType.toString() + " " + pos+"\n"));
-		out.flush();
+
+			out.write(("[SPAWN] " + moleType.toString() + " " + pos+"\n"));
+			out.flush();
 		}
 	}
-	
+
 	public void pauseGame() {
 		System.out.println("[SocketHandler] Sending to Pause Game");
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
 			String toWrite = "[PAUSE] \n";
-		
+
 			try {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
 				@SuppressWarnings("restriction")
 				BASE64Encoder encode = new BASE64Encoder();
-				
+
 				@SuppressWarnings("restriction")
 				String encryptedValue = encode.encode(cipherText);
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
-				} catch (Exception e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
+
+
 		}
 		else{
-		out.write(("[PAUSE] \n"));
-		out.flush();
+			out.write(("[PAUSE] \n"));
+			out.flush();
 		}
 	}
-	
+
 	public void continueGame() {
 		System.out.println("[SocketHandler] Sending to Continue Game");
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
 			String toWrite = "[CONTINUE] \n";
-			
+
 			try {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
 				@SuppressWarnings("restriction")
 				BASE64Encoder encode = new BASE64Encoder();
-				
+
 				@SuppressWarnings("restriction")
 				String encryptedValue = encode.encode(cipherText);
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
-				} catch (Exception e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
+
+
 		}
 		else{
-		out.write(("[CONTINUE] \n"));
-		out.flush();
+			out.write(("[CONTINUE] \n"));
+			out.flush();
 		}
 	}
-	
+
 	public void toChooseMolesScreen() {
 		System.out.println("[SocketHandler] Sending to Change Screen to Choose Moles Screen");
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
 			String toWrite = "[CHOOSEMOLESCREEN] \n";
-			
+
 			try {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
 				@SuppressWarnings("restriction")
 				BASE64Encoder encode = new BASE64Encoder();
-				
+
 				@SuppressWarnings("restriction")
 				String encryptedValue = encode.encode(cipherText);
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
-				} catch (Exception e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
+
+
 		}
 		else{
-		out.write("[CHOOSEMOLESCREEN] \n");
-		out.flush();}
+			out.write("[CHOOSEMOLESCREEN] \n");
+			out.flush();}
 	}
-	
+
 	public void toMainMenuScreen() {
 		System.out.println("[SocketHandler] Sending to Change Screen to MainMenuScreen");
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
 			String toWrite = "[MAINMENUSCREEN] \n";
-		
+
 			try {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
 				@SuppressWarnings("restriction")
 				BASE64Encoder encode = new BASE64Encoder();
-				
+
 				@SuppressWarnings("restriction")
 				String encryptedValue = encode.encode(cipherText);
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
-				} catch (Exception e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
+
+
 		}
 		else{
-		out.write("[MAINMENUSCREEN] \n");
-		out.flush();
+			out.write("[MAINMENUSCREEN] \n");
+			out.flush();
 		}
 	}
-	
+
 	public void gameOver() {
 		System.out.println("[SocketHandler] Sending GameOver");
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
 			String toWrite = "[GAMEOVER] \n";
-			
+
 			try {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
 				@SuppressWarnings("restriction")
 				BASE64Encoder encode = new BASE64Encoder();
-				
+
 				@SuppressWarnings("restriction")
 				String encryptedValue = encode.encode(cipherText);
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
-				} catch (Exception e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
+
+
 		}
 		else{
-		out.write("[GAMEOVER] \n");
-		out.flush();
+			out.write("[GAMEOVER] \n");
+			out.flush();
 		}
 	}
 
@@ -624,86 +620,86 @@ public class ServerClientThread extends Thread {
 		System.out.println("[SocketHandler] Sending RestartGame");
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
 			String toWrite = "[RESTARTGAME] \n";
-		
+
 			try {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
 				@SuppressWarnings("restriction")
 				BASE64Encoder encode = new BASE64Encoder();
-				
+
 				@SuppressWarnings("restriction")
 				String encryptedValue = encode.encode(cipherText);
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
-				} catch (Exception e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
+
+
 		}
 		else{
-		out.write("[RESTARTGAME] \n");
-		out.flush();}
+			out.write("[RESTARTGAME] \n");
+			out.flush();}
 	}
 
 	public void exitGame() {
 		System.out.println("[SocketHandler] Sending ExitGame");
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
 			String toWrite ="[EXITGAME] \n";
-		
+
 			try {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
 				@SuppressWarnings("restriction")
 				BASE64Encoder encode = new BASE64Encoder();
-				
+
 				@SuppressWarnings("restriction")
 				String encryptedValue = encode.encode(cipherText);
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
-				} catch (Exception e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
+
+
 		}
 		else{
-		out.write("[EXITGAME] \n");
-		out.flush();}
+			out.write("[EXITGAME] \n");
+			out.flush();}
 	}
 
 	public void leaveGameRoom() {
 		System.out.println("[SocketHandler] Sending to Leave GameRoom");
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
 			String toWrite ="[LEAVEMULTIPLAYERSCREEN] \n";
-		
+
 			try {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
 				@SuppressWarnings("restriction")
 				BASE64Encoder encode = new BASE64Encoder();
-				
+
 				@SuppressWarnings("restriction")
 				String encryptedValue = encode.encode(cipherText);
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
-				} catch (Exception e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
+
+
 		}
 		else{
-		out.write("[LEAVEMULTIPLAYERSCREEN] \n");
-		out.flush();}
+			out.write("[LEAVEMULTIPLAYERSCREEN] \n");
+			out.flush();}
 	}
-	
+
 	public void sendPowerUp(PowerUpType powerUpType) {
 		System.out.println("[SocketHandler] PowerUp Deployed! Sending " + "[SPAWN] " + powerUpType.toString());
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
@@ -715,49 +711,49 @@ public class ServerClientThread extends Thread {
 				byte[] cipherText = cipher.doFinal(toWriteByte);
 				@SuppressWarnings("restriction")
 				BASE64Encoder encode = new BASE64Encoder();
-				
+
 				@SuppressWarnings("restriction")
 				String encryptedValue = encode.encode(cipherText);
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
-				} catch (Exception e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
+
+
 		}
 		else{
-		out.write(("[POWERUP] " + powerUpType.toString()+"\n"));
-		out.flush();}
+			out.write(("[POWERUP] " + powerUpType.toString()+"\n"));
+			out.flush();}
 	}
-	
+
 	public void sendHPMessage(int hp) {
 		System.out.println("[SocketHandler] Opponent got hit! Sending " + "[OPPONENTHP] " + hp);
 		if (authType == AuthenticationType.T3 || authType == AuthenticationType.T4){
 			String toWrite ="[OPPONENTHP] " + hp+"\n";
-		
+
 			try {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
 				@SuppressWarnings("restriction")
 				BASE64Encoder encode = new BASE64Encoder();
-				
+
 				@SuppressWarnings("restriction")
 				String encryptedValue = encode.encode(cipherText);
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
-				} catch (Exception e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
+
+
 		}
 		else{
-		out.write(("[OPPONENTHP] " + hp+"\n"));
-		out.flush();
+			out.write(("[OPPONENTHP] " + hp+"\n"));
+			out.flush();
 		}
 	}
 
@@ -776,7 +772,7 @@ public class ServerClientThread extends Thread {
 	public void setPreGameScreen(PreGameScreen preGameS) {
 		this.preGameS = preGameS;
 	}
-	
+
 	public Game getGame() {
 		return game;
 	}

@@ -46,7 +46,7 @@ import com.deny.Screens.PreGameScreen;
 
 public class T4Server {
 	
-	private String sharedSecret = "blueberry";
+	
 	private Socket client;
 	private String Password;
 	private String clientPassword;
@@ -139,33 +139,31 @@ public class T4Server {
 		
 		
 		
-		/*****************6. GENERATING MAC MD5 : PASSWORD + SHAREDSECRET **************************/
+		/*****************6. GENERATING DIGEST**************************/
 		
 		System.out.println("Creating MD5 digest now");
-		byte[] salt = sharedSecret.getBytes("UTF-8");
-		outputStream.write(combineText);
-		outputStream.write(salt);
-		byte[] saltedPass = outputStream.toByteArray();
+		outputStream.write(cipherText);
+		byte[] toDigest = outputStream.toByteArray();
 		outputStream.reset();
 		
 		MessageDigest MD = MessageDigest.getInstance("MD5");
-		MD.update(saltedPass);
+		MD.update(toDigest);
 		
-		System.out.println("Digest now is: " + new String(saltedPass, "UTF-8"));
+		System.out.println("Digest now is: " + new String(toDigest, "UTF-8"));
 		
 		
 		/************7. RECEIVING DIGEST****************************/
 		System.out.println("Receiving digest");
 		ObjectInputStream inObj = new ObjectInputStream(client.getInputStream());
-		Object incomeSaltPass = inObj.readObject();
-		String incomeSaltedPassString = (String) incomeSaltPass;
+		Object incomeDigest = inObj.readObject();
+		String incomeDigestString = (String) incomeDigest;
 		
 		
 		/**********8. SENDING DIGEST OVER*********/
 		System.out.println("Sending digest over");
 		
 		@SuppressWarnings("restriction")
-		String saltedPassString = base64.encode(saltedPass);
+		String saltedPassString = base64.encode(toDigest);
 		ObjectOutputStream obj = new ObjectOutputStream(client.getOutputStream());
 		obj.writeObject(saltedPassString);
 		obj.flush();
@@ -173,7 +171,7 @@ public class T4Server {
 		/***************9. DECODE DIGEST***************************/
 		System.out.println("Decode digest");
 		@SuppressWarnings("restriction")
-		byte[] incomeSaltedPassByte = new BASE64Decoder().decodeBuffer(incomeSaltedPassString);
+		byte[] incomeDigestByte = new BASE64Decoder().decodeBuffer(incomeDigestString);
 		
 		/************10. RECEIVING ENRYPTED PASSWORD********************/
 		System.out.println("Receiving encrypted password");
@@ -182,19 +180,33 @@ public class T4Server {
 		@SuppressWarnings("restriction")
 		byte[] incomeEncryptedValueByte = new BASE64Decoder().decodeBuffer(incomeEncryptedValueString);
 		
-		/*************11. SENDING ENCRYPTED PASSWORD***********************/
+		
+		/*************11. DIGESTING PASSWORD AND COMPARING*****************************************/
+		System.out.println("Comparing digest and incoming encryptedtext");
+		outputStream.write(incomeEncryptedValueByte);
+		byte[] toCompareWithDigest = outputStream.toByteArray();
+		outputStream.reset();
+		MD.update(toCompareWithDigest);
+		
+		boolean digestAuthenticity = Arrays.equals(toCompareWithDigest, incomeDigestByte);
+		
+		System.out.println("Status of encryptedtext and Digest received is : " + digestAuthenticity);
+		
+		/*************12. SENDING ENCRYPTED PASSWORD***********************/
+		if(digestAuthenticity){
 		System.out.println("Sending encrypted password");
 		obj.writeObject(encryptedValue);
 		obj.flush();
 
 		
-	/***************12. DECRYPT ENCRYPTED PASSWORD***********************************/
+	/***************13. DECRYPT ENCRYPTED PASSWORD***********************************/
+	
 		System.out.println("Decrypting password");
 		cipher.init(Cipher.DECRYPT_MODE, privateKey);
 		byte[] incomeDecryptedValueByte = cipher.doFinal(incomeEncryptedValueByte);
 		
 		
-		/******************13. COMPARING PASSWORDS*************************************/
+		/******************14. COMPARING PASSWORDS*************************************/
 		System.out.println("Comparison begins");
 		byte[] clientPass = clientPassword.getBytes("UTF-8");
 		outputStream.write(nonce);
@@ -205,20 +217,9 @@ public class T4Server {
 		
 		boolean compare = Arrays.equals(incomeDecryptedValueByte, toCompare);
 		System.out.println("Result of encrypted passwords is : " + compare);
-		/******************14. COMPARING DIGEST******************************/
+
 		
-		outputStream.write(toCompare);
-		outputStream.write(salt);
-		byte[] toCompareDigest = outputStream.toByteArray();
-		MD.update(toCompareDigest);
-		
-		boolean compareDigest = Arrays.equals(toCompareDigest, incomeSaltedPassByte);
-		System.out.println("Result of digest is : " + compareDigest);
-		
-		boolean authenticity = (compareDigest == compare);
-		System.out.println("Authenticity status is : " + authenticity) ;
-		
-		
+
 		/*********************12. GENERATE SYMMETRIC  KEY, DES ALGORITHM********************************/
 		KeyGenerator symKey = KeyGenerator.getInstance("DES");
 		SecureRandom r = new SecureRandom();
@@ -227,7 +228,7 @@ public class T4Server {
 		
 		/**********13. SEND KEY ONLY IF IT IS AUTHENTICATED*******************************/
 		
-		if (authenticity){
+		if (compare){
 
 			/************** 14. ENCRYPT KEY******************/
 			System.out.println("Encrypting symmetric Key using clientPublicKey");
@@ -250,7 +251,12 @@ public class T4Server {
 
 		}
 		else{
-			System.out.println("false");
+			System.out.println("Password is wrong.");
+			return false;
+		}
+		}
+		else{
+			System.out.println("Digest and encrypted text doesnot match!");
 			return false;
 		}
 	}

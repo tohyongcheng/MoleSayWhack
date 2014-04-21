@@ -34,7 +34,7 @@ public class OptionsScreen implements Screen {
 
 
 	public enum AuthenticationType {
-		NOPROTOCOL, T2,T3,T4,T5;
+		NOPROTOCOL, T2,T3,T4,T5, TRUDY;
 		//NATALIE, ADD THE AUTHENTICATION TYPES HERE
 		
 		public AuthenticationType next() {
@@ -90,8 +90,16 @@ public class OptionsScreen implements Screen {
 		name = (prefs.getString("Name", "Player"));
 		enableBGM = prefs.getBoolean("enableBGM", true);
 		enableSFX = prefs.getBoolean("enableSFX", true);
+		if (MainMenuScreen.previous == null){
 		authType = AuthenticationType.NOPROTOCOL;
-		
+		ServerClientThread.authType = getAuthType();
+		}
+		else{
+			authType = MainMenuScreen.previous;
+			ServerClientThread.authType = getAuthType();
+			
+		}
+		System.out.println("Authentication type is now: "  + getAuthType());
 		
 	}
 	
@@ -112,6 +120,8 @@ public class OptionsScreen implements Screen {
 
 		case T5:
 			return AssetLoader.t5;
+		case TRUDY:
+			return AssetLoader.tdyopt;
 		default:
 			return AssetLoader.noprotocol;
 		
@@ -171,6 +181,7 @@ public class OptionsScreen implements Screen {
 				else if (changeAuthBtn.contains(touchPoint.x, touchPoint.y)) {
 					AssetLoader.button.play();
 					setAuthType(authType.next());
+					MainMenuScreen.previous = getAuthType();
 					//set the serverClientThread auth Type
 					ServerClientThread.authType = getAuthType();
 					System.out.println("Authentication protocol is changed to : " + authType.toString() );

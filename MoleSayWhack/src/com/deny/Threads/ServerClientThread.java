@@ -201,8 +201,9 @@ public class ServerClientThread extends Thread {
 
 				}
 				else{
+					System.out.println("There's intruder!");
 					authenticityStatus = false;
-					multiS.setState(MultiplayerState.QUIT);
+					multiS.setState(MultiplayerState.TRUDY);
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -222,9 +223,9 @@ public class ServerClientThread extends Thread {
 			
 				}
 				else{
-				
+					System.out.println("There's intruder!");
 					authenticityStatus = false;
-					multiS.setState(MultiplayerState.QUIT);
+					multiS.setState(MultiplayerState.TRUDY);
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -243,8 +244,9 @@ public class ServerClientThread extends Thread {
 					
 				}
 				else{
+					System.out.println("There's intruder!");
 					authenticityStatus = false;
-					multiS.setState(MultiplayerState.QUIT);
+					multiS.setState(MultiplayerState.TRUDY);
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -262,8 +264,9 @@ public class ServerClientThread extends Thread {
 					System.out.println("Authentication granted.");
 				}
 				else{
+					System.out.println("There's intruder!");
 					authenticityStatus = false;
-					multiS.setState(MultiplayerState.QUIT);
+					multiS.setState(MultiplayerState.TRUDY);
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -282,8 +285,30 @@ public class ServerClientThread extends Thread {
 					System.out.println("Authentication granted.");
 				}
 				else{
+					System.out.println("There's intruder!");
 					authenticityStatus = false;
-					multiS.setState(MultiplayerState.QUIT);
+					multiS.setState(MultiplayerState.TRUDY);
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		else if (authType == AuthenticationType.T4 && isClient){
+			T4Client t4 = new T4Client(client, clientPassword, serverPassword);
+			try {
+				boolean authenticity = t4.doAuthentication();
+		
+				System.out.println("The T4 protocol status is: "+ authenticity);
+				if (authenticity) {
+					SymmetricKey = T4Client.symmetricKey;
+					System.out.println("Authentication granted.");
+				}
+				else{
+					System.out.println("There's intruder!");
+					authenticityStatus = false;
+					multiS.setState(MultiplayerState.TRUDY);
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -297,14 +322,14 @@ public class ServerClientThread extends Thread {
 			try {
 				boolean authenticity = t5.doAuthentication();
 		
-				System.out.println("The T4 protocol status is: "+ authenticity);
+				System.out.println("The T5 protocol status is: "+ authenticity);
 				if (authenticity) {
 					SymmetricKey = T5Server.symmetricKey;
 					System.out.println("Authentication granted.");
 				}
 				else{
 					authenticityStatus = false;
-					multiS.setState(MultiplayerState.QUIT);
+					multiS.setState(MultiplayerState.TRUDY);
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -318,7 +343,7 @@ public class ServerClientThread extends Thread {
 			try {
 				boolean authenticity = t5.doAuthentication();
 			
-				System.out.println("The T4 protocol status is: "+ authenticity);
+				System.out.println("The T5 protocol status is: "+ authenticity);
 				if (authenticity) {
 					SymmetricKey = T5Client.symmetricKey;
 					System.out.println("Authentication granted.");
@@ -328,7 +353,46 @@ public class ServerClientThread extends Thread {
 				}
 				else{
 					authenticityStatus = false;
-					multiS.setState(MultiplayerState.QUIT);
+					multiS.setState(MultiplayerState.TRUDY);
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else if (authType == AuthenticationType.TRUDY && isServer){
+			TrudyServer tr = new TrudyServer(client);
+			try {
+				boolean authenticity = tr.doAuthentication();
+		
+				System.out.println("The TRUDY protocol status is: "+ authenticity);
+				if (authenticity) {
+					System.out.println("Authentication granted.");
+				}
+				else{
+					authenticityStatus = false;
+					multiS.setState(MultiplayerState.TRUDY);
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		else if (authType == AuthenticationType.TRUDY && isClient){
+			TrudyClient td = new TrudyClient(client);
+			try {
+				boolean authenticity = td.doAuthentication();
+			
+				System.out.println("The TRUDY protocol status is: "+ authenticity);
+				if (authenticity) {
+
+					System.out.println("Authentication granted.");
+				}
+				else{
+					authenticityStatus = false;
+					multiS.setState(MultiplayerState.TRUDY);
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -349,10 +413,11 @@ public class ServerClientThread extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		if(authenticityStatus){
 		out = new PrintWriter(client.getOutputStream(), true);
 		readThread = new ReadThread(this,client);
 		readThread.start();
+		}
 		}
 	}
 	

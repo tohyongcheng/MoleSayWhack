@@ -33,7 +33,7 @@ public class MultiplayerScreen implements Screen {
 	private static final int GAME_HEIGHT = Gdx.graphics.getHeight();
 
 	public enum MultiplayerState {
-		READY, CONNECTED, START, RESTART, QUIT, PROTOCOLMISMATCH
+		READY, CONNECTED, START, RESTART, QUIT, PROTOCOLMISMATCH, TRUDY;
 	}
 	private MultiplayerState currentState;
 	private Object multiplayerStateLock = new Object();
@@ -242,16 +242,27 @@ public class MultiplayerScreen implements Screen {
 			
 			}
 			break;
+		case TRUDY:
 			
+			if(Gdx.input.justTouched()) {
+				if (socketHandler !=null) {
+					socketHandler.interrupt();
+					socketHandler.dispose();
+				}
+				System.out.println("Disconnected because there is intruder! Please try again. ");
+				game.setScreen(new MainMenuScreen(game));
+				dispose();
+				
+				}
+			break;
 		case QUIT:
+			System.out.println("QUITTING NOW.");
 			if (socketHandler !=null) {
 				socketHandler.interrupt();
 				socketHandler.dispose();
 			}
-			
-			if(ServerClientThread.authenticityStatus == false){
-				System.out.println("Disconnected because there is intruder! Please try again. ");
-			}
+
+
 			game.setScreen(new MainMenuScreen(game));
 			dispose();
 			break;
@@ -302,6 +313,10 @@ public class MultiplayerScreen implements Screen {
 			break;
 		case PROTOCOLMISMATCH:
 			batcher.draw(AssetLoader.mp, 0, 0, GAME_WIDTH, GAME_HEIGHT);
+			break;
+		case TRUDY:
+			batcher.draw(AssetLoader.tdy, 0,0, GAME_WIDTH, GAME_HEIGHT);
+			break;
 		default:
 			break;
         }

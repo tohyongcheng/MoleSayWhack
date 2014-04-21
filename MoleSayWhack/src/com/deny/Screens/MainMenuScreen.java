@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
+import com.deny.Screens.OptionsScreen.AuthenticationType;
 
 public class MainMenuScreen implements Screen {
 
@@ -29,6 +30,7 @@ public class MainMenuScreen implements Screen {
 	Rectangle scoreBounds;
 	ShapeRenderer shapeRenderer;
 	Vector3 touchPoint;
+	static AuthenticationType previous;
 	
 	public MainMenuScreen(Game game) {
 		

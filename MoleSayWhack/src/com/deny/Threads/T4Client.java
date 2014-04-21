@@ -52,7 +52,7 @@ import com.deny.Screens.PreGameScreen;
  */
 public class T4Client {
 	
-	private String sharedSecret = "blueberry";
+	
 	private Socket server;
 	private String Password;
 	private String serverPassword;
@@ -144,19 +144,17 @@ public class T4Client {
 		String encryptedValue = base64.encode(cipherText);
 		System.out.println("Base64 encoded is " + encryptedValue);
 		
-		/*****************6. GENERATING MAC MD5 : PASSWORD + SHAREDSECRET **************************/
+		/*****************6. GENERATING DIGEST **************************/
 		
 		System.out.println("Creating MD5 digest now");
-		byte[] salt = sharedSecret.getBytes("UTF-8");
-		outputStream.write(combineText);
-		outputStream.write(salt);
-		byte[] saltedPass = outputStream.toByteArray();
+		outputStream.write(cipherText);
+		byte[] toDigest = outputStream.toByteArray();
 		outputStream.reset();
 		
 		MessageDigest MD = MessageDigest.getInstance("MD5");
-		MD.update(saltedPass);
+		MD.update(toDigest);
 		
-		System.out.println("Digest now is: " + new String(saltedPass, "UTF-8"));
+		System.out.println("Digest now is: " + new String(toDigest, "UTF-8"));
 		
 		/**********7. SENDING DIGEST OVER*********/
 	
@@ -164,7 +162,7 @@ public class T4Client {
 		System.out.println("Sending digest over");
 		
 		@SuppressWarnings("restriction")
-		String saltedPassString = base64.encode(saltedPass);
+		String saltedPassString = base64.encode(toDigest);
 		ObjectOutputStream obj = new ObjectOutputStream(server.getOutputStream());
 		obj.writeObject(saltedPassString);
 		obj.flush();
@@ -172,15 +170,15 @@ public class T4Client {
 		/************8. RECEIVING DIGEST****************************/
 		System.out.println("Receiving digest");
 		ObjectInputStream inObj = new ObjectInputStream(server.getInputStream());
-		Object incomeSaltPass = inObj.readObject();
-		String incomeSaltedPassString = (String) incomeSaltPass;
+		Object incomeDigest = inObj.readObject();
+		String incomeDigestString = (String) incomeDigest;
 		
 		
 		/***************9. DECODE DIGEST***************************/
 		System.out.println("Decode digest");
 		@SuppressWarnings("restriction")
 	
-		byte[] incomeSaltedPassByte = new BASE64Decoder().decodeBuffer(incomeSaltedPassString);
+		byte[] incomeDigestByte = new BASE64Decoder().decodeBuffer(incomeDigestString);
 		
 		/*************10. SENDING ENCRYPTED PASSWORD***********************/
 		System.out.println("Sending encrypted password");
@@ -194,8 +192,18 @@ public class T4Client {
 		@SuppressWarnings("restriction")
 		byte[] incomeEncryptedValueByte = new BASE64Decoder().decodeBuffer(incomeEncryptedValueString);
 		
+		/*************12. DIGESTING ENCRYPTED VALUE AND COMPARING DIGESTS*************************************/
+		System.out.println("Comparing digest and encrypted password");
+		outputStream.write(incomeEncryptedValueByte);
+		byte[] toCompareWithDigest = outputStream.toByteArray();
+		outputStream.reset();
+		MD.update(toCompareWithDigest);
+		
+		boolean digestAuthenticity = Arrays.equals(toCompareWithDigest, incomeDigestByte);
+		System.out.println("Status of encryptedtext and Digest received is : " + digestAuthenticity);
 		
 		/***************12. DECRYPT ENCRYPTED PASSWORD***********************************/
+		if(digestAuthenticity){
 		System.out.println("Decrypting password");
 		cipher.init(Cipher.DECRYPT_MODE, privateKey);
 		byte[] incomeDecryptedValueByte = cipher.doFinal(incomeEncryptedValueByte);
@@ -211,25 +219,10 @@ public class T4Client {
 		
 		boolean compare = Arrays.equals(incomeDecryptedValueByte, toCompare);
 		System.out.println("Result of encrypted passwords is : " + compare);
-		/******************14. COMPARING DIGEST******************************/
-		
-		outputStream.write(toCompare);
-		outputStream.write(salt);
-		byte[] toCompareDigest = outputStream.toByteArray();
-		MD.update(toCompareDigest);
-		
-		boolean compareDigest = Arrays.equals(toCompareDigest, incomeSaltedPassByte);
-		System.out.println("Result of digest is : " + compareDigest);
-		
-		
-		boolean authenticity = (compareDigest == compare);
-		System.out.println("Authenticity status is : " + authenticity) ;
-		
-		
-		
+
 		
 		/******************14. ACCEPT KEY ONLY IF ITS AUTHENTIC************************************/
-		if (authenticity){
+		if (compare){
 
 			System.out.println("Receiving encrypted key length now");
 			byte[] encryptedKeyLength = new byte[4];
@@ -255,7 +248,12 @@ public class T4Client {
 			return true;
 		}
 		else{
-			System.out.println("false");
+			System.out.println("Password is wrong.");
+			return false;
+		}
+		}
+		else{
+			System.out.println("Digest and encryptedtext doesn't match!");
 			return false;
 		}
 	}

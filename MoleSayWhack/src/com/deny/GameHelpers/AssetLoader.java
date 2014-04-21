@@ -22,8 +22,8 @@ public class AssetLoader
 {
 	//The Textures//
 	public static BitmapFont font;
-	public static Texture texture, logoTexture, win, invulnerable, mismatch, optionsSC;
-	public static TextureRegion optBG, changename, changemusic, changefx, noprotocol, t2, t3, t4, t5, refresh;
+	public static Texture texture, logoTexture, win, invulnerable, mismatch, optionsSC, trudy;
+	public static TextureRegion tdyopt, optBG, changename, changemusic, changefx, noprotocol, t2, t3, t4, t5, refresh, tdy;
 	public static Texture Main1024, Game1024, moleDep1024, lose, PS, powerup, powerupDep2, powerupDep1;
 	public static TextureRegion powerless, earthquake, moleshower, silencer, molejam, kingmole, mouldy, dummymole, moleshield;
 	public static TextureRegion gameBG, ps, rpl, ext, rsm, psBG, borderVert, borderHor, hmr, titlepuDep, shield;
@@ -45,11 +45,20 @@ public class AssetLoader
 	
 	public static void load()
 	{
+		trudy = new Texture(Gdx.files.internal("data/trudy.png"));
+		trudy.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+		
+		tdy = new TextureRegion(trudy, 0, 0, 544, 816);
+		tdy.flip(false,true);
+		
 		optionsSC = new Texture(Gdx.files.internal("data/optionsSC.png"));
 		optionsSC.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 		
 		optBG = new TextureRegion(optionsSC, 0, 0,  544, 816);
 		optBG.flip(false, true);
+		
+		tdyopt = new TextureRegion(optionsSC, 12,829, 258,90);
+		tdyopt.flip(false,true);
 		
 		refresh = new TextureRegion(optionsSC, 556,937,260,87);
 		refresh.flip(false,true);

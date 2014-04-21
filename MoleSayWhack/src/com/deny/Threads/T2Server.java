@@ -132,6 +132,7 @@ public class T2Server {
 		Object obj1 = in.readObject();
 
 		/*****************7. SENDING FIRST HALF OF ENCRYPTED VALUE*********************************/
+		System.out.println("Sending first half of encrypted value");
 		String encryptedValue1 = encryptedValue.substring(0, encryptedValue.length()/2);
 		String encryptedValue2 = encryptedValue.substring(encryptedValue.length()/2, encryptedValue.length());
 		
@@ -142,11 +143,10 @@ public class T2Server {
 		/******************8. RECEIVE THE SECOND HALF OF ENCRYPTED VALUE****************/
 		Object obj2 = in.readObject();
 
-		/******************9. SENDING SECOND HALF OF ENCRYPTED VALUE*********************/
-		out.writeObject(encryptedValue2);
-		out.flush();
+	
 		
-		/*****************10. COMBINE AND DECRYPT**********************************/
+		/*****************9. COMBINE AND DECRYPT**********************************/
+		System.out.println("Begin decryption");
 		String obj = (String) obj1 + (String) obj2;
 		
 		@SuppressWarnings("restriction")
@@ -158,7 +158,7 @@ public class T2Server {
 		String s = new String(fromClient, "UTF-8");
 		System.out.println(s);
 		
-		/********************11. CONFIRM AUTHENTICITY*************************************/
+		/********************10. CONFIRM AUTHENTICITY*************************************/
 		byte[] clientPass = clientPassword.getBytes("UTF-8");
 		ByteArrayOutputStream byteout = new ByteArrayOutputStream();
 		byteout.write(nonce);
@@ -166,10 +166,15 @@ public class T2Server {
 		byte[] toCompare = byteout.toByteArray();
 		if (Arrays.equals(fromClient, toCompare)){
 			System.out.println("true");
+			/******************11. SENDING SECOND HALF OF ENCRYPTED VALUE*********************/
+			System.out.println("Sending second half of encrypted value because client is legit.");
+			out.writeObject(encryptedValue2);
+			out.flush();
 			return true;
 
 		}
 		else{
+			out.writeObject("You are not legit!");
 			System.out.println("false");
 			return false;
 		}

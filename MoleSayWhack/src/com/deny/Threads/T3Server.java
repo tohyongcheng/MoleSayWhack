@@ -134,6 +134,7 @@ public class T3Server {
 		Object obj1 = in.readObject();
 
 		/*****************7. SENDING FIRST HALF OF ENCRYPTED VALUE*********************************/
+		System.out.println("Sending first half of encrypted value");
 		String encryptedValue1 = encryptedValue.substring(0, encryptedValue.length()/2);
 		String encryptedValue2 = encryptedValue.substring(encryptedValue.length()/2, encryptedValue.length());
 		
@@ -144,11 +145,10 @@ public class T3Server {
 		/******************8. RECEIVE THE SECOND HALF OF ENCRYPTED VALUE****************/
 		Object obj2 = in.readObject();
 
-		/******************9. SENDING SECOND HALF OF ENCRYPTED VALUE*********************/
-		out.writeObject(encryptedValue2);
-		out.flush();
+
 		
 		/*****************10. COMBINE AND DECRYPT**********************************/
+		System.out.println("Begin decryption");
 		String obj = (String) obj1 + (String) obj2;
 		
 		@SuppressWarnings("restriction")
@@ -180,7 +180,10 @@ public class T3Server {
 		/**********13. SEND KEY ONLY IF IT IS AUTHENTICATED*******************************/
 		
 		if (authenticity){
-	
+			/******************9. SENDING SECOND HALF OF ENCRYPTED VALUE*********************/
+			System.out.println("Sending second half of encrypted value because client is legit.");
+			out.writeObject(encryptedValue2);
+			out.flush();
 			/************** 14. ENCRYPT KEY******************/
 			System.out.println("Encrypting symmetric Key using clientPublicKey");
 			byte[] symK = symmetricKey.getEncoded();
@@ -204,6 +207,7 @@ public class T3Server {
 
 		}
 		else{
+			out.writeObject("You're not legit!");
 			System.out.println("false");
 			return false;
 		}

@@ -299,6 +299,7 @@ public class MultiplayerScreen implements Screen {
 			break;
 		case TRUDY:
 			batcher.draw(AssetLoader.tdy, 0,0, GAME_WIDTH, GAME_HEIGHT);
+
 			break;
 		default:
 			break;

@@ -23,7 +23,7 @@ public class AssetLoader
 	//The Textures//
 	public static BitmapFont font;
 	public static Texture texture, logoTexture, win, invulnerable, mismatch, optionsSC, trudy;
-	public static TextureRegion fxON, mscOFF, tdyopt, optBG, changename, changemusic, changefx, noprotocol, t2, t3, t4, t5, refresh, tdy;
+	public static TextureRegion  fxON, mscOFF, tdyopt, optBG, changename, changemusic, changefx, noprotocol, t2, t3, t4, t5, refresh, tdy;
 	public static Texture Main1024, Game1024, moleDep1024, lose, PS, powerup, powerupDep2, powerupDep1;
 	public static TextureRegion powerless, earthquake, moleshower, silencer, molejam, kingmole, mouldy, dummymole, moleshield;
 	public static TextureRegion gameBG, ps, rpl, ext, rsm, psBG, borderVert, borderHor, hmr, titlepuDep, shield;
@@ -56,6 +56,7 @@ public class AssetLoader
 		
 		optBG = new TextureRegion(optionsSC, 0, 0,  544, 816);
 		optBG.flip(false, true);
+		
 		
 		tdyopt = new TextureRegion(optionsSC, 12,829, 258,90);
 		tdyopt.flip(false,true);

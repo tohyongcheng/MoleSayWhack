@@ -51,11 +51,15 @@ public class SpawnMoleKing extends PowerUp {
 			public void run() {
 				Gdx.app.postRunnable(new Runnable() {
 					public void run() {
-						gameWorld.spawnMole(MoleType.MOLEKING, r.nextInt(9));
+						causeEffect();
 					}
 				});
 			}
 		}).start();
+	}
+	
+	public static void causeEffect() {
+		gameWorld.spawnMole(MoleType.MOLEKING, r.nextInt(9));
 	}
 	
 	public static void update(float delta) {

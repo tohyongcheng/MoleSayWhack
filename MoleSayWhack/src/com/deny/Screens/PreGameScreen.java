@@ -216,4 +216,8 @@ public class PreGameScreen implements Screen {
 			return currentState;
 		}
 	}
+
+	public Object getSocketHandler() {
+		return socketHandler;
+	}
 }

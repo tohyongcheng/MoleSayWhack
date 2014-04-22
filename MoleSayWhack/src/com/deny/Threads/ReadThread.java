@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -34,8 +36,8 @@ public class ReadThread  extends Thread{
 	private ObjectInputStream inObject;
 	private Key  symmetricKey;
 	private AuthenticationType authType;
-	
-	//NOT THREAD SAFE
+
+
 	public ReadThread(ServerClientThread sh, Socket client) {
 		socketHandler = sh;
 		game = socketHandler.getGame();
@@ -44,25 +46,25 @@ public class ReadThread  extends Thread{
 		if(authType == AuthenticationType.T3 || authType == AuthenticationType.T4){
 			symmetricKey = sh.getKey();
 		}
-	
+	}
+
+	public void run() {
+		
 		try {
+			in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 			cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
 			inObject = new ObjectInputStream(client.getInputStream());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-	}
-	
-	public void run() {
+		
 		System.out.println("ReadThread running");
+		
 		while(true) {
 			if (isInterrupted()) {
 				return;
 			}
 			try {
-				//DECRYPT HERE
 				String message = "";
 				if (authType == AuthenticationType.T3 || authType == AuthenticationType.T4){
 					try {
@@ -71,9 +73,9 @@ public class ReadThread  extends Thread{
 						String messageString = (String) messageObject;
 						@SuppressWarnings("restriction")
 						byte[] messageByte = Base64Coder.decode(messageString);
-						
+
 						cipher.init(Cipher.DECRYPT_MODE, symmetricKey);
-						
+
 						byte[] newMessageByte = cipher.doFinal(messageByte);
 						String messageTemp = new String(newMessageByte, "UTF-8");
 						message = messageTemp.substring(0);
@@ -81,14 +83,14 @@ public class ReadThread  extends Thread{
 						goToDisconnectedScreen();
 						return;
 					}
-					
+
 				}
 				else{
-				message = in.readLine();
+					message = in.readLine();
 				}
 				System.out.println("Received Message: " + message);
 				String[] messages = message.split(" ");
-
+				
 				switch(messages[0]) {
 				//GAMESCREEN
 				case "[SPAWN]":
@@ -124,7 +126,6 @@ public class ReadThread  extends Thread{
 					break;
 				case "[POWERUP]":
 					System.out.println("Received message about invoking a powerup on current player: " + messages[1]);
-
 					PowerUpType powerUp = PowerUpType.valueOf(messages[1].trim());
 					gameWorld.invokePowerUp(powerUp);
 					break;
@@ -133,27 +134,13 @@ public class ReadThread  extends Thread{
 					char hp = messages[1].charAt(0);
 					gameWorld.setOpponentHP(Character.getNumericValue(hp));
 					break;
-//				//PREGAMESCREEN
-//				case "[MAINMENUSCREEN]":
-//					System.out.println("Received message to go back to main menu!");
-//					if (socketHandler.getPreGameScreen() !=null) socketHandler.getPreGameScreen().setState(PreGameState.QUIT);
-//					break;
-				//MULTIPLAYERSCREEN
-				case "[LEAVEMULTIPLAYERSCREEN]":
-					System.out.println("Received message to restart server!");
-					if (socketHandler.getMultiplayerScreen() !=null) socketHandler.getMultiplayerScreen().setState(MultiplayerState.RESTART);
-					break;
 				}
-				
 			} catch (IOException e) {
-				//e.printStackTrace();
 				System.out.println("Socket Closed");
 			} catch(NullPointerException e) {
-				
 				goToDisconnectedScreen();
 				return;
 			}
-			
 		}
 	}
 
@@ -165,21 +152,19 @@ public class ReadThread  extends Thread{
 	public void setGameWorld(GameWorld gameWorld) {
 		this.gameWorld = gameWorld;
 	}
-	
+
 	public void goToDisconnectedScreen() {
 		new Thread(new Runnable() {
-			   @Override
-			   public void run() {
-				  
-			      Gdx.app.postRunnable(new Runnable() {
-			         @Override
-			         public void run() {
-			        	 game.setScreen(new DisconnectScreen(game));
-			         }
-			      });
-			   }
-			}).start();
-		
+			@Override
+			public void run() {
+				Gdx.app.postRunnable(new Runnable() {
+					@Override
+					public void run() {
+						game.setScreen(new DisconnectScreen(game));
+					}
+				});
+			}
+		}).start();
 		socketHandler.dispose();
 	}
 }

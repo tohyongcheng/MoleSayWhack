@@ -44,13 +44,11 @@ public class BlockMoleGrid extends PowerUp {
 	}
 
 	public static void invoke() {
-
 		new Thread(new Runnable() {
 			public void run() {
 				Gdx.app.postRunnable(new Runnable() {
 					public void run() {
-						boolean[] blockedGrids = gameWorld.getBlockedGrids();
-						blockedGrids[r.nextInt(2)] = true;
+						causeEffect();
 					}
 				});
 			}
@@ -59,6 +57,11 @@ public class BlockMoleGrid extends PowerUp {
 		if (enableSFX) AssetLoader.blockG.play();
 	}
 
+	public static void causeEffect() {
+		boolean[] blockedGrids = gameWorld.getBlockedGrids();
+		blockedGrids[r.nextInt(2)] = true;
+	}
+	
 	public static void update(float delta) {
 		if (isInEffect()) {			
 			if (runningTime > effectDuration) {

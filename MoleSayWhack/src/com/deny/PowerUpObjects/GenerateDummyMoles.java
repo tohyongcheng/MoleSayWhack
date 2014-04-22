@@ -16,6 +16,7 @@ public class GenerateDummyMoles extends PowerUp {
 	static GameWorld gameWorld;
 	static Random r;
 	
+	static float intervalTime;
 	
 	public static void resetRunningTime() {
 		runningTime = 0;
@@ -40,19 +41,18 @@ public class GenerateDummyMoles extends PowerUp {
 		powerUpType = PowerUpType.DUMMY;
 		effectDuration = powerUpType.getEffectDuration();
 		loadPreferences();
+		intervalTime = 0;
 	}
 
 	
 	public static void invoke() {
 		inEffect = true;
 		if (enableSFX) AssetLoader.dummy.play();
-		//generates 6 dummy moles
-		gameWorld.generateRandomSpawns(effectDuration,  MoleType.DUMMY);
-		gameWorld.generateRandomSpawns(effectDuration,  MoleType.DUMMY);
-		gameWorld.generateRandomSpawns(effectDuration,  MoleType.DUMMY);
-		gameWorld.generateRandomSpawns(effectDuration,  MoleType.DUMMY);
-		gameWorld.generateRandomSpawns(effectDuration,  MoleType.DUMMY);
-		gameWorld.generateRandomSpawns(effectDuration, MoleType.DUMMY);
+		causeEffect();
+	}
+	
+	public static void causeEffect() {
+		gameWorld.spawnMole(MoleType.DUMMY, r.nextInt(9));
 	}
 	
 	public static void update(float delta) {
@@ -60,9 +60,14 @@ public class GenerateDummyMoles extends PowerUp {
 			if (runningTime > effectDuration) {
 		        runningTime = 0;
 				inEffect = false;
-
 			} else{
 				runningTime += delta;
+				intervalTime += delta;
+				if (intervalTime > 1) {
+					gameWorld.spawnMole(MoleType.DUMMY, r.nextInt(9));
+					intervalTime = 0;
+				}
+				
 			}
 		}
 	}

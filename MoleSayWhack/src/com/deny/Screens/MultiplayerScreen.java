@@ -65,7 +65,7 @@ public class MultiplayerScreen implements Screen {
 		backBounds = new Rectangle(3,(int)(GAME_HEIGHT-9-82*scaleH),(int)(83*scaleW), (int)(82*scaleH));
 		playBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(3*GAME_HEIGHT/6 - 90*scaleH/2 - 50*scaleH),(int)(260*scaleW), (int)(90*scaleH));
 		
-		refreshBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(4*GAME_HEIGHT/6 - 90*scaleH/2 - 50*scaleH),(int)(260*scaleW), (int)(90*scaleH));
+		refreshBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(3*GAME_HEIGHT/6 - 90*scaleH/2 - 50*scaleH),(int)(260*scaleW), (int)(90*scaleH));
 		changeAddressBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(5*GAME_HEIGHT/6 - 90*scaleH/2 - 50*scaleH),(int)(260*scaleW), (int)(90*scaleH));
 
 		listener = new IPAddressInputListener(this);
@@ -169,9 +169,7 @@ public class MultiplayerScreen implements Screen {
 				multiplayerCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
-					if (socketHandler !=null) socketHandler.interrupt();
-					if (enableSFX)  AssetLoader.back.play();
-					game.setScreen(new MainMenuScreen(game));
+					setState(MultiplayerState.QUIT);
 				}
 				
 				else if (refreshBounds.contains(touchPoint.x,touchPoint.y)) {
@@ -187,8 +185,6 @@ public class MultiplayerScreen implements Screen {
 			break;
 		
 		case CONNECTED:
-			
-
 			if(Gdx.input.isKeyPressed(Keys.BACK)) {
 				if (enableSFX) AssetLoader.back.play();
 				socketHandler.leaveGameRoom();
@@ -203,11 +199,6 @@ public class MultiplayerScreen implements Screen {
 					if (enableSFX) AssetLoader.button.play();
 					socketHandler.toChooseMolesScreen();
 					setState(MultiplayerState.START);
-				}
-				
-				else if (refreshBounds.contains(touchPoint.x,touchPoint.y)) {
-					setState(MultiplayerState.RESTART);
-					if (enableSFX) AssetLoader.button.play();
 				}
 				
 				else if (backBounds.contains(touchPoint.x, touchPoint.y)) {
@@ -286,7 +277,6 @@ public class MultiplayerScreen implements Screen {
         switch (getState()) {
         case CONNECTED:
         	batcher.draw(AssetLoader.strB, playBounds.x, playBounds.y,playBounds.width, playBounds.height);
-        	batcher.draw(AssetLoader.refresh, refreshBounds.x, refreshBounds.y,refreshBounds.width, refreshBounds.height);
         	batcher.draw(AssetLoader.enterIP, changeAddressBounds.x, changeAddressBounds.y,changeAddressBounds.width, changeAddressBounds.height);
             AssetLoader.font.draw(batcher, "My address is: ", 20, 20);
             AssetLoader.font.drawMultiLine(batcher, myAddress.toString(), 20, 50);

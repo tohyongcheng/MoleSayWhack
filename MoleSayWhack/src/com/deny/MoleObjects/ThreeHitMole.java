@@ -43,11 +43,12 @@ public class ThreeHitMole extends Mole
 	
 	//Invoking Mole (super) class methods//
 	//damage will call the player.damage method which minuses 1 life//
-	public void damage(Player player) 
+	public void damage() 
 	{
-		super.damage(player);
-		super.damage(player); //minus 2 hp - ought to cange the player class method//
+		super.damage();
+		super.damage(); //minus 2 hp - ought to cange the player class method//
 	}
+	
 	
 	//This will constantly update whether the mole shud appear or not//
 	public void update(float delta) 
@@ -62,7 +63,7 @@ public class ThreeHitMole extends Mole
 		// havent been killed by player. damage the player//
 		else if (timeExisted >= MOLE_APPEARANCE_TIME && isAlive())
 		{
-			damage(player);
+			damage();
 			isDead = true;
 		}
 	}

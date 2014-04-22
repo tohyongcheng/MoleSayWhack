@@ -26,8 +26,8 @@ public abstract class Mole
 	protected Player player;
 	protected Rectangle boundingRectangle;
 	protected MoleType moleType;
-	private Preferences prefs;
-	private boolean enableSFX;
+	protected Preferences prefs;
+	protected boolean enableSFX;
 	
 	
 	public Mole(Player player) 
@@ -49,7 +49,7 @@ public abstract class Mole
 		return !isDead;
 	}
 	
-	public void damage(Player player) {
+	public void damage() {
 		if (!player.isInvulnerable()) {
 			player.damage();
 		}
@@ -75,14 +75,11 @@ public abstract class Mole
 
 		} 
 	}
-
-	
-	public Rectangle getBoundingCircle() {
-		return boundingRectangle;
-	}
 	
 	public void minusHP() {
-		if (isAlive()) {
+		if (isAlive()) 
+		{
+			if (enableSFX) AssetLoader.hit.play();
 			System.out.println("mole kena attack!");
 			HP -= 1;
 			if (HP==0) {
@@ -92,20 +89,15 @@ public abstract class Mole
 		}
 	}
 	
+	public Rectangle getBoundingCircle() {
+		return boundingRectangle;
+	}
+	
 	public boolean isTouchDown(int screenX, int screenY) {
 		
 		//minusHP
 		if (boundingRectangle.contains(screenX, screenY)) {
-			if (isAlive()) 
-			{
-				if (enableSFX) AssetLoader.hit.play();
-				System.out.println("mole kena attack!");
-				HP -= 1;
-				if (HP==0) {
-					System.out.println("Mole is dead!");
-					isDead = true;
-				}
-			}
+			minusHP();
 			return true;
 		}
 		return false;
@@ -117,5 +109,35 @@ public abstract class Mole
 	
 	public MoleType getMoleType(){
 		return moleType;
+	}
+
+
+	public int getHP() {
+		return HP;
+	}
+
+
+	public void setHP(int hP) {
+		HP = hP;
+	}
+
+
+	public float getTimeExisted() {
+		return timeExisted;
+	}
+
+
+	public void setTimeExisted(float timeExisted) {
+		this.timeExisted = timeExisted;
+	}
+
+
+	public long getMOLE_APPEARANCE_TIME() {
+		return MOLE_APPEARANCE_TIME;
+	}
+
+
+	public void setMoleType(MoleType moleType) {
+		this.moleType = moleType;
 	}
 }

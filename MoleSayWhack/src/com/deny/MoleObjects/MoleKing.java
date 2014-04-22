@@ -48,9 +48,9 @@ public class MoleKing extends Mole
 	
 	//Invoking Mole (super) class methods//
 	//damage will call the player.damage method which minuses 1 life//
-	public void damage(Player player) 
+	public void damage() 
 	{
-		super.damage(player);
+		super.damage();
 	}
 	
 	//This will constantly update whether the mole shud appear or not//
@@ -67,7 +67,7 @@ public class MoleKing extends Mole
 		else if (timeExisted >= MOLE_APPEARANCE_TIME && isAlive())
 		{
 			while(player.getHP() > 0) {
-				damage(player);
+				damage();
 			}
 			isDead = true;
 		}

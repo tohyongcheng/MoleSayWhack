@@ -48,8 +48,7 @@ public class EnableFog extends PowerUp {
 			public void run() {
 				Gdx.app.postRunnable(new Runnable() {
 					public void run() {
-						//Set fog to be true!
-						gameWorld.setFog(true);
+						causeEffect();
 					}
 				});
 			}
@@ -60,6 +59,9 @@ public class EnableFog extends PowerUp {
 		
 	}
 
+	public static void causeEffect() {
+		gameWorld.setFog(true);
+	}
 	
 	public static void update(float delta) {
 		

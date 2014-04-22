@@ -49,10 +49,7 @@ public class DisableAllPowerUps extends PowerUp {
 			public void run() {
 				Gdx.app.postRunnable(new Runnable() {
 					public void run() {
-						PowerUpDeployer[] powerUpDeployers = gameWorld.getPowerUpDeployers();
-						for (int i =0; i<gameWorld.getNumberOfPowerUpDeployers();i++) {
-							powerUpDeployers[i].setDisabled(true);
-						}
+						causeEffect();
 					}
 				});
 			}
@@ -62,6 +59,14 @@ public class DisableAllPowerUps extends PowerUp {
 		if (enableSFX) AssetLoader.block.play();
 	}
 
+	
+	public static void causeEffect() {
+		PowerUpDeployer[] powerUpDeployers = gameWorld.getPowerUpDeployers();
+		for (int i =0; i<gameWorld.getNumberOfPowerUpDeployers();i++) {
+			powerUpDeployers[i].setDisabled(true);
+		}
+	}
+	
 	public static void update(float delta) {
 		if (isInEffect()) {			
 			if (runningTime > effectDuration) {

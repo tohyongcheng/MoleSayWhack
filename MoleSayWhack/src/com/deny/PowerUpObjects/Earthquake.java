@@ -59,18 +59,21 @@ public class Earthquake extends PowerUp {
 			public void run() {
 				Gdx.app.postRunnable(new Runnable() {
 					public void run() {
-						Mole[] moleGrid = gameWorld.getMoleGrid();
-						Queue[] moleQueues = gameWorld.getMoleQueues();
-						for (int i=0; i<GameWorld.getNumberOfMolesPerGrid(); i++) {
-				        	moleGrid[i] = null;
-							moleQueues[i].clear();
-						}
-						
+						causeEffect();
 					}
 				});
 			}
 		}).start();
 		if (enableSFX) AssetLoader.earthQk.play();
+	}
+	
+	public static void causeEffect() {
+		Mole[] moleGrid = gameWorld.getMoleGrid();
+		Queue[] moleQueues = gameWorld.getMoleQueues();
+		for (int i=0; i<GameWorld.getNumberOfMolesPerGrid(); i++) {
+        	moleGrid[i] = null;
+			moleQueues[i].clear();
+		}
 	}
 	
 	public static void update(float delta) {

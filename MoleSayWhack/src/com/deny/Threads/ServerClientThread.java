@@ -51,15 +51,13 @@ public class ServerClientThread extends Thread {
 	private ReadThread readThread;
 	private Cipher cipher;
 	private ObjectOutputStream outObject;
-	
+
 	public static AuthenticationType authType = AuthenticationType.NOPROTOCOL;
 	public static boolean authenticityStatus = true;
 
 	private Key SymmetricKey;
 
-	public Key getKey(){
-		return SymmetricKey;
-	}
+
 	public ServerClientThread(MultiplayerScreen ms, String IPAddress) {
 		this.setMultiplayerScreen(ms);
 		this.game = ms.getGame();
@@ -80,17 +78,13 @@ public class ServerClientThread extends Thread {
 
 
 	public void run() {
-
-
 		//Create client to check if there is an existing server connection
 		clientHints = new SocketHints();
-		//Cannot be too long
-		clientHints.connectTimeout = 100;
-
+		clientHints.connectTimeout = 1000;
+		
 		try {
 			System.out.println("Trying to find existing server to join...");
-			//THIS IS UR SERVER
-			client = Gdx.net.newClientSocket(Protocol.TCP, address, port, null);
+			client = Gdx.net.newClientSocket(Protocol.TCP, address, port, clientHints);
 			isClient = true;
 		} catch (GdxRuntimeException e) {
 			System.out.println("There is no current server running! I'm going to be a server now!");
@@ -110,7 +104,7 @@ public class ServerClientThread extends Thread {
 				else {
 					try {
 						serverHints = new ServerSocketHints();
-						serverHints.acceptTimeout = 1000;	//set to 0 for infinite waiting
+						serverHints.acceptTimeout = 100;	//set to 0 for infinite waiting
 						if (server == null)
 							server = Gdx.net.newServerSocket(Protocol.TCP, port , serverHints);
 						client = server.accept(serverClientHints);
@@ -150,9 +144,8 @@ public class ServerClientThread extends Thread {
 			}
 
 			clientProtocol = clientProtocol.trim();
-			System.out.println(clientProtocol.matches(authType.toString()));
+			System.out.println("Protocol matching is " + clientProtocol.matches(authType.toString()));
 			if (clientProtocol.matches(authType.toString())){
-
 				matchedProtocol = true;
 			}
 			else{
@@ -178,7 +171,6 @@ public class ServerClientThread extends Thread {
 
 			serverProtocol = serverProtocol.trim();
 			if (serverProtocol.matches(authType.toString())){
-
 				matchedProtocol = true;
 			}
 			else{
@@ -196,7 +188,6 @@ public class ServerClientThread extends Thread {
 					System.out.println("The T2 protocol status is: "+ authenticity);
 					if (authenticity) {
 						System.out.println("Authentication granted.");
-
 					}
 					else{
 						System.out.println("There's intruder!");
@@ -399,18 +390,18 @@ public class ServerClientThread extends Thread {
 			else if(authType == AuthenticationType.NOPROTOCOL){
 				System.out.println("NO AUTHENTICATION REQUIRED");
 			}
-
-
-
-
-			try {
-				outObject = new ObjectOutputStream(client.getOutputStream());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			if(authenticityStatus){
+			
+			
+			
+			if (authenticityStatus){
 				out = new PrintWriter(client.getOutputStream(), true);
+				out.flush();
+				try {
+					outObject = new ObjectOutputStream(client.getOutputStream());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				readThread = new ReadThread(this,client);
 				readThread.start();
 			}
@@ -436,12 +427,11 @@ public class ServerClientThread extends Thread {
 
 	public void dispose() {
 		if (readThread != null) readThread.interrupt();
-
 		if (server!=null) server.dispose();
 		if (client!=null) client.dispose();
 	}
 
-	//ENCRYPT HERE
+
 	public void deployMole(MoleType moleType, int pos) {
 		System.out.println("[SocketHandler] deployed mole! Sending " + "[SPAWN] " + moleType.toString() + " " + pos);
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
@@ -462,13 +452,14 @@ public class ServerClientThread extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-
 		}
 		else{
-
-			out.write(("[SPAWN] " + moleType.toString() + " " + pos+"\n"));
-			out.flush();
+			try {
+				out.write(("[SPAWN] " + moleType.toString() + " " + pos+"\n"));
+				out.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -492,12 +483,14 @@ public class ServerClientThread extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-
 		}
 		else{
-			out.write(("[PAUSE] \n"));
-			out.flush();
+			try {
+				out.write(("[PAUSE] \n"));
+				out.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -521,12 +514,14 @@ public class ServerClientThread extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-
 		}
 		else{
-			out.write(("[CONTINUE] \n"));
-			out.flush();
+			try {
+				out.write(("[CONTINUE] \n"));
+				out.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -554,8 +549,13 @@ public class ServerClientThread extends Thread {
 
 		}
 		else{
-			out.write("[CHOOSEMOLESCREEN] \n");
-			out.flush();}
+			try {
+				out.write("[CHOOSEMOLESCREEN] \n");
+				out.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} 
 	}
 
 	public void toMainMenuScreen() {
@@ -578,12 +578,14 @@ public class ServerClientThread extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-
 		}
 		else{
-			out.write("[MAINMENUSCREEN] \n");
-			out.flush();
+			try {
+				out.write("[MAINMENUSCREEN] \n");
+				out.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -607,12 +609,14 @@ public class ServerClientThread extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-
 		}
 		else{
-			out.write("[GAMEOVER] \n");
-			out.flush();
+			try {
+				out.write("[GAMEOVER] \n");
+				out.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -636,12 +640,15 @@ public class ServerClientThread extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-
 		}
 		else{
-			out.write("[RESTARTGAME] \n");
-			out.flush();}
+			try {
+				out.write("[RESTARTGAME] \n");
+				out.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void exitGame() {
@@ -664,12 +671,15 @@ public class ServerClientThread extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-
 		}
 		else{
-			out.write("[EXITGAME] \n");
-			out.flush();}
+			try {
+				out.write("[EXITGAME] \n");
+				out.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void leaveGameRoom() {
@@ -692,12 +702,16 @@ public class ServerClientThread extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-
 		}
 		else{
-			out.write("[LEAVEMULTIPLAYERSCREEN] \n");
-			out.flush();}
+			try {
+				out.write("[LEAVEMULTIPLAYERSCREEN] \n");
+				out.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+			
 	}
 
 	public void sendPowerUp(PowerUpType powerUpType) {
@@ -724,8 +738,13 @@ public class ServerClientThread extends Thread {
 
 		}
 		else{
-			out.write(("[POWERUP] " + powerUpType.toString()+"\n"));
-			out.flush();}
+			try {
+				out.write(("[POWERUP] " + powerUpType.toString()+"\n"));
+				out.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} 
 	}
 
 	public void sendHPMessage(int hp) {
@@ -748,12 +767,14 @@ public class ServerClientThread extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-
 		}
 		else{
-			out.write(("[OPPONENTHP] " + hp+"\n"));
-			out.flush();
+			try {
+				out.write(("[OPPONENTHP] " + hp+"\n"));
+				out.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -777,10 +798,141 @@ public class ServerClientThread extends Thread {
 		return game;
 	}
 
+	/**
+	 * sets the preGamePowerUpScreen to allow the ServerClientThread to have access to it
+	 * 
+	 * @param preGamePowerUpScreen
+	 */
 	public void setPreGamePowerUpScreen(PreGamePowerUpScreen preGamePowerUpScreen) {
 		this.preGamePowerUpScreen = preGamePowerUpScreen;
 	}
 
+
+	/**
+	 * @return the address
+	 */
+	public String getAddress() {
+		return address;
+	}
+	/**
+	 * @return the port
+	 */
+	public int getPort() {
+		return port;
+	}
+	/**
+	 * @return the serverHints
+	 */
+	public ServerSocketHints getServerHints() {
+		return serverHints;
+	}
+	/**
+	 * @return the client
+	 */
+	public Socket getClient() {
+		return client;
+	}
+	/**
+	 * @return the server
+	 */
+	public ServerSocket getServer() {
+		return server;
+	}
+	/**
+	 * @return the clientHints
+	 */
+	public SocketHints getClientHints() {
+		return clientHints;
+	}
+	/**
+	 * @return the serverClientHints
+	 */
+	public SocketHints getServerClientHints() {
+		return serverClientHints;
+	}
+	/**
+	 * @return the isServer
+	 */
+	public boolean isServer() {
+		return isServer;
+	}
+	/**
+	 * @return the isClient
+	 */
+	public boolean isClient() {
+		return isClient;
+	}
+	/**
+	 * @return the multiS
+	 */
+	public MultiplayerScreen getMultiS() {
+		return multiS;
+	}
+	/**
+	 * @return the preGameS
+	 */
+	public PreGameScreen getPreGameS() {
+		return preGameS;
+	}
+	/**
+	 * @return the preGamePowerUpScreen
+	 */
+	public PreGamePowerUpScreen getPreGamePowerUpScreen() {
+		return preGamePowerUpScreen;
+	}
+	/**
+	 * @return the out
+	 */
+	public PrintWriter getOut() {
+		return out;
+	}
+	/**
+	 * @return the clientPassword
+	 */
+	public String getClientPassword() {
+		return clientPassword;
+	}
+	/**
+	 * @return the serverPassword
+	 */
+	public String getServerPassword() {
+		return serverPassword;
+	}
+	/**
+	 * @return the cipher
+	 */
+	public Cipher getCipher() {
+		return cipher;
+	}
+	/**
+	 * @return the outObject
+	 */
+	public ObjectOutputStream getOutObject() {
+		return outObject;
+	}
+	/**
+	 * @return the authType
+	 */
+	public static AuthenticationType getAuthType() {
+		return authType;
+	}
+	/**
+	 * @return the authenticityStatus
+	 */
+	public static boolean isAuthenticityStatus() {
+		return authenticityStatus;
+	}
+	/**
+	 * @return the symmetricKey
+	 */
+	public Key getSymmetricKey() {
+		return SymmetricKey;
+	}
+	
+	public Key getKey(){
+		return SymmetricKey;
+	}
+	
 }
 
 

@@ -35,7 +35,6 @@ public class PreGamePowerUpScreen implements Screen {
 	
 	private OrthographicCamera mainMenuCam;
 	private SpriteBatch batcher;
-	private BitmapFont font;
 	private ShapeRenderer shapeRenderer;
 	private Vector3 touchPoint;
 	private Rectangle backBounds;
@@ -64,9 +63,6 @@ public class PreGamePowerUpScreen implements Screen {
 		
 		batcher = new SpriteBatch();
 		batcher.setProjectionMatrix(mainMenuCam.combined);
-		font = new BitmapFont();
-		font.setScale(1, -1);
-		
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(mainMenuCam.combined);
 		touchPoint = new Vector3();
@@ -121,7 +117,7 @@ public class PreGamePowerUpScreen implements Screen {
 	}
 
 
-	private void update(float delta) {
+	public void update(float delta) {
 		
 		switch(getState()) {
 		

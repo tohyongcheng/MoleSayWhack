@@ -18,20 +18,20 @@ public class GameScreen implements Screen {
 	private GameWorld world;
 	private GameRenderer renderer;
 	private ServerClientThread socketHandler;
+	private ArrayList<MoleType> selectedMoles;
+	private ArrayList<PowerUpType> selectedPowerUps;
 	
 	public GameScreen(Game game, ServerClientThread sH, ArrayList<MoleType> selectedMoles, ArrayList<PowerUpType> selectedPowerUps) {
 		System.out.println("GameScreen attached.");
-		
+		this.game = game;
+		this.socketHandler = sH;
+		this.selectedMoles = selectedMoles;
+		this.selectedPowerUps = selectedPowerUps;
+		this.world = new GameWorld(game, this);
+		this.renderer = new GameRenderer(world);
 		float screenWidth = Gdx.graphics.getWidth();
 		float screenHeight = Gdx.graphics.getHeight();
-
-		this.setGame(game);
-		this.socketHandler = sH;
-		this.world = new GameWorld(game, this, socketHandler,selectedMoles, selectedPowerUps);
-		this.renderer = new GameRenderer(world);
-		
 		Gdx.input.setInputProcessor(new GameInputHandler(world, screenWidth, screenHeight));
-		
 	}
 	
 	@Override
@@ -82,6 +82,22 @@ public class GameScreen implements Screen {
 
 	public void setGame(Game game) {
 		this.game = game;
+	}
+
+	public ServerClientThread getSocketHandler() {
+		return socketHandler;
+	}
+
+	public ArrayList<MoleType> getSelectedMoles() {
+		return selectedMoles;
+	}
+
+	public ArrayList<PowerUpType> getSelectedPowerUps() {
+		return selectedPowerUps;
+	}
+
+	public GameWorld getGameWorld() {
+		return world;
 	}
 	
 

@@ -49,15 +49,19 @@ public class MoleShower extends PowerUp {
 			public void run() {
 				Gdx.app.postRunnable(new Runnable() {
 					public void run() {
-						for (int i=0; i<gameWorld.getNumberOfMolesPerGrid(); i++) {
-				        	gameWorld.spawnMole(MoleType.ONETAP,i);
-						}
+						causeEffect();
 					}
 				});
 			}
 		}).start();
 		if (enableSFX) AssetLoader.shower.play();
 
+	}
+	
+	public static void causeEffect() {
+		for (int i=0; i<gameWorld.getNumberOfMolesPerGrid(); i++) {
+        	gameWorld.spawnMole(MoleType.ONETAP,i);
+		}
 	}
 	
 	public static void update(float delta) {

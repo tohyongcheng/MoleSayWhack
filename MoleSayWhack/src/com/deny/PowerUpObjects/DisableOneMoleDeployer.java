@@ -50,10 +50,7 @@ public class DisableOneMoleDeployer extends PowerUp {
 			public void run() {
 				Gdx.app.postRunnable(new Runnable() {
 					public void run() {
-						//Set a random Mole Deployer to be disabled
-						MoleDeployer[] moleDeployers = gameWorld.getMoleDeployers();
-						moleDeployers[r.nextInt(2)].setDisabled(true);
-
+						causeEffect();
 					}
 				});
 			}
@@ -61,6 +58,12 @@ public class DisableOneMoleDeployer extends PowerUp {
 		inEffect = true;
 		if (enableSFX) AssetLoader.block.play();
 		
+	}
+	
+	public static void causeEffect() {
+		//Set a random Mole Deployer to be disabled
+		MoleDeployer[] moleDeployers = gameWorld.getMoleDeployers();
+		moleDeployers[r.nextInt(2)].setDisabled(true);
 	}
 	
 	public static void update(float delta) {

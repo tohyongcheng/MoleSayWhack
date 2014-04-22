@@ -43,9 +43,9 @@ public class SabotageMole extends Mole
 	
 	//Invoking Mole (super) class methods//
 	//damage will call the player.damage method which minuses 1 life//
-	public void damage(Player player) 
+	public void damage() 
 	{
-		super.damage(player);
+		super.damage();
 	}
 	
 	//This will constantly update whether the mole shud appear or not//
@@ -66,8 +66,8 @@ public class SabotageMole extends Mole
 	public boolean isTouchDown(int screenX, int screenY) 
 	{
 		if (super.isTouchDown(screenX, screenY)) {
-			damage(player);
-			AssetLoader.explode.play();
+			damage();
+			if (enableSFX) AssetLoader.explode.play();
 			return true;			
 		}
 		return false;

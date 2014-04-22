@@ -94,7 +94,6 @@ public class GameWorld {
 	private boolean[] blockedGrids;
 	
 	//Generate random spawns
-	private float runningTime;
 	private Random r;
 	
 	//LOCKS
@@ -107,7 +106,7 @@ public class GameWorld {
 
 
 	@SuppressWarnings("unchecked")
-	public GameWorld(Game game, GameScreen gameScreen, ServerClientThread sH, ArrayList<MoleType> selectedMoles, ArrayList<PowerUpType> selectedPowerUps) {
+	public GameWorld(Game game, GameScreen gameScreen) {
 		
 		this.game = game;
 		this.gameScreen = gameScreen;
@@ -118,14 +117,14 @@ public class GameWorld {
 		enableSFX = prefs.getBoolean("enableSFX", true);
 		
 		//Setup player and threads
-		this.socketHandler = sH;
+		this.socketHandler = gameScreen.getSocketHandler();
 		this.readThread = socketHandler.getReadThread();
 		this.readThread.setGameWorld(this);
 		this.player = new Player(STARTING_HP_FOR_PLAYER,this);
 		setOpponentHP(STARTING_HP_FOR_PLAYER);
 		
-		this.selectedMoles = selectedMoles;
-		this.selectedPowerUps = selectedPowerUps;
+		this.selectedMoles = gameScreen.getSelectedMoles();
+		this.selectedPowerUps = gameScreen.getSelectedPowerUps();
 		
 		//Setup GameState, Grid and Delays.
 		setGameState(GameState.READY);
@@ -184,22 +183,18 @@ public class GameWorld {
 		Rectangle one = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2)), (int)(100*scaleH),(int)(150*scaleW),(int)(150*scaleH));
 		Rectangle two = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2)+150*scaleW), (int)(100*scaleH),(int)(150*scaleW),(int)(150*scaleH));
 		Rectangle three = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2) + 300*scaleW), (int)(100*scaleH),(int)(150*scaleW),(int)(150*scaleH));	
-
 		Rectangle four = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2)), (int)(100*scaleH+150*scaleH ),(int)(150*scaleW),(int)(150*scaleH));
 		Rectangle five = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2) + 150*scaleW), (int)(100*scaleH+150*scaleH ),(int)(150*scaleW),(int)(150*scaleH));
 		Rectangle six = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2) + 300*scaleW), (int)(100*scaleH+150*scaleH ),(int)(150*scaleW),(int)(150*scaleH));
-		
 		Rectangle seven = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2)), (int)(100*scaleH+300*scaleH ),(int)(150*scaleW),(int)(150*scaleH));
 		Rectangle eight = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2) + 150*scaleW), (int)(100*scaleH+300*scaleH ),(int)(150*scaleW),(int)(150*scaleH));
 		Rectangle nine = new Rectangle((int)(GAME_WIDTH/2-(450*scaleW/2) + 300*scaleW), (int)(100*scaleH+300*scaleH ),(int)(150*scaleW),(int)(150*scaleH));
-		
 		placeHolders.add(one);placeHolders.add(two);placeHolders.add(three);placeHolders.add(four);
 		placeHolders.add(five);placeHolders.add(six);placeHolders.add(seven);placeHolders.add(eight);
 		placeHolders.add(nine);
 		
 		//GameOverMenu
 		gameOverMenu = new Rectangle(0,30, 136, 136);
-
 		continueButton = new Rectangle(GAME_WIDTH/2-(int)(82*scaleW/2), GAME_HEIGHT/2, (int)(83*scaleW), (int)(82*scaleH));
 		playAgainBounds = new Rectangle(GAME_WIDTH/2-(int)(82*scaleW/2), GAME_HEIGHT/2, (int)(83*scaleW), (int)(82*scaleH));
 		exitBounds = new Rectangle(GAME_WIDTH/2-(int)(82*scaleW/2), GAME_HEIGHT/2 + (int)(115*scaleH), (int)(83*scaleW), (int)(82*scaleH));
@@ -289,8 +284,6 @@ public class GameWorld {
         for (int i=0; i<NUMBER_OF_GRIDS; i++) {
         	if (moleGrid[i] != null) {
         		moleGrid[i].update(delta);
-
-        		//change here
         		moleGrid[i].getBoundingCircle().set((int)(placeHolders.get(i).x + (30*scaleW)), (int) (placeHolders.get(i).y + (40*scaleH)), (int)(120*scaleW), (int)(120*scaleH)); 
 
         		if (moleGrid[i].isDead()) {
@@ -389,15 +382,6 @@ public class GameWorld {
 		return placeHolders;
 	}
     
-	public void generateRandomSpawns(float duration,  MoleType moleType) {
-		//Generate random spawns
-
-        int pos = r.nextInt(9);
-        runningTime = 0;
-        spawnMole(moleType, pos);
-
-	}
-	
 	public MoleDeployer[] getMoleDeployers() {
 		return moleDeployers;
 	}

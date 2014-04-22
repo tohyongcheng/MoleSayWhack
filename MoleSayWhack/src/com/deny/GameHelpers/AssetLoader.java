@@ -23,7 +23,7 @@ public class AssetLoader
 	//The Textures//
 	public static BitmapFont font;
 	public static Texture texture, logoTexture, win, invulnerable, mismatch, optionsSC, trudy;
-	public static TextureRegion tdyopt, optBG, changename, changemusic, changefx, noprotocol, t2, t3, t4, t5, refresh, tdy;
+	public static TextureRegion fxON, mscOFF, tdyopt, optBG, changename, changemusic, changefx, noprotocol, t2, t3, t4, t5, refresh, tdy;
 	public static Texture Main1024, Game1024, moleDep1024, lose, PS, powerup, powerupDep2, powerupDep1;
 	public static TextureRegion powerless, earthquake, moleshower, silencer, molejam, kingmole, mouldy, dummymole, moleshield;
 	public static TextureRegion gameBG, ps, rpl, ext, rsm, psBG, borderVert, borderHor, hmr, titlepuDep, shield;
@@ -68,6 +68,12 @@ public class AssetLoader
 		
 		changemusic = new TextureRegion(optionsSC, 558, 717, 258, 90);
 		changemusic.flip(false,true);
+		
+		fxON = new TextureRegion(optionsSC, 15,929, 258,90);
+		fxON.flip(false,true);
+		
+		mscOFF= new TextureRegion(optionsSC, 290,827, 258, 90);
+		mscOFF.flip(false,true);
 		
 		changefx = new TextureRegion(optionsSC, 558, 605, 258, 90);
 		changefx.flip(false, true);
@@ -403,8 +409,8 @@ public class AssetLoader
         shieldS = Gdx.audio.newSound(Gdx.files.internal("data/shield.mp3"));
         kinglaugh = Gdx.audio.newSound(Gdx.files.internal("data/king.mp3"));
         blockG = Gdx.audio.newSound(Gdx.files.internal("data/block.mp3"));
-       shower = Gdx.audio.newSound(Gdx.files.internal("data/shower.mp3"));
-       dummy = Gdx.audio.newSound(Gdx.files.internal("data/dummy.mp3"));
+        shower = Gdx.audio.newSound(Gdx.files.internal("data/shower.mp3"));
+        dummy = Gdx.audio.newSound(Gdx.files.internal("data/dummy.mp3"));
 	}
 	
 	public static void dispose() {

@@ -79,7 +79,7 @@ public class OptionsScreen implements Screen {
 		
 		backBounds = new Rectangle(3,(int)(GAME_HEIGHT-9-82*scaleH),(int)(83*scaleW), (int)(82*scaleH));
 		
-		//NATALIE, put the position of buttons into the rectangles.
+		//Setup Positions of the Buttons
 		changeNameBtn = new Rectangle((int)(136*scaleW),(int)(scaleH* 181), (int)(scaleW*264), (int)(scaleH*93));
 		changeBGMBtn = new Rectangle((int)(136*scaleW),(int)(scaleH* 315), (int)(scaleW*264), (int)(scaleH*93));
 		changeSFXBtn = new Rectangle((int)(136*scaleW),(int)(scaleH* 458), (int)(scaleW*264), (int)(scaleH*93));
@@ -87,37 +87,33 @@ public class OptionsScreen implements Screen {
 		
 		//Setup options
 		prefs = Gdx.app.getPreferences("Options");
-		name = (prefs.getString("Name", "Player"));
+		name = prefs.getString("Name", "Player");
 		enableBGM = prefs.getBoolean("enableBGM", true);
 		enableSFX = prefs.getBoolean("enableSFX", true);
-		if (MainMenuScreen.previous == null){
-		authType = AuthenticationType.NOPROTOCOL;
-		ServerClientThread.authType = getAuthType();
-		}
-		else{
-			authType = MainMenuScreen.previous;
-			ServerClientThread.authType = getAuthType();
-			
-		}
-		System.out.println("Authentication type is now: "  + getAuthType());
 		
+		authType = AuthenticationType.valueOf(prefs.getString("authType","NOPROTOCOL"));
+		ServerClientThread.authType = getAuthType();
+
+		
+		System.out.println("Options");
+		System.out.println("name is: " + name);
+		System.out.println("enableBGM is: " + enableBGM);
+		System.out.println("enableSFX is: " + enableSFX);
+		System.out.println("authType is: " + authType.toString());
 	}
 	
 	//EDIT THIS
 	
-	public TextureRegion getAsset(){
+	public TextureRegion getProtocolAsset(){
 		switch (authType){
 		case NOPROTOCOL:
 			return AssetLoader.noprotocol;
-			
 		case T2:
 			return AssetLoader.t2;
 		case T3:
 			return AssetLoader.t3;
-			
 		case T4:
 			return AssetLoader.t4;
-
 		case T5:
 			return AssetLoader.t5;
 		case TRUDY:
@@ -141,9 +137,18 @@ public class OptionsScreen implements Screen {
         
         //ADD OPTIONS BUTTONS HERE
         batcher.draw(AssetLoader.changename, changeNameBtn.x, changeNameBtn.y, changeNameBtn.width, changeNameBtn.height);
-        batcher.draw(AssetLoader.changemusic, changeBGMBtn.x, changeBGMBtn.y, changeBGMBtn.width, changeBGMBtn.height);
+        if(enableBGM == true){
+        batcher.draw(AssetLoader.changemusic, changeBGMBtn.x, changeBGMBtn.y, changeBGMBtn.width, changeBGMBtn.height);}
+        else if (enableBGM == false){
+        	batcher.draw(AssetLoader.mscOFF, changeBGMBtn.x, changeBGMBtn.y, changeBGMBtn.width, changeBGMBtn.height);
+        }
+        if(enableSFX ==false){
         batcher.draw(AssetLoader.changefx, changeSFXBtn.x, changeSFXBtn.y, changeSFXBtn.width, changeSFXBtn.height);
-        batcher.draw(getAsset(), changeAuthBtn.x, changeAuthBtn.y, changeAuthBtn.width, changeAuthBtn.height);
+        }
+        else if(enableSFX==true){
+        	 batcher.draw(AssetLoader.fxON, changeSFXBtn.x, changeSFXBtn.y, changeSFXBtn.width, changeSFXBtn.height);
+        }
+        batcher.draw(getProtocolAsset(), changeAuthBtn.x, changeAuthBtn.y, changeAuthBtn.width, changeAuthBtn.height);
         
         batcher.draw(AssetLoader.ext, backBounds.x, backBounds.y,backBounds.width, backBounds.height);
         batcher.end();
@@ -157,32 +162,30 @@ public class OptionsScreen implements Screen {
 				mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.back.play();
+					if (enableSFX) AssetLoader.back.play();
 					setState(OptionsScreenState.BACK);
 				}
 				
 				else if (changeNameBtn.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.button.play();
+					if (enableSFX)AssetLoader.button.play();
 					Gdx.input.getTextInput(listener, "Set your name: ", name);
 				}
 				
 				else if (changeBGMBtn.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.button.play();
+					if (enableSFX)AssetLoader.button.play();
 					setEnableBGM(!enableBGM);
-					
 				}
 				
 				else if (changeSFXBtn.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.button.play();
+					if (enableSFX)AssetLoader.button.play();
 					setEnableSFX(!enableSFX);
-					
 				}
 				
 				else if (changeAuthBtn.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.button.play();
+					if (enableSFX)AssetLoader.button.play();
 					setAuthType(authType.next());
-					MainMenuScreen.previous = getAuthType();
-					//set the serverClientThread auth Type
+					
+					//set the serverClientThread authType
 					ServerClientThread.authType = getAuthType();
 					System.out.println("Authentication protocol is changed to : " + authType.toString() );
 				}
@@ -252,7 +255,7 @@ public class OptionsScreen implements Screen {
 
 	public void setName(String name) {
 		this.name = name;
-		prefs.putString("name", name );
+		prefs.putString("Name", name );
 		prefs.flush();
 	}
 
@@ -261,6 +264,15 @@ public class OptionsScreen implements Screen {
 	}
 
 	public void setEnableBGM(boolean enableBGM) {
+		if (enableBGM == false ){
+			AssetLoader.ann.stop();
+			AssetLoader.summer.stop();
+		} else {
+			AssetLoader.ann.stop();
+			AssetLoader.summer.stop();
+			AssetLoader.summer.setLooping(true);
+			AssetLoader.summer.play();
+		}
 		this.enableBGM = enableBGM;
 		prefs.putBoolean("enableBGM", enableBGM);
 		prefs.flush();

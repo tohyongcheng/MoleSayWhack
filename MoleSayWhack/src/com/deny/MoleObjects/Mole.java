@@ -1,6 +1,8 @@
 package com.deny.MoleObjects;
 
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 
 
@@ -24,12 +26,14 @@ public abstract class Mole
 	protected Player player;
 	protected Rectangle boundingRectangle;
 	protected MoleType moleType;
-
+	private Preferences prefs;
+	private boolean enableSFX;
 	
 	
 	public Mole(Player player) 
 	{
-
+		prefs = Gdx.app.getPreferences("Options");
+		enableSFX = prefs.getBoolean("enableSFX", true);
 		boundingRectangle = new Rectangle();
 		isDead = false;
 		timeExisted = 0;
@@ -94,9 +98,7 @@ public abstract class Mole
 		if (boundingRectangle.contains(screenX, screenY)) {
 			if (isAlive()) 
 			{
-
-				//PLAY IT WHEN IT IS HIT.
-				AssetLoader.hit.play();
+				if (enableSFX) AssetLoader.hit.play();
 				System.out.println("mole kena attack!");
 				HP -= 1;
 				if (HP==0) {
@@ -112,7 +114,8 @@ public abstract class Mole
 	public Color getColor() {
 		return moleType.getColor();
 	}
-public MoleType getMoleType(){
-	return moleType;
-}
+	
+	public MoleType getMoleType(){
+		return moleType;
+	}
 }

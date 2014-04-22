@@ -17,6 +17,7 @@ public class DisableAllPowerUps extends PowerUp {
 	static Random r;
 	
 	
+	
 	public static void resetRunningTime() {
 		runningTime = 0;
 	}
@@ -40,6 +41,7 @@ public class DisableAllPowerUps extends PowerUp {
 		r = new Random();
 		powerUpType = PowerUpType.DISABLEALLPOWERUPS;
 		effectDuration = powerUpType.getEffectDuration();
+		loadPreferences();
 	}
 
 	public static void invoke() {
@@ -57,7 +59,7 @@ public class DisableAllPowerUps extends PowerUp {
 		}).start();
 		inEffect = true;
 		//play sounds at invoke.
-		AssetLoader.block.play();
+		if (enableSFX) AssetLoader.block.play();
 	}
 
 	public static void update(float delta) {

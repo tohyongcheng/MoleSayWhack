@@ -40,12 +40,13 @@ public class SpawnMoleKing extends PowerUp {
 		r = new Random();
 		powerUpType = PowerUpType.MOLEKING;
 		effectDuration = powerUpType.getEffectDuration();
+		loadPreferences();
 	}
 
 
 	public static void invoke() {
 		inEffect = true;
-		AssetLoader.kinglaugh.play();
+		if (enableSFX) AssetLoader.kinglaugh.play();
 		new Thread(new Runnable() {
 			public void run() {
 				Gdx.app.postRunnable(new Runnable() {

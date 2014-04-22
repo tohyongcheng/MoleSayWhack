@@ -4,8 +4,9 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -17,7 +18,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpType;
-import com.deny.Screens.MultiplayerScreen.MultiplayerState;
 import com.deny.Threads.ServerClientThread;
 
 public class PreGamePowerUpScreen implements Screen {
@@ -45,8 +45,12 @@ public class PreGamePowerUpScreen implements Screen {
 	private ArrayList<PowerUpType> selectedPowerUps;
 	private ArrayList<Rectangle> selectedPowerUpsRectangles;
 	private float countDownTime = 20f;
+	private Preferences prefs;
+	private boolean enableBGM;
+	private boolean enableSFX;
 	private PreGameState currentState;
 	private Object preGameStateLock = new Object();
+	
 
 	public PreGamePowerUpScreen(Game game, ServerClientThread socketHandler, ArrayList<MoleType> selectedMoles) {
 		this.game = game;
@@ -76,7 +80,10 @@ public class PreGamePowerUpScreen implements Screen {
 			selectedPowerUps.add(PowerUpType.EARTHQUAKE);
 			selectedPowerUpsRectangles.add(new Rectangle( (int)(GAME_WIDTH/2 - 474*scaleW/2),(int)(GAME_HEIGHT/4.5 +(i*(178*scaleH+7)-5)) , (int)(474*scaleW),(int)(178*scaleH )));
 		}		
-		
+		//Get options
+		prefs = Gdx.app.getPreferences("Options");
+		enableBGM = prefs.getBoolean("enableBGM", true);
+		enableSFX = prefs.getBoolean("enableSFX", true);
 	}
 	
 	private void draw() {
@@ -129,7 +136,7 @@ public class PreGamePowerUpScreen implements Screen {
 				countDownTime -= delta;
 			}
 			if(Gdx.input.isKeyPressed(Keys.BACK)) {
-				AssetLoader.back.play();
+				if (enableSFX) AssetLoader.back.play();
 				setState(PreGameState.QUIT);
 				return;
 			}
@@ -138,7 +145,7 @@ public class PreGamePowerUpScreen implements Screen {
 				mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.back.play();
+					if (enableSFX) AssetLoader.back.play();
 					setState(PreGameState.QUIT);
 				}
 				
@@ -147,7 +154,7 @@ public class PreGamePowerUpScreen implements Screen {
 						PowerUpType nextPowerUpType = selectedPowerUps.get(i).next();
 						selectedPowerUps.remove(i);
 						selectedPowerUps.add(i,nextPowerUpType);
-						AssetLoader.clicksound.play();
+						if (enableSFX) AssetLoader.clicksound.play();
 					}
 				}
 			}

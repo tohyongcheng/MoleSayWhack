@@ -40,6 +40,7 @@ public class BlockMoleGrid extends PowerUp {
 		r = new Random();
 		powerUpType = PowerUpType.BLOCKGRID;
 		effectDuration = powerUpType.getEffectDuration();
+		loadPreferences();
 	}
 
 	public static void invoke() {
@@ -55,7 +56,7 @@ public class BlockMoleGrid extends PowerUp {
 			}
 		}).start();
 		inEffect = true;
-		AssetLoader.blockG.play();
+		if (enableSFX) AssetLoader.blockG.play();
 	}
 
 	public static void update(float delta) {

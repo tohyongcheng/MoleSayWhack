@@ -11,19 +11,17 @@ import java.util.List;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameHelpers.IPAddressInputListener;
-import com.deny.GameObjects.MoleType;
 import com.deny.Threads.ServerClientThread;
 
 public class MultiplayerScreen implements Screen {
@@ -51,9 +49,10 @@ public class MultiplayerScreen implements Screen {
 	private String myAddress;
 	private Preferences prefs;
 	private IPAddressInputListener listener;
-	private BitmapFont font;
-	
 	private Vector3 touchPoint;
+	private boolean enableBGM;
+	private boolean enableSFX;
+	
 	
 	
 	public MultiplayerScreen(Game game) {
@@ -63,38 +62,32 @@ public class MultiplayerScreen implements Screen {
 
         double scaleW = (double) GAME_WIDTH/544;
         double scaleH = (double) GAME_HEIGHT/816;
-        
 		backBounds = new Rectangle(3,(int)(GAME_HEIGHT-9-82*scaleH),(int)(83*scaleW), (int)(82*scaleH));
 		playBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(3*GAME_HEIGHT/6 - 90*scaleH/2 - 50*scaleH),(int)(260*scaleW), (int)(90*scaleH));
 		
-		//NATALIE: INPUT THE POSITION OF THE RECTANGLE
 		refreshBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(4*GAME_HEIGHT/6 - 90*scaleH/2 - 50*scaleH),(int)(260*scaleW), (int)(90*scaleH));
-		
 		changeAddressBounds = new Rectangle((int)(GAME_WIDTH/2 - 260*scaleW/2),(int)(5*GAME_HEIGHT/6 - 90*scaleH/2 - 50*scaleH),(int)(260*scaleW), (int)(90*scaleH));
-		
 
 		listener = new IPAddressInputListener(this);
-		
-		font = new BitmapFont();
-		font.setScale(1, -1);
 		batcher = new SpriteBatch();
 		batcher.setProjectionMatrix(multiplayerCam.combined);
 	
-		
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(multiplayerCam.combined);
 		touchPoint = new Vector3();
 		
 		//Preferences
-		prefs = Gdx.app.getPreferences("Multiplayer");
+		prefs = Gdx.app.getPreferences("Options");
 		otherAddress = (prefs.getString("IPAddress", "127.0.0.1"));
+		enableBGM = prefs.getBoolean("enableBGM", true);
+		enableSFX = prefs.getBoolean("enableSFX", true);
 				
-		//Sockets!
+		//Initialize Sockets!
 		socketHandler = new ServerClientThread(this, otherAddress);
 		socketHandler.start();
 		setState(MultiplayerState.READY);
 		
-		 // The following code loops through the available network interfaces
+		// The following code loops through the available network interfaces
         // Keep in mind, there can be multiple interfaces per device, for example
         // one per NIC, one per active wireless and the loopback
         // In this case we only care about IPv4 address ( x.x.x.x format )
@@ -168,7 +161,7 @@ public class MultiplayerScreen implements Screen {
 		switch (getState()) {
 		case READY:		
 			if(Gdx.input.isKeyPressed(Keys.BACK)) {
-				AssetLoader.back.play();
+				if (enableSFX) AssetLoader.back.play();
 				setState(MultiplayerState.QUIT);
 			}
 			
@@ -177,17 +170,17 @@ public class MultiplayerScreen implements Screen {
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
 					if (socketHandler !=null) socketHandler.interrupt();
-					AssetLoader.back.play();
+					if (enableSFX)  AssetLoader.back.play();
 					game.setScreen(new MainMenuScreen(game));
 				}
 				
 				else if (refreshBounds.contains(touchPoint.x,touchPoint.y)) {
 					setState(MultiplayerState.RESTART);
-					AssetLoader.button.play();
+					if (enableSFX) AssetLoader.button.play();
 				}
 				
 				else if (changeAddressBounds.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.button.play();
+					if (enableSFX) AssetLoader.button.play();
 					Gdx.input.getTextInput(listener, "Set IP Address", otherAddress);
 				}
 			}
@@ -197,7 +190,7 @@ public class MultiplayerScreen implements Screen {
 			
 
 			if(Gdx.input.isKeyPressed(Keys.BACK)) {
-				AssetLoader.back.play();
+				if (enableSFX) AssetLoader.back.play();
 				socketHandler.leaveGameRoom();
 				setState(MultiplayerState.QUIT);
 			}
@@ -207,24 +200,24 @@ public class MultiplayerScreen implements Screen {
 				multiplayerCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				
 				if (playBounds.contains(touchPoint.x,touchPoint.y)) {
-					AssetLoader.button.play();
+					if (enableSFX) AssetLoader.button.play();
 					socketHandler.toChooseMolesScreen();
 					setState(MultiplayerState.START);
 				}
 				
 				else if (refreshBounds.contains(touchPoint.x,touchPoint.y)) {
 					setState(MultiplayerState.RESTART);
-					AssetLoader.button.play();
+					if (enableSFX) AssetLoader.button.play();
 				}
 				
 				else if (backBounds.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.back.play();
+					if (enableSFX) AssetLoader.back.play();
 					socketHandler.leaveGameRoom();
 					setState(MultiplayerState.QUIT);
 				}
 				
 				else if (changeAddressBounds.contains(touchPoint.x, touchPoint.y)) {
-					AssetLoader.button.play();
+					if (enableSFX) AssetLoader.button.play();
 					Gdx.input.getTextInput(listener, "Set IP Address", otherAddress);
 				}
 			}
@@ -232,13 +225,13 @@ public class MultiplayerScreen implements Screen {
 		case PROTOCOLMISMATCH:
 			
 			if(Gdx.input.justTouched()) {
-			if (socketHandler !=null) {
-				socketHandler.interrupt();
-				socketHandler.dispose();
-			}
-			System.out.println("Disconnected because protocol type does not match. Please try again");
-			game.setScreen(new MainMenuScreen(game));
-			dispose();
+				if (socketHandler !=null) {
+					socketHandler.interrupt();
+					socketHandler.dispose();
+				}
+				System.out.println("Disconnected because protocol type does not match. Please try again");
+				game.setScreen(new MainMenuScreen(game));
+				dispose();
 			
 			}
 			break;

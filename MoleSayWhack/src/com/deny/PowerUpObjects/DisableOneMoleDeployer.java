@@ -18,6 +18,7 @@ public class DisableOneMoleDeployer extends PowerUp {
 	static Random r;
 	
 	
+	
 	public static void resetRunningTime() {
 		runningTime = 0;
 	}
@@ -40,6 +41,7 @@ public class DisableOneMoleDeployer extends PowerUp {
 		r = new Random();
 		powerUpType = PowerUpType.DISABLEONEMOLEDEPLOYER;
 		effectDuration = powerUpType.getEffectDuration();
+		loadPreferences();
 	}
 
 	
@@ -57,7 +59,7 @@ public class DisableOneMoleDeployer extends PowerUp {
 			}
 		}).start();
 		inEffect = true;
-		AssetLoader.block.play();
+		if (enableSFX) AssetLoader.block.play();
 		
 	}
 	

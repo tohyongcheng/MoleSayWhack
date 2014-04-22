@@ -132,6 +132,7 @@ public class T3Client {
 		System.out.println("Base64 encoded is " + encryptedValue);
 		
 		/*****************6. SENDING FIRST HALF OF ENCRYPTED VALUE*********************************/
+		System.out.println("Sending first half of encrypted value");
 		String encryptedValue1 = encryptedValue.substring(0, encryptedValue.length()/2);
 		String encryptedValue2 = encryptedValue.substring(encryptedValue.length()/2, encryptedValue.length());
 		
@@ -146,6 +147,7 @@ public class T3Client {
 
 
 		/******************8. SENDING SECOND HALF OF ENCRYPTED VALUE*********************/
+		System.out.println("Sending second half of encrypted value");
 		out.writeObject(encryptedValue2);
 		out.flush();
 		
@@ -153,7 +155,7 @@ public class T3Client {
 		Object obj2 = in.readObject();
 	
 		/*****************10. COMBINE AND DECRYPT**********************************/
-		
+		System.out.println("Begin decryption");
 		String obj = (String) obj1 + (String) obj2;
 		@SuppressWarnings("restriction")
 		byte[] deco = new BASE64Decoder().decodeBuffer(obj);

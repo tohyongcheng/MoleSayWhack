@@ -3,6 +3,7 @@ package com.deny.Screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -20,17 +21,17 @@ public class MainMenuScreen implements Screen {
 	private static final int GAME_HEIGHT = (int) Gdx.graphics.getHeight(); //204 to 408
 	double scaleW = (double)GAME_WIDTH/544.0;
 	double scaleH = (double) GAME_HEIGHT/816;
-
-	Game game;
-	
-	OrthographicCamera mainMenuCam;
-	SpriteBatch batcher;
-	Rectangle startBounds;
-	Rectangle optionsBounds;
-	Rectangle scoreBounds;
-	ShapeRenderer shapeRenderer;
-	Vector3 touchPoint;
-	static AuthenticationType previous;
+	private Game game;
+	private OrthographicCamera mainMenuCam;
+	private SpriteBatch batcher;
+	private Rectangle startBounds;
+	private Rectangle optionsBounds;
+	private Rectangle scoreBounds;
+	private ShapeRenderer shapeRenderer;
+	private Vector3 touchPoint;
+	private Preferences prefs;
+	private boolean enableBGM;
+	private boolean enableSFX;
 	
 	public MainMenuScreen(Game game) {
 		
@@ -42,8 +43,6 @@ public class MainMenuScreen implements Screen {
 		batcher = new SpriteBatch();
 		
 		//Create bounds. We are to edit the Position and the Width/Height Here!
-
-
 		int boxLength = (int) Math.round(((260/2)*scaleW)) ;
 
 		System.out.println(boxLength);
@@ -57,11 +56,23 @@ public class MainMenuScreen implements Screen {
         // Attach batcher to camera
         batcher.setProjectionMatrix(mainMenuCam.combined);
 		touchPoint = new Vector3();	
-
-		AssetLoader.ann.stop();
-		AssetLoader.summer.stop();
-		AssetLoader.summer.setLooping(true);
-		AssetLoader.summer.play();
+		
+		//Get options
+		prefs = Gdx.app.getPreferences("Options");
+		enableBGM = prefs.getBoolean("enableBGM", true);
+		enableSFX = prefs.getBoolean("enableSFX", true);
+		
+		// Start playing music if enableBGM is true
+		try {
+			if (enableBGM) {
+				AssetLoader.ann.stop();
+				AssetLoader.summer.stop();
+				AssetLoader.summer.setLooping(true);
+				AssetLoader.summer.play();
+			}
+		} catch(Exception e) {
+			System.out.println("Problems playing music and sound.");
+		}
 
 	}
 	
@@ -74,9 +85,6 @@ public class MainMenuScreen implements Screen {
         // Disable transparency 
         // This is good for performance when drawing images that do not require transparency.
         batcher.enableBlending();
-        //put the position here
-
-        
         batcher.draw(AssetLoader.background, 0, 0, GAME_WIDTH, GAME_HEIGHT);
         double Titlewidth = 336*scaleW;
         double Titleheight = 170*scaleH;
@@ -113,24 +121,20 @@ public class MainMenuScreen implements Screen {
 		else if(Gdx.input.justTouched()) {
 			mainMenuCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 			if (startBounds.contains(touchPoint.x, touchPoint.y)) {
-				AssetLoader.button.play();
-				
-				
+				if (enableSFX) AssetLoader.button.play();
 				game.setScreen(new MultiplayerScreen(game));
-				
-				
 				this.dispose();
 				return;
 			}
 			if (optionsBounds.contains(touchPoint.x, touchPoint.y)) {
 				game.setScreen(new OptionsScreen(game));
-				AssetLoader.button.play();
+				if (enableSFX) AssetLoader.button.play();
 				this.dispose();
 				return;
 			}
 /*			if(scoreBounds.contains(touchPoint.x, touchPoint.y)){
 				game.setScreen(new HighScoreScreen(game));
-				AssetLoader.button.play();
+				if (enableSFX) AssetLoader.button.play();
 				this.dispose();
 				return;
 			}*/

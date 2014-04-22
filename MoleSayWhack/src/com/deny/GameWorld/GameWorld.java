@@ -318,27 +318,29 @@ public class GameWorld {
 	}
     
     public void spawnMole(MoleType moleType, int pos) {
-		switch(moleType) {
-		case ONETAP:
-			moleQueues[pos].add(new OneHitMole(player));
-			break;
-		case THREETAP:
-			moleQueues[pos].add(new ThreeHitMole(player));
-			break;
-		case FIVETAP:
-			moleQueues[pos].add(new FiveHitMole(player));
-			break;
-		case SABOTAGE:
-			moleQueues[pos].add(new SabotageMole(player));
-			break;
-		case MOLEKING:
-			moleQueues[pos].add(new MoleKing(player));
-			break;
-		case DUMMY:
-			moleQueues[pos].add(new DummyMole(player));
-			break;
-		default:
-			break;
+		if (blockedGrids[pos] == false ) { 
+	    	switch(moleType) {
+			case ONETAP:
+				moleQueues[pos].add(new OneHitMole(player));
+				break;
+			case THREETAP:
+				moleQueues[pos].add(new ThreeHitMole(player));
+				break;
+			case FIVETAP:
+				moleQueues[pos].add(new FiveHitMole(player));
+				break;
+			case SABOTAGE:
+				moleQueues[pos].add(new SabotageMole(player));
+				break;
+			case MOLEKING:
+				moleQueues[pos].add(new MoleKing(player));
+				break;
+			case DUMMY:
+				moleQueues[pos].add(new DummyMole(player));
+				break;
+			default:
+				break;
+			}
 		}
     }
     

@@ -5,16 +5,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
-import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 
+import sun.misc.BASE64Encoder;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.Protocol;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
@@ -25,11 +27,9 @@ import com.deny.GameObjects.PowerUpType;
 import com.deny.Screens.MultiplayerScreen;
 import com.deny.Screens.MultiplayerScreen.MultiplayerState;
 import com.deny.Screens.OptionsScreen.AuthenticationType;
-import com.deny.Screens.OptionsScreen;
 import com.deny.Screens.PreGamePowerUpScreen;
 import com.deny.Screens.PreGameScreen;
-import sun.misc.BASE64Decoder;			//Base64 decoding
-import sun.misc.BASE64Encoder;
+//Base64 decoding
 
 public class ServerClientThread extends Thread {
 	private Game game;
@@ -51,12 +51,12 @@ public class ServerClientThread extends Thread {
 	private ReadThread readThread;
 	private Cipher cipher;
 	private ObjectOutputStream outObject;
+	private Preferences prefs; 
 
-	public static AuthenticationType authType = AuthenticationType.NOPROTOCOL;
-	public static boolean authenticityStatus = true;
+	public static AuthenticationType authType;
+	public static boolean authenticityStatus;
 
 	private Key SymmetricKey;
-
 
 	public ServerClientThread(MultiplayerScreen ms, String IPAddress) {
 		this.setMultiplayerScreen(ms);
@@ -74,6 +74,10 @@ public class ServerClientThread extends Thread {
 
 		if (IPAddress.equals("")) address = "localhost";
 		else address = IPAddress;
+		
+		prefs = Gdx.app.getPreferences("Options");
+		ServerClientThread.authenticityStatus = true;
+		ServerClientThread.authType = AuthenticationType.valueOf(prefs.getString("authType","NOPROTOCOL"));
 	}
 
 

@@ -110,7 +110,7 @@ public class GameInputHandler implements InputProcessor {
 				if (md!= null) {
 					md.setSelected(false);
 					if (md.isTouchDown(screenX,screenY)) {
-						if (md.isAvailable() && !md.isDisabled()) {
+						if (md.isAvailable()) {
 							md.setSelected(true);
 							if (enableSFX) AssetLoader.slctd.play();
 							myWorld.setGameState(GameState.DEPLOYMENT);

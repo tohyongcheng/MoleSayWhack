@@ -46,7 +46,7 @@ public class PowerUpDeployer {
 	
 
 	public boolean isAvailable() {
-		return isAvailable;
+		return (isAvailable && !disabled);
 	}
 	
 	public PowerUpType getPowerupType(){

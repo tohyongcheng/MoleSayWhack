@@ -49,7 +49,6 @@ public class ReadThread  extends Thread{
 	}
 
 	public void run() {
-		
 		try {
 			in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 			cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");

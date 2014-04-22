@@ -83,7 +83,7 @@ public class MoleDeployer
 	}
 	
 	public boolean isAvailable(){
-		return isAvailable;
+		return (isAvailable && !disabled);
 	}
 	
 	public Rectangle getRectangle(){

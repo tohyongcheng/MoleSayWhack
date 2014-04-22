@@ -135,11 +135,10 @@ public class T5Client {
 		
 		byte[] messageFromServerBytes = messageFromServer.getBytes("UTF-8");
 		
-		boolean result = Arrays.equals(serverSignatureBytesDecrypted, messageFromServerBytes);
-		System.out.println("Signature verification is: " + result);
+		boolean authenticity = Arrays.equals(serverSignatureBytesDecrypted, messageFromServerBytes);
+		System.out.println("Signature verification is: " + authenticity);
 		
-		boolean authenticity = true;
-		/******************14. ACCEPT KEY ONLY IF ITS AUTHENTIC************************************/
+		/******************5. ACCEPT KEY ONLY IF ITS AUTHENTIC************************************/
 		if (authenticity){
 			System.out.println("Receiving encrypted key length now");
 			byte[] encryptedKeyLength = new byte[4];
@@ -151,7 +150,7 @@ public class T5Client {
 			byte[] encryptedSymkey = new  byte[lengthEncrypted];
 			server.getInputStream().read(encryptedSymkey);
 			
-			/*************Decrypt the key****************/
+			/*************6. Decrypt the key****************/
 			cipher.init(Cipher.DECRYPT_MODE, privateKey);
 			byte[] symKeyBytes = cipher.doFinal(encryptedSymkey);
 			DESKeySpec EKS = new DESKeySpec(symKeyBytes);

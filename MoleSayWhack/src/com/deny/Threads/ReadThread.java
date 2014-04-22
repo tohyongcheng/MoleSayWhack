@@ -1,13 +1,18 @@
 package com.deny.Threads;
 
 import java.io.BufferedReader;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.net.SocketException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import com.badlogic.gdx.Game;
@@ -78,20 +83,33 @@ public class ReadThread  extends Thread{
 						byte[] newMessageByte = cipher.doFinal(messageByte);
 						String messageTemp = new String(newMessageByte, "UTF-8");
 						message = messageTemp.substring(0);
-					} catch (Exception e) {
+					}  catch (EOFException e) {
 						goToDisconnectedScreen();
+						e.printStackTrace();
 						return;
-					}
+					} 
+					catch (SocketException e) {
+						System.out.println("Socket Closed");
 
+				} catch (InvalidKeyException e) {
+					goToDisconnectedScreen();
+					} catch (ClassNotFoundException e) {
+						goToDisconnectedScreen();
+				} catch (IllegalBlockSizeException e) {
+					goToDisconnectedScreen();
+					} catch (BadPaddingException e) {
+						goToDisconnectedScreen();
+					}
 				}
 				else{
 					message = in.readLine();
 				}
 				System.out.println("Received Message: " + message);
 				String[] messages = message.split(" ");
-				
+				messages[0] = messages[0].trim();
 				switch(messages[0]) {
 				//GAMESCREEN
+				
 				case "[SPAWN]":
 					MoleType moleType = MoleType.valueOf(messages[1].trim());
 					System.out.println(messages[2]);

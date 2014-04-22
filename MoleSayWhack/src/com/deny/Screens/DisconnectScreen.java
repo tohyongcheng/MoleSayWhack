@@ -35,6 +35,7 @@ public class DisconnectScreen implements Screen {
 	private DisconnectScreenStates currentState;
 
 	public DisconnectScreen(Game game) {
+		System.out.println("I'm called!");
 		this.game = game;
 		this.mainMenuCam = new OrthographicCamera();
 		currentState = DisconnectScreenStates.START;

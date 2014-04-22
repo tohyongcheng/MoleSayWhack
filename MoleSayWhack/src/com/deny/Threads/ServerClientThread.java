@@ -174,6 +174,7 @@ public class ServerClientThread extends Thread {
 			}
 
 			serverProtocol = serverProtocol.trim();
+			System.out.println("Protocol matching is " + serverProtocol.matches(authType.toString()));
 			if (serverProtocol.matches(authType.toString())){
 				matchedProtocol = true;
 			}

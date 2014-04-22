@@ -151,6 +151,7 @@ public class PreGameScreen implements Screen {
 			socketHandler.dispose();
 			socketHandler = null;
 			dispose();
+			System.out.println("Im quitting!");
 			game.setScreen(new MainMenuScreen(game));
 			break;
 			

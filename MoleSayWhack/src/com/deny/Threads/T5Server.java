@@ -108,24 +108,7 @@ public class T5Server {
 		String messageFromClient = (String) m;
 		String clientSignature = (String) ms;
 		
-		/********************3. Sending Hello Message to client with signed encryption************************************/
-		System.out.println("Sending reply Hello message");
-		String message = "Hello client";
-		ObjectOutputStream obj = new ObjectOutputStream(client.getOutputStream());
-		obj.writeObject(message);
-		obj.flush();
-		
-		System.out.println("Sending reply Signature");
-		cipher.init(Cipher.ENCRYPT_MODE, privateKey);
-		byte[] messageByte = message.getBytes("UTF-8");
-		byte[] signedMessage = cipher.doFinal(messageByte);
-		
-		@SuppressWarnings("restriction")
-		String signedMesageString = base64.encode(signedMessage);
-		obj.writeObject(signedMesageString);
-		obj.flush();
-		
-		/****************4. Decoding signature and Encrypting it************************/
+		/****************3. Decoding signature and Encrypting it************************/
 		System.out.println("Verifying authenticity");
 		@SuppressWarnings("restriction")
 		byte[] clientSignatureBytes = base64D.decodeBuffer(clientSignature);
@@ -134,29 +117,46 @@ public class T5Server {
 		
 		byte[] messageFromClientBytes = messageFromClient.getBytes("UTF-8");
 		
-		boolean result = Arrays.equals(clientSignatureBytesDecrypted, messageFromClientBytes);
-		System.out.println("Signature verification is: " + result);
+		boolean authenticity = Arrays.equals(clientSignatureBytesDecrypted, messageFromClientBytes);
+		System.out.println("Signature verification is: " + authenticity);
 		
 		
-		
-		boolean authenticity = true;
-		
-		/*********************12. GENERATE SYMMETRIC  KEY, DES ALGORITHM********************************/
-		KeyGenerator symKey = KeyGenerator.getInstance("DES");
-		SecureRandom r = new SecureRandom();
-		symKey.init(56, r);
-		symmetricKey = symKey.generateKey();
-	/**********13. SEND KEY ONLY IF IT IS AUTHENTICATED*******************************/
+
+			/**********REPLY ONLY IF CLIENT IS LEGITIMATE*******************************/
 		
 		if (authenticity){
-			/************** 14. ENCRYPT KEY******************/
+	
+			/********************4. Sending Hello Message to client with signed encryption************************************/
+			System.out.println("Sending reply Hello message");
+			String message = "Hello client";
+			ObjectOutputStream obj = new ObjectOutputStream(client.getOutputStream());
+			obj.writeObject(message);
+			obj.flush();
+			
+			System.out.println("Sending reply Signature");
+			cipher.init(Cipher.ENCRYPT_MODE, privateKey);
+			byte[] messageByte = message.getBytes("UTF-8");
+			byte[] signedMessage = cipher.doFinal(messageByte);
+			
+			@SuppressWarnings("restriction")
+			String signedMesageString = base64.encode(signedMessage);
+			obj.writeObject(signedMesageString);
+			obj.flush();
+			
+			/*********************5. GENERATE SYMMETRIC  KEY, DES ALGORITHM********************************/
+			KeyGenerator symKey = KeyGenerator.getInstance("DES");
+			SecureRandom r = new SecureRandom();
+			symKey.init(56, r);
+			symmetricKey = symKey.generateKey();
+			
+			
 			System.out.println("Encrypting symmetric Key using clientPublicKey");
 			byte[] symK = symmetricKey.getEncoded();
 			cipher.init(Cipher.ENCRYPT_MODE, clientPublicKey);
 			byte[] encryptedSymK = cipher.doFinal(symK);
 			
 		
-			
+			/********************6. SENDING SYMMETRIC KEY**************************/
 			System.out.println("Sending encrypted symmetric key length now.");
 			ByteBuffer symKeyEnc = ByteBuffer.allocate(4);
 			symKeyEnc.putInt(encryptedSymK.length);
@@ -172,7 +172,7 @@ public class T5Server {
 
 		}
 		else{
-			System.out.println("false");
+			System.out.println("Client does not appear to be legit.");
 			return false;
 		}
 	}

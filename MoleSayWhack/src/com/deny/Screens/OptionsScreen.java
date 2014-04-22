@@ -90,7 +90,7 @@ public class OptionsScreen implements Screen {
 		name = prefs.getString("Name", "Player");
 		enableBGM = prefs.getBoolean("enableBGM", true);
 		enableSFX = prefs.getBoolean("enableSFX", true);
-		
+
 		authType = AuthenticationType.valueOf(prefs.getString("authType","NOPROTOCOL"));
 		ServerClientThread.authType = getAuthType();
 
@@ -143,11 +143,12 @@ public class OptionsScreen implements Screen {
         	batcher.draw(AssetLoader.mscOFF, changeBGMBtn.x, changeBGMBtn.y, changeBGMBtn.width, changeBGMBtn.height);
         }
         if(enableSFX ==false){
-        batcher.draw(AssetLoader.changefx, changeSFXBtn.x, changeSFXBtn.y, changeSFXBtn.width, changeSFXBtn.height);
-        }
+        batcher.draw(AssetLoader.changefx, changeSFXBtn.x, changeSFXBtn.y, changeSFXBtn.width, changeSFXBtn.height);}
+
         else if(enableSFX==true){
         	 batcher.draw(AssetLoader.fxON, changeSFXBtn.x, changeSFXBtn.y, changeSFXBtn.width, changeSFXBtn.height);
         }
+
         batcher.draw(getProtocolAsset(), changeAuthBtn.x, changeAuthBtn.y, changeAuthBtn.width, changeAuthBtn.height);
         
         batcher.draw(AssetLoader.ext, backBounds.x, backBounds.y,backBounds.width, backBounds.height);

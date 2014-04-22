@@ -1,4 +1,4 @@
-package Screens;
+package screens;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -89,8 +89,10 @@ public class PreGameScreenTest {
 		assertEquals(PreGameState.COUNTING, preGameScreen.getState());
 		
 		//Test if state COUNTING changes within 10s
-		preGameScreen.update(10f);
+		preGameScreen.update(20f);
 		assertEquals(PreGameState.COUNTING, preGameScreen.getState());
+		preGameScreen.update(0);	//update to change state
+		assertEquals(PreGameState.GO, preGameScreen.getState());
 	}
 	
 	@Test

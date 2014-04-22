@@ -1,4 +1,4 @@
-package Screens;
+package screens;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;

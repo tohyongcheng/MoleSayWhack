@@ -52,6 +52,7 @@ public abstract class Mole
 	public void damage() {
 		if (!player.isInvulnerable()) {
 			player.damage();
+			AssetLoader.damage.play();
 		}
 	}
 	

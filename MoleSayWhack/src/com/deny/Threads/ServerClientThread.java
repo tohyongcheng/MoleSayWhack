@@ -26,6 +26,7 @@ import com.deny.GameObjects.PowerUpType;
 import com.deny.Screens.MultiplayerScreen;
 import com.deny.Screens.MultiplayerScreen.MultiplayerState;
 import com.deny.Screens.OptionsScreen.AuthenticationType;
+import com.deny.Screens.DisconnectScreen;
 import com.deny.Screens.PreGamePowerUpScreen;
 import com.deny.Screens.PreGameScreen;
 //Base64 decoding
@@ -64,10 +65,12 @@ public class ServerClientThread extends Thread {
 		try {
 			cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
+			System.out.println("Connection lost.");
+			goToDisconnectedScreen();
 			e.printStackTrace();
 		} catch (NoSuchPaddingException e) {
-			// TODO Auto-generated catch block
+			System.out.println("Connection lost.");
+			goToDisconnectedScreen();
 			e.printStackTrace();
 		}
 
@@ -116,7 +119,7 @@ public class ServerClientThread extends Thread {
 						server.dispose();
 						break;
 					} catch (GdxRuntimeException e) {
-						//System.out.println("Error with creating ServerSocket");
+						System.out.println("Error with creating ServerSocket");
 					}
 
 				}
@@ -137,7 +140,8 @@ public class ServerClientThread extends Thread {
 
 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				System.out.println("Connection lost.");
+				goToDisconnectedScreen();
 				e.printStackTrace();
 			}
 
@@ -163,7 +167,8 @@ public class ServerClientThread extends Thread {
 			try {
 				serverProtocol = in.readLine();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				System.out.println("Connection lost.");
+				goToDisconnectedScreen();
 				e.printStackTrace();
 			}
 
@@ -194,7 +199,8 @@ public class ServerClientThread extends Thread {
 						multiS.setState(MultiplayerState.TRUDY);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					System.out.println("Connection lost.");
+					goToDisconnectedScreen();
 					e.printStackTrace();
 				}
 
@@ -214,7 +220,8 @@ public class ServerClientThread extends Thread {
 						multiS.setState(MultiplayerState.TRUDY);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					System.out.println("Connection lost.");
+					goToDisconnectedScreen();
 					e.printStackTrace();
 				}
 			}
@@ -235,7 +242,8 @@ public class ServerClientThread extends Thread {
 						multiS.setState(MultiplayerState.TRUDY);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					System.out.println("Connection lost.");
+					goToDisconnectedScreen();
 					e.printStackTrace();
 				}
 			}
@@ -255,7 +263,8 @@ public class ServerClientThread extends Thread {
 						multiS.setState(MultiplayerState.TRUDY);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					System.out.println("Connection lost.");
+					goToDisconnectedScreen();
 					e.printStackTrace();
 				}
 			}
@@ -276,7 +285,8 @@ public class ServerClientThread extends Thread {
 						multiS.setState(MultiplayerState.TRUDY);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					System.out.println("Connection lost.");
+					goToDisconnectedScreen();
 					e.printStackTrace();
 				}
 
@@ -297,7 +307,8 @@ public class ServerClientThread extends Thread {
 						multiS.setState(MultiplayerState.TRUDY);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					System.out.println("Connection lost.");
+					goToDisconnectedScreen();
 					e.printStackTrace();
 				}
 
@@ -318,7 +329,8 @@ public class ServerClientThread extends Thread {
 						multiS.setState(MultiplayerState.TRUDY);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					System.out.println("Connection lost.");
+					goToDisconnectedScreen();
 					e.printStackTrace();
 				}
 
@@ -342,7 +354,8 @@ public class ServerClientThread extends Thread {
 						multiS.setState(MultiplayerState.TRUDY);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					System.out.println("Connection lost.");
+					goToDisconnectedScreen();
 					e.printStackTrace();
 				}
 			}
@@ -360,7 +373,8 @@ public class ServerClientThread extends Thread {
 						multiS.setState(MultiplayerState.TRUDY);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					System.out.println("Connection lost.");
+					goToDisconnectedScreen();
 					e.printStackTrace();
 				}
 
@@ -381,7 +395,8 @@ public class ServerClientThread extends Thread {
 						multiS.setState(MultiplayerState.TRUDY);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					System.out.println("Connection lost.");
+					goToDisconnectedScreen();
 					e.printStackTrace();
 				}
 			}
@@ -397,7 +412,8 @@ public class ServerClientThread extends Thread {
 					out = new PrintWriter(client.getOutputStream(), true);
 					outObject = new ObjectOutputStream(client.getOutputStream());
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					System.out.println("Connection lost.");
+					goToDisconnectedScreen();
 					e.printStackTrace();
 				} catch (GdxRuntimeException e) {
 					e.printStackTrace();
@@ -912,6 +928,21 @@ public class ServerClientThread extends Thread {
 	
 	public Key getKey(){
 		return SymmetricKey;
+	}
+	
+	public void goToDisconnectedScreen() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Gdx.app.postRunnable(new Runnable() {
+					@Override
+					public void run() {
+						game.setScreen(new DisconnectScreen(game));
+					}
+				});
+			}
+		}).start();
+		this.dispose();
 	}
 	
 }

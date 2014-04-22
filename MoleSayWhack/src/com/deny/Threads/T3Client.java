@@ -2,7 +2,6 @@ package com.deny.Threads;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -18,28 +17,9 @@ import java.util.Random;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
-import javax.crypto.spec.SecretKeySpec;
 
-import sun.misc.BASE64Decoder;			//Base64 decoding
-import sun.misc.BASE64Encoder;
-
-
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net.Protocol;
-import com.badlogic.gdx.net.ServerSocket;
-import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
-import com.badlogic.gdx.net.SocketHints;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.deny.GameObjects.MoleType;
-import com.deny.GameObjects.PowerUpType;
-import com.deny.Screens.MultiplayerScreen;
-import com.deny.Screens.MultiplayerScreen.MultiplayerState;
-import com.deny.Screens.OptionsScreen.AuthenticationType;
-import com.deny.Screens.OptionsScreen;
-import com.deny.Screens.PreGamePowerUpScreen;
-import com.deny.Screens.PreGameScreen;
+import com.badlogic.gdx.utils.Base64Coder;
 
 public class T3Client {
 	private Socket server;
@@ -125,10 +105,7 @@ public class T3Client {
 		cipher.init(Cipher.ENCRYPT_MODE, serverPublicKey);
 		byte[] cipherText = cipher.doFinal(combineText);
 		
-		@SuppressWarnings("restriction")
-		BASE64Encoder base64 = new BASE64Encoder();
-		@SuppressWarnings("restriction")
-		String encryptedValue = base64.encode(cipherText);
+		String encryptedValue = String.valueOf(Base64Coder.encode(cipherText));
 		System.out.println("Base64 encoded is " + encryptedValue);
 		
 		/*****************6. SENDING FIRST HALF OF ENCRYPTED VALUE*********************************/
@@ -158,7 +135,7 @@ public class T3Client {
 		System.out.println("Begin decryption");
 		String obj = (String) obj1 + (String) obj2;
 		@SuppressWarnings("restriction")
-		byte[] deco = new BASE64Decoder().decodeBuffer(obj);
+		byte[] deco = Base64Coder.decodeLines(obj);
 		
 		cipher.init(Cipher.DECRYPT_MODE, privateKey);
 		byte[] fromServer = cipher.doFinal(deco);

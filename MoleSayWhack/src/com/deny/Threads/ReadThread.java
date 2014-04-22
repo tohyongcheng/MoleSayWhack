@@ -8,12 +8,12 @@ import java.io.ObjectInputStream;
 import java.net.SocketException;
 import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -75,9 +75,7 @@ public class ReadThread  extends Thread{
 						System.out.println("Doing Decryption:");
 						Object messageObject = inObject.readObject();
 						String messageString = (String) messageObject;
-						@SuppressWarnings("restriction")
 						byte[] messageByte = Base64Coder.decode(messageString);
-
 						cipher.init(Cipher.DECRYPT_MODE, symmetricKey);
 
 						byte[] newMessageByte = cipher.doFinal(messageByte);
@@ -90,13 +88,12 @@ public class ReadThread  extends Thread{
 					} 
 					catch (SocketException e) {
 						System.out.println("Socket Closed");
-
-				} catch (InvalidKeyException e) {
-					goToDisconnectedScreen();
+					} catch (InvalidKeyException e) {
+						goToDisconnectedScreen();
 					} catch (ClassNotFoundException e) {
 						goToDisconnectedScreen();
-				} catch (IllegalBlockSizeException e) {
-					goToDisconnectedScreen();
+					} catch (IllegalBlockSizeException e) {
+						goToDisconnectedScreen();
 					} catch (BadPaddingException e) {
 						goToDisconnectedScreen();
 					}

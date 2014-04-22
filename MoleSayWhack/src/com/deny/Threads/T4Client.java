@@ -2,7 +2,6 @@ package com.deny.Threads;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -17,33 +16,11 @@ import java.util.Arrays;
 import java.util.Random;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.Mac;
-import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
-import javax.crypto.spec.SecretKeySpec;
 
-import sun.misc.BASE64Decoder;			//Base64 decoding
-import sun.misc.BASE64Encoder;
-
-
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net.Protocol;
-import com.badlogic.gdx.net.ServerSocket;
-import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
-import com.badlogic.gdx.net.SocketHints;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.deny.GameObjects.MoleType;
-import com.deny.GameObjects.PowerUpType;
-import com.deny.Screens.MultiplayerScreen;
-import com.deny.Screens.MultiplayerScreen.MultiplayerState;
-import com.deny.Screens.OptionsScreen.AuthenticationType;
-import com.deny.Screens.OptionsScreen;
-import com.deny.Screens.PreGamePowerUpScreen;
-import com.deny.Screens.PreGameScreen;
+import com.badlogic.gdx.utils.Base64Coder;
 /**
  * In this case, we send the MAC secretKey.
  * But we assume that both have already shared a known secretKey a priori
@@ -138,10 +115,7 @@ public class T4Client {
 		byte[] cipherText = cipher.doFinal(combineText);
 		System.out.println("Encrypted myself: " + new String(cipherText, "UTF-8"));
 		
-		@SuppressWarnings("restriction")
-		BASE64Encoder base64 = new BASE64Encoder();
-		@SuppressWarnings("restriction")
-		String encryptedValue = base64.encode(cipherText);
+		String encryptedValue = String.valueOf(Base64Coder.encode(cipherText));
 		System.out.println("Base64 encoded is " + encryptedValue);
 		
 		/*****************6. GENERATING DIGEST **************************/
@@ -161,8 +135,7 @@ public class T4Client {
 		
 		System.out.println("Sending digest over");
 		
-		@SuppressWarnings("restriction")
-		String saltedPassString = base64.encode(toDigest);
+		String saltedPassString = String.valueOf(Base64Coder.encode(toDigest));
 		ObjectOutputStream obj = new ObjectOutputStream(server.getOutputStream());
 		obj.writeObject(saltedPassString);
 		obj.flush();
@@ -178,7 +151,7 @@ public class T4Client {
 		System.out.println("Decode digest");
 		@SuppressWarnings("restriction")
 	
-		byte[] incomeDigestByte = new BASE64Decoder().decodeBuffer(incomeDigestString);
+		byte[] incomeDigestByte = Base64Coder.decodeLines(incomeDigestString);
 		
 		/*************10. SENDING ENCRYPTED PASSWORD***********************/
 		System.out.println("Sending encrypted password");
@@ -190,7 +163,7 @@ public class T4Client {
 		Object incomeEncryptedValue = inObj.readObject();
 		String incomeEncryptedValueString = (String) incomeEncryptedValue;
 		@SuppressWarnings("restriction")
-		byte[] incomeEncryptedValueByte = new BASE64Decoder().decodeBuffer(incomeEncryptedValueString);
+		byte[] incomeEncryptedValueByte = Base64Coder.decodeLines(incomeEncryptedValueString);
 		
 		/*************12. DIGESTING ENCRYPTED VALUE AND COMPARING DIGESTS*************************************/
 		System.out.println("Comparing digest and encrypted password");

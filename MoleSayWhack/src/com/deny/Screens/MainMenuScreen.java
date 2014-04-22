@@ -44,8 +44,6 @@ public class MainMenuScreen implements Screen {
 		
 		//Create bounds. We are to edit the Position and the Width/Height Here!
 		int boxLength = (int) Math.round(((260/2)*scaleW)) ;
-
-
 		startBounds = new Rectangle((int)Math.ceil(GAME_WIDTH/2 - boxLength), (int) (Math.ceil(GAME_HEIGHT/2) + GAME_HEIGHT*0.1*scaleH), (int)(260*scaleW), (int) (91*scaleH));
 		optionsBounds = new Rectangle((int)Math.ceil(GAME_WIDTH/2 - boxLength), (int) (Math.ceil(GAME_HEIGHT/2)+ scaleH*(GAME_HEIGHT*0.1 + 120)), (int)(260*scaleW),(int) (91*scaleH));
 		scoreBounds = new Rectangle((int)Math.ceil(GAME_WIDTH/2 - boxLength), (int) (Math.ceil(GAME_HEIGHT/2) + scaleH*(GAME_HEIGHT*0.05+ 200)),(int)(260*scaleW),(int) (91*scaleH));

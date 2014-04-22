@@ -14,8 +14,6 @@ public class WMGame extends Game {
 		System.out.println("Game created");
 		setScreen(new SplashScreen(this));
 		Gdx.input.setCatchBackKey(true);
-//		setScreen(new MainMenuScreen(this));
-//		setScreen(new GameScreen());
 	}
 	
 	@Override

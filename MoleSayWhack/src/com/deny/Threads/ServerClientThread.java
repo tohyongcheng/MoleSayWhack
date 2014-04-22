@@ -11,8 +11,6 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 
-import sun.misc.BASE64Encoder;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.Protocol;
@@ -21,6 +19,7 @@ import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.net.SocketHints;
+import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpType;
@@ -122,11 +121,6 @@ public class ServerClientThread extends Thread {
 
 				}
 			}
-		}
-
-		if (client.isConnected()) {
-			System.out.println("Connected to other player!");
-			this.getMultiplayerScreen().setState(MultiplayerState.CONNECTED);
 		}
 
 		boolean matchedProtocol = false;
@@ -399,14 +393,18 @@ public class ServerClientThread extends Thread {
 			
 			
 			if (authenticityStatus){
-				out = new PrintWriter(client.getOutputStream(), true);
-				out.flush();
 				try {
+					out = new PrintWriter(client.getOutputStream(), true);
 					outObject = new ObjectOutputStream(client.getOutputStream());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (GdxRuntimeException e) {
+					e.printStackTrace();
 				}
+				
+				System.out.println("Connected to other player!");
+				this.getMultiplayerScreen().setState(MultiplayerState.CONNECTED);
 				readThread = new ReadThread(this,client);
 				readThread.start();
 			}
@@ -446,11 +444,9 @@ public class ServerClientThread extends Thread {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
-				@SuppressWarnings("restriction")
-				BASE64Encoder encode = new BASE64Encoder();
 
 				@SuppressWarnings("restriction")
-				String encryptedValue = encode.encode(cipherText);
+				String encryptedValue = String.valueOf(Base64Coder.encode(cipherText));
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
 			} catch (Exception e) {
@@ -477,11 +473,9 @@ public class ServerClientThread extends Thread {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
-				@SuppressWarnings("restriction")
-				BASE64Encoder encode = new BASE64Encoder();
 
 				@SuppressWarnings("restriction")
-				String encryptedValue = encode.encode(cipherText);
+				String encryptedValue = String.valueOf(Base64Coder.encode(cipherText));
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
 			} catch (Exception e) {
@@ -508,11 +502,9 @@ public class ServerClientThread extends Thread {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
-				@SuppressWarnings("restriction")
-				BASE64Encoder encode = new BASE64Encoder();
 
 				@SuppressWarnings("restriction")
-				String encryptedValue = encode.encode(cipherText);
+				String encryptedValue = String.valueOf(Base64Coder.encode(cipherText));
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
 			} catch (Exception e) {
@@ -539,11 +531,9 @@ public class ServerClientThread extends Thread {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
-				@SuppressWarnings("restriction")
-				BASE64Encoder encode = new BASE64Encoder();
 
 				@SuppressWarnings("restriction")
-				String encryptedValue = encode.encode(cipherText);
+				String encryptedValue = String.valueOf(Base64Coder.encode(cipherText));
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
 			} catch (Exception e) {
@@ -572,11 +562,9 @@ public class ServerClientThread extends Thread {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
-				@SuppressWarnings("restriction")
-				BASE64Encoder encode = new BASE64Encoder();
 
 				@SuppressWarnings("restriction")
-				String encryptedValue = encode.encode(cipherText);
+				String encryptedValue = String.valueOf(Base64Coder.encode(cipherText));
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
 			} catch (Exception e) {
@@ -603,11 +591,9 @@ public class ServerClientThread extends Thread {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
-				@SuppressWarnings("restriction")
-				BASE64Encoder encode = new BASE64Encoder();
 
 				@SuppressWarnings("restriction")
-				String encryptedValue = encode.encode(cipherText);
+				String encryptedValue = String.valueOf(Base64Coder.encode(cipherText));
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
 			} catch (Exception e) {
@@ -634,11 +620,9 @@ public class ServerClientThread extends Thread {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
-				@SuppressWarnings("restriction")
-				BASE64Encoder encode = new BASE64Encoder();
 
 				@SuppressWarnings("restriction")
-				String encryptedValue = encode.encode(cipherText);
+				String encryptedValue = String.valueOf(Base64Coder.encode(cipherText));
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
 			} catch (Exception e) {
@@ -665,11 +649,9 @@ public class ServerClientThread extends Thread {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
-				@SuppressWarnings("restriction")
-				BASE64Encoder encode = new BASE64Encoder();
 
 				@SuppressWarnings("restriction")
-				String encryptedValue = encode.encode(cipherText);
+				String encryptedValue = String.valueOf(Base64Coder.encode(cipherText));
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
 			} catch (Exception e) {
@@ -696,11 +678,9 @@ public class ServerClientThread extends Thread {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
-				@SuppressWarnings("restriction")
-				BASE64Encoder encode = new BASE64Encoder();
 
 				@SuppressWarnings("restriction")
-				String encryptedValue = encode.encode(cipherText);
+				String encryptedValue = String.valueOf(Base64Coder.encode(cipherText));
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
 			} catch (Exception e) {
@@ -728,11 +708,9 @@ public class ServerClientThread extends Thread {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
-				@SuppressWarnings("restriction")
-				BASE64Encoder encode = new BASE64Encoder();
 
 				@SuppressWarnings("restriction")
-				String encryptedValue = encode.encode(cipherText);
+				String encryptedValue = String.valueOf(Base64Coder.encode(cipherText));
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
 			} catch (Exception e) {
@@ -761,11 +739,9 @@ public class ServerClientThread extends Thread {
 				byte[] toWriteByte = toWrite.getBytes("UTF-8");
 				cipher.init(Cipher.ENCRYPT_MODE, SymmetricKey);
 				byte[] cipherText = cipher.doFinal(toWriteByte);
-				@SuppressWarnings("restriction")
-				BASE64Encoder encode = new BASE64Encoder();
 
 				@SuppressWarnings("restriction")
-				String encryptedValue = encode.encode(cipherText);
+				String encryptedValue = String.valueOf(Base64Coder.encode(cipherText));
 				outObject.writeObject(encryptedValue);
 				outObject.flush();
 			} catch (Exception e) {

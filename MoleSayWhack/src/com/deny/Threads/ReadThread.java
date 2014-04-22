@@ -59,7 +59,7 @@ public class ReadThread  extends Thread{
 			cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
 			inObject = new ObjectInputStream(client.getInputStream());
 		} catch (Exception e) {
-			e.printStackTrace();
+			goToDisconnectedScreen();
 		}
 		
 		System.out.println("ReadThread running");

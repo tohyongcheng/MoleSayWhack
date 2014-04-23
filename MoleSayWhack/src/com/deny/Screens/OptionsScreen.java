@@ -1,6 +1,5 @@
 package com.deny.Screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
@@ -15,19 +14,22 @@ import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameHelpers.NameInputListener;
 import com.deny.Threads.ServerClientThread;
+import com.deny.molewhack.WMGame;
+
 /***
  * The screen which displays the options of the game
  * Displayed after the option button
  * is clicked on the main screen
  *
  */
+
 public class OptionsScreen implements Screen {
 	private static final int GAME_WIDTH = Gdx.graphics.getWidth();
 	private static final int GAME_HEIGHT = Gdx.graphics.getHeight();
 	public double scaleW = (double)GAME_WIDTH/544;
 	public double scaleH = (double) GAME_HEIGHT/816;
 	
-	private Game game;
+	private WMGame game;
 	private OrthographicCamera mainMenuCam;
 	private Preferences prefs;
 	
@@ -79,7 +81,8 @@ public class OptionsScreen implements Screen {
 	 * Takes in the game that instantiate this
 	 * class
 	 */
-	public OptionsScreen(Game game) {
+
+	public OptionsScreen(WMGame game) {
 		this.game = game;
 		this.optionsState = optionsState.RUNNING;
 		this.mainMenuCam = new OrthographicCamera();

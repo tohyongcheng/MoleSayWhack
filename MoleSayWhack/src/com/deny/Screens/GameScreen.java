@@ -11,6 +11,8 @@ import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameRenderer;
 import com.deny.GameWorld.GameWorld;
 import com.deny.Threads.ServerClientThread;
+import com.deny.molewhack.WMGame;
+
 /**
  * A screen that is called when
  * a game begins
@@ -18,19 +20,21 @@ import com.deny.Threads.ServerClientThread;
  */
 public class GameScreen implements Screen {
 	
-	private Game game;
+	private WMGame game;
 	private GameWorld world;
 	private GameRenderer renderer;
 	private ServerClientThread socketHandler;
 	private ArrayList<MoleType> selectedMoles;
 	private ArrayList<PowerUpType> selectedPowerUps;
+	
 	/**
 	 * The constructor of this screen
 	 * Takes in the game that instantiate this
 	 * class and the thread that sends messages
 	 * to the other player
 	 */
-	public GameScreen(Game game, ServerClientThread sH, ArrayList<MoleType> selectedMoles, ArrayList<PowerUpType> selectedPowerUps) {
+	
+	public GameScreen(WMGame game, ServerClientThread sH, ArrayList<MoleType> selectedMoles, ArrayList<PowerUpType> selectedPowerUps) {
 		System.out.println("GameScreen attached.");
 		this.game = game;
 		this.socketHandler = sH;
@@ -94,7 +98,7 @@ public class GameScreen implements Screen {
 	}
 
 
-	public void setGame(Game game) {
+	public void setGame(WMGame game) {
 		this.game = game;
 	}
 

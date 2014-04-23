@@ -23,12 +23,15 @@ import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameHelpers.IPAddressInputListener;
 import com.deny.Threads.ServerClientThread;
+import com.deny.molewhack.WMGame;
+
 /**
  * A screenn that is called
- * right after start game button is
- * pressed
+ * right after the start game button is
+ * pressed.
  *
  */
+
 public class MultiplayerScreen implements Screen {
 	
 
@@ -44,7 +47,7 @@ public class MultiplayerScreen implements Screen {
 	private MultiplayerState currentState;
 	private Object multiplayerStateLock = new Object();
 	
-	private Game game;
+	private WMGame game;
 	private OrthographicCamera multiplayerCam;
 	private SpriteBatch batcher;
 	private Rectangle backBounds;
@@ -61,13 +64,12 @@ public class MultiplayerScreen implements Screen {
 	private boolean enableBGM;
 	private boolean enableSFX;
 	
-	
 	/**
 	 * The constructor of this screen
 	 * Takes in the game that instantiate this
 	 * class
 	 */
-	public MultiplayerScreen(Game game) {
+	public MultiplayerScreen(WMGame game) {
 		this.game = game;
 		this.multiplayerCam = new OrthographicCamera();
 		multiplayerCam.setToOrtho(true, GAME_WIDTH, GAME_HEIGHT);
@@ -405,11 +407,13 @@ public class MultiplayerScreen implements Screen {
 	public void setSocketHandler(ServerClientThread socketHandler) {
 		this.socketHandler = socketHandler;
 	}
+	
+	
 	/**
 	 * Returns the Game of this screen
 	 * @return game
 	 */
-	public Game getGame() {
+	public WMGame getGame() {
 		return game;
 	}
 }

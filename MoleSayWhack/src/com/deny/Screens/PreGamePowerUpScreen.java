@@ -2,14 +2,12 @@ package com.deny.Screens;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -19,11 +17,14 @@ import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpType;
 import com.deny.Threads.ServerClientThread;
+import com.deny.molewhack.WMGame;
+
 /**
  * The screen that allows user to
  * choose powerups
  *
  */
+
 public class PreGamePowerUpScreen implements Screen {
 	private static final int NO_OF_DEPLOYERS = 3;
 	private static final int GAME_WIDTH = Gdx.graphics.getWidth();
@@ -35,8 +36,7 @@ public class PreGamePowerUpScreen implements Screen {
 		READY, COUNTING, GO, QUIT;
 	}
 	
-	Game game;
-	
+	private WMGame game;
 	private OrthographicCamera mainMenuCam;
 	private SpriteBatch batcher;
 	private ShapeRenderer shapeRenderer;
@@ -59,7 +59,8 @@ public class PreGamePowerUpScreen implements Screen {
 	 * Takes in the game that instantiate this
 	 * class
 	 */
-	public PreGamePowerUpScreen(Game game, ServerClientThread socketHandler, ArrayList<MoleType> selectedMoles) {
+
+	public PreGamePowerUpScreen(WMGame game, ServerClientThread socketHandler, ArrayList<MoleType> selectedMoles) {
 		this.game = game;
 		this.socketHandler = socketHandler;
 		this.selectedMoles = selectedMoles;

@@ -7,11 +7,8 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
-
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.Protocol;
 import com.badlogic.gdx.Preferences;
@@ -29,7 +26,8 @@ import com.deny.Screens.OptionsScreen.AuthenticationType;
 import com.deny.Screens.DisconnectScreen;
 import com.deny.Screens.PreGamePowerUpScreen;
 import com.deny.Screens.PreGameScreen;
-//Base64 decoding
+import com.deny.molewhack.WMGame;
+
 /**
  * A thread that write messages to the other player based on inputs
  * and commmands given by the player or
@@ -37,7 +35,7 @@ import com.deny.Screens.PreGameScreen;
  *
  */
 public class ServerClientThread extends Thread {
-	private Game game;
+	private WMGame game;
 	private String address = "localhost";
 	private int port = 5000;
 	private ServerSocketHints serverHints;
@@ -870,7 +868,8 @@ public class ServerClientThread extends Thread {
 	 * Get the Game of this thread
 	 * @return
 	 */
-	public Game getGame() {
+
+	public WMGame getGame() {
 		return game;
 	}
 

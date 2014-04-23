@@ -2,7 +2,6 @@ package com.deny.Screens;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Preferences;
@@ -16,12 +15,15 @@ import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.Threads.ServerClientThread;
+import com.deny.molewhack.WMGame;
+
 /**
  * The screen that allows us to choose
  * what types of moles we want to deploy
  * to the opponent's screen
  *
  */
+
 public class PreGameScreen implements Screen {
 	private static final int NO_OF_DEPLOYERS = 3;
 
@@ -35,7 +37,7 @@ public class PreGameScreen implements Screen {
 		READY, COUNTING, GO, QUIT;
 	}
 	
-	private Game game;
+	private WMGame game;
 	private OrthographicCamera mainMenuCam;
 	private SpriteBatch batcher;
 	private ShapeRenderer shapeRenderer;
@@ -57,7 +59,8 @@ public class PreGameScreen implements Screen {
 	 * Takes in the game that instantiate this
 	 * class
 	 */
-	public PreGameScreen(Game game, ServerClientThread socketHandler) {
+
+	public PreGameScreen(WMGame game, ServerClientThread socketHandler) {
 		this.game = game;
 		this.socketHandler = socketHandler;
 		this.mainMenuCam = new OrthographicCamera();

@@ -36,9 +36,12 @@ import com.deny.Screens.MainMenuScreen;
 import com.deny.Screens.PreGameScreen;
 import com.deny.Threads.ReadThread;
 import com.deny.Threads.ServerClientThread;
+import com.deny.molewhack.WMGame;
+
 /**
- * The class which represent the
- * whole game played by the player
+ * The class which carries the
+ * whole game data and logic for
+ * the running of the game. 
  *
  */
 public class GameWorld {
@@ -60,7 +63,7 @@ public class GameWorld {
 	private boolean enableSFX;
 	
 	//GAME
-	private Game game;
+	private WMGame game;
 	private GameScreen gameScreen;
 	
 	//GAME MECHANICS
@@ -111,8 +114,6 @@ public class GameWorld {
 		READY, RUNNING, DEPLOYMENT, WIN, LOSE, PAUSE, MENU, EXIT, RESTART;
 	}
 
-
-	@SuppressWarnings("unchecked")
 	/**
 	 * The constructor for this class. Takes in the
 	 * gameScreen which initialize this class and
@@ -120,8 +121,8 @@ public class GameWorld {
 	 * @param game
 	 * @param gameScreen
 	 */
-	public GameWorld(Game game, GameScreen gameScreen) {
-		
+	public GameWorld(WMGame game, GameScreen gameScreen) {
+
 		this.game = game;
 		this.gameScreen = gameScreen;
 		

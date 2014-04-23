@@ -1,6 +1,5 @@
 package com.deny.Screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Preferences;
@@ -13,11 +12,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.Screens.OptionsScreen.AuthenticationType;
+import com.deny.molewhack.WMGame;
+
 /**
  * The screen that contains the main
  * menu of the game, right after the
  * splash screen
  */
+
 public class MainMenuScreen implements Screen {
 
 	
@@ -25,7 +27,7 @@ public class MainMenuScreen implements Screen {
 	private static final int GAME_HEIGHT = (int) Gdx.graphics.getHeight(); //204 to 408
 	double scaleW = (double)GAME_WIDTH/544.0;
 	double scaleH = (double) GAME_HEIGHT/816;
-	private Game game;
+	private WMGame game;
 	private OrthographicCamera mainMenuCam;
 	private SpriteBatch batcher;
 	private Rectangle startBounds;
@@ -41,7 +43,9 @@ public class MainMenuScreen implements Screen {
 	 * Takes in the game that instantiate this
 	 * class
 	 */
-	public MainMenuScreen(Game game) {
+
+	
+	public MainMenuScreen(WMGame game) {
 		System.out.println("I'm starting");
 		this.game = game;
 		this.mainMenuCam = new OrthographicCamera();

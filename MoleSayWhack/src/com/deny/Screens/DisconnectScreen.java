@@ -1,17 +1,15 @@
 package com.deny.Screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
+import com.deny.molewhack.WMGame;
+
 /**
  * A screen that is called when
  * one player disconnects from the game
@@ -31,7 +29,7 @@ public class DisconnectScreen implements Screen {
 		START, QUIT;
 	}
 	
-	private Game game;
+	private WMGame game;
 	private OrthographicCamera mainMenuCam;
 	private SpriteBatch batcher;
 	private Preferences prefs;
@@ -40,12 +38,13 @@ public class DisconnectScreen implements Screen {
 	private ShapeRenderer shapeRenderer;
 	private Vector3 touchPoint;
 	private DisconnectScreenStates currentState;
+
 	/**
 	 * The constructor of this screen
 	 * Takes in the game that instantiate this
 	 * class
 	 */
-	public DisconnectScreen(Game game) {
+	public DisconnectScreen(WMGame game) {
 		System.out.println("I'm called!");
 		this.game = game;
 		this.mainMenuCam = new OrthographicCamera();

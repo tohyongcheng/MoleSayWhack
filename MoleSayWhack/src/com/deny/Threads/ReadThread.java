@@ -13,10 +13,7 @@ import java.security.Key;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
-
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.utils.Base64Coder;
@@ -30,13 +27,16 @@ import com.deny.Screens.MultiplayerScreen.MultiplayerState;
 import com.deny.Screens.OptionsScreen.AuthenticationType;
 import com.deny.Screens.PreGameScreen.PreGameState;
 import com.deny.Screens.PreGameScreen;
+import com.deny.molewhack.WMGame;
+
 /**
  * This is a thread that reads all the input given
  * from the other player's inputStream
  *
  */
+
 public class ReadThread  extends Thread{
-	private Game game;
+	private WMGame game;
 	private Socket client;
 	private BufferedReader in;
 	private ServerClientThread socketHandler;

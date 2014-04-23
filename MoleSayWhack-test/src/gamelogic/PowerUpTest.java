@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.deny.GameObjects.MoleDeployer;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.Player;
 import com.deny.GameObjects.PowerUpDeployer;
@@ -28,6 +29,7 @@ import com.deny.MoleObjects.MoleKing;
 import com.deny.MoleObjects.OneHitMole;
 import com.deny.PowerUpObjects.BlockMoleGrid;
 import com.deny.PowerUpObjects.DisableAllPowerUps;
+import com.deny.PowerUpObjects.DisableOneMoleDeployer;
 import com.deny.PowerUpObjects.Earthquake;
 import com.deny.PowerUpObjects.EnableFog;
 import com.deny.PowerUpObjects.GenerateDummyMoles;
@@ -110,7 +112,7 @@ public class PowerUpTest {
 	public void testBlockMoleGrid() {
 		boolean[] blockedMoleGrids = gameWorld.getBlockedGrids();
 		for (int i=0; i<gameWorld.getNumberOfMolesPerGrid();i++) {
-			assert(blockedMoleGrids[i] == false);
+			assertFalse(blockedMoleGrids[i]);
 		}
 
 		gameWorld.invokePowerUp(PowerUpType.BLOCKGRID);
@@ -124,7 +126,35 @@ public class PowerUpTest {
 				pos = i;
 			}
 		}
-		assert(pos!=-1);
+		
+		if (pos == -1) {
+			fail("BlockMoleGrid Test failed");
+		}
+
+		
+	}
+	
+	@Test
+	public void testBlockMoleDeployer() {
+		MoleDeployer[] moleDeployers = gameWorld.getMoleDeployers();
+		for (int i=0; i<gameWorld.getNumberOfMoleDeployers();i++) {
+			assertFalse(moleDeployers[i].isDisabled());
+		}
+		
+		gameWorld.invokePowerUp(PowerUpType.DISABLEONEMOLEDEPLOYER);
+		assertTrue(DisableOneMoleDeployer.isInEffect());
+		
+		DisableOneMoleDeployer.causeEffect();
+		int pos = -1;
+		for (int i=0; i<gameWorld.getNumberOfMoleDeployers();i++) {
+			if(moleDeployers[i].isDisabled() == true) {
+				pos = i;
+			}
+		}
+		
+		if (pos == -1) {
+			fail("DisableMoleDeployer failed");
+		}
 		
 	}
 	

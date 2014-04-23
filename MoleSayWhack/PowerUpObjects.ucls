@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.5" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true">  
+  <class id="1" language="java" name="com.deny.PowerUpObjects.BlockMoleGrid" project="MoleSayWhack" 
+    file="/MoleSayWhack/src/com/deny/PowerUpObjects/BlockMoleGrid.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="314" width="187" x="233" y="298"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="2" language="java" name="com.deny.PowerUpObjects.SpawnMoleKing" project="MoleSayWhack" 
+    file="/MoleSayWhack/src/com/deny/PowerUpObjects/SpawnMoleKing.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="314" width="187" x="687" y="298"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="com.deny.PowerUpObjects.DisableAllPowerUps" project="MoleSayWhack" 
+    file="/MoleSayWhack/src/com/deny/PowerUpObjects/DisableAllPowerUps.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="314" width="187" x="460" y="298"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="com.deny.PowerUpObjects.MoleShower" project="MoleSayWhack" 
+    file="/MoleSayWhack/src/com/deny/PowerUpObjects/MoleShower.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="314" width="187" x="1141" y="298"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="com.deny.PowerUpObjects.Earthquake" project="MoleSayWhack" 
+    file="/MoleSayWhack/src/com/deny/PowerUpObjects/Earthquake.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="314" width="187" x="914" y="298"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="com.deny.PowerUpObjects.Invulnerability" project="MoleSayWhack" 
+    file="/MoleSayWhack/src/com/deny/PowerUpObjects/Invulnerability.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="314" width="187" x="1368" y="298"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="com.deny.PowerUpObjects.GenerateDummyMoles" project="MoleSayWhack" 
+    file="/MoleSayWhack/src/com/deny/PowerUpObjects/GenerateDummyMoles.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="332" width="187" x="1595" y="298"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="com.deny.PowerUpObjects.DisableOneMoleDeployer" project="MoleSayWhack" 
+    file="/MoleSayWhack/src/com/deny/PowerUpObjects/DisableOneMoleDeployer.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="314" width="197" x="1822" y="298"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="9" language="java" name="com.deny.PowerUpObjects.PowerUp" project="MoleSayWhack" 
+    file="/MoleSayWhack/src/com/deny/PowerUpObjects/PowerUp.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="296" width="187" x="1141" y="-38"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="10" language="java" name="com.deny.PowerUpObjects.EnableFog" project="MoleSayWhack" 
+    file="/MoleSayWhack/src/com/deny/PowerUpObjects/EnableFog.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="314" width="187" x="2059" y="298"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <generalization id="11">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <generalization id="12">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <generalization id="13">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <generalization id="14">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <generalization id="15">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <generalization id="16">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <generalization id="17">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <generalization id="18">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <generalization id="19">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>    
+    <operations public="true" package="true" protected="true" private="true" static="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

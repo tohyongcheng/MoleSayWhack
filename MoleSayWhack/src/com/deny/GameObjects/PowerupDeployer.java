@@ -5,9 +5,11 @@ import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameWorld.GameWorld;
 import com.deny.Threads.ServerClientThread;
-//Deploys powerups
-//initialized at the beginning of the game
-
+/**
+ * Deploys powerups
+ * Initialized at the beginning of the game
+ *
+ */
 public class PowerUpDeployer {
 	
 	private PowerUpType powerupType;
@@ -20,7 +22,15 @@ public class PowerUpDeployer {
 
 	
 	private ServerClientThread socketHandler;
-	
+	/**
+	 * The constructor for this class, takes in the gameWorld
+	 * which instantiate this class, and the socketHandler,
+	 * which is the thread that sends information to the
+	 * other player
+	 * 
+	 * @param gameWorld
+	 * @param powerupType
+	 */
 	public PowerUpDeployer(GameWorld gameWorld, PowerUpType powerupType){
 		this.gameWorld = gameWorld;
 		this.socketHandler = gameWorld.getSocketHandler();
@@ -32,7 +42,11 @@ public class PowerUpDeployer {
 		disabled = false;
 	}
 	
-	
+	/**
+	 * Updates the cooldown time of the PowerUpDeployer
+	 * @param delta : the time interval of which
+	 * this method is checked
+	 */
 	public void update(float delta) 
 	{
 		//wait until time deployed exceeds cooldown to make it available again//
@@ -44,14 +58,26 @@ public class PowerUpDeployer {
 		}
 	}
 	
-
+	/**
+	 * Check whether this powerupdeployer is
+	 * available and not disabled
+	 * @return
+	 */
 	public boolean isAvailable() {
 		return (isAvailable && !disabled);
 	}
-	
+	/**
+	 * Return the powerupType of this powerupDeployer
+	 * @return powerupType
+	 */
 	public PowerUpType getPowerupType(){
 		return powerupType;
 	}
+	/**
+	 * Return the assetloader associated with this
+	 * class's powerupType
+	 * @return 
+	 */
 	public TextureRegion getAsset(){
 		switch (powerupType){
 		case BLOCKGRID:
@@ -76,6 +102,11 @@ public class PowerUpDeployer {
 			return AssetLoader.eq;
 		}
 	}
+	/**
+	 * Updates the cooldown time of the powerupdeployer
+	 * @param delta : the time interval of which
+	 * this method is checked
+	 */
 	public void deploy(){
 		//send message or change gameworld variables
 		isAvailable = false;
@@ -112,22 +143,41 @@ public class PowerUpDeployer {
 		}
 	}
 
-	
+	/**
+	 * Return the rectangle location of this 
+	 * powerUpDeployer
+	 * 
+	 * @return boundingRectangle
+	 */
 	public Rectangle getRectangle(){
 		return boundingRectangle;
 	}
-	
+	/**
+	 * Check whether the touch in the screen
+	 * is within the boundary of the powerupDeployer
+	 * box
+	 * @param screenX
+	 * @param screenY
+	 * @return
+	 */
 	public boolean isTouchDown(int screenX, int screenY) {
 		if (boundingRectangle.contains(screenX, screenY)) {
 			return true;
 		}
 		return false;
 	}
-	
+	/**
+	 * Check whether this powerUp is disabled
+	 * @return
+	 */
 	public boolean isDisabled() {
 		return disabled;
 	}
-	
+	/**
+	 * Set whether this powerUp is enabled
+	 * or disabled
+	 * @param b
+	 */
 	public void setDisabled(boolean b) {
 		disabled = b;
 	}

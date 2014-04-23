@@ -30,7 +30,12 @@ import com.deny.Screens.DisconnectScreen;
 import com.deny.Screens.PreGamePowerUpScreen;
 import com.deny.Screens.PreGameScreen;
 //Base64 decoding
-
+/**
+ * A thread that write messages to the other player based on inputs
+ * and commmands given by the player or
+ * current state of the game
+ *
+ */
 public class ServerClientThread extends Thread {
 	private Game game;
 	private String address = "localhost";
@@ -57,7 +62,13 @@ public class ServerClientThread extends Thread {
 	public static boolean authenticityStatus;
 
 	private Key SymmetricKey;
-
+	/**
+	 * The constructor of the game, takes in the multiplayer screen which
+	 * will initialize and run this thread, as well as the IP address of
+	 * the device this player will connect to
+	 * @param ms
+	 * @param IPAddress
+	 */
 	public ServerClientThread(MultiplayerScreen ms, String IPAddress) {
 		this.setMultiplayerScreen(ms);
 		this.game = ms.getGame();
@@ -82,7 +93,14 @@ public class ServerClientThread extends Thread {
 		ServerClientThread.authType = AuthenticationType.valueOf(prefs.getString("authType","NOPROTOCOL"));
 	}
 
-
+	/**
+	 * A method that makes this player a server if there's no current 
+	 * server to connect to, or otherwise a client if there's already
+	 * an available server out there
+	 * 
+	 * Also, it does mutual authentication between the client and the server
+	 * to make sure that their connection is legitimate and secure
+	 */
 	public void run() {
 		//Create client to check if there is an existing server connection
 		clientHints = new SocketHints();
@@ -427,30 +445,49 @@ public class ServerClientThread extends Thread {
 		}
 	}
 
-
+	/**
+	 * Returns the server socket if this player is  a client
+	 * @return server
+	 */
 	public ServerSocket getServerSocket() {
 		return server;
 	}
-
+	/**
+	 * Returns the client socket if this player is a server
+	 * @return
+	 */
 	public Socket getClientSocket() {
 		return client;
 	}
-
+	/**
+	 * Returns the readThread associated with this write thread
+	 * @return readThread
+	 */
 	public ReadThread getReadThread() {
 		return readThread;
 	}
-
+	/**
+	 * Sets the readThread that will be associated with this write thread
+	 * @param readThread
+	 */
 	public void setReadThread(ReadThread readThread) {
 		this.readThread = readThread;
 	}
-
+	/**
+	 * Dispose this thread after connection is terminated
+	 */
 	public void dispose() {
+		System.out.println("Thread is disposing now");
 		if (readThread != null) readThread.interrupt();
 		if (server!=null) server.dispose();
 		if (client!=null) client.dispose();
 	}
 
-
+	/**
+	 * A method that deploys the mole to the other player
+	 * @param moleType
+	 * @param pos
+	 */
 	public void deployMole(MoleType moleType, int pos) {
 		System.out.println("[SocketHandler] deployed mole! Sending " + "[SPAWN] " + moleType.toString() + " " + pos);
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
@@ -479,7 +516,9 @@ public class ServerClientThread extends Thread {
 			}
 		}
 	}
-
+	/**
+	 * A method that pauses the game
+	 */
 	public void pauseGame() {
 		System.out.println("[SocketHandler] Sending to Pause Game");
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
@@ -508,7 +547,9 @@ public class ServerClientThread extends Thread {
 			}
 		}
 	}
-
+	/**
+	 * A method that continues the game
+	 */
 	public void continueGame() {
 		System.out.println("[SocketHandler] Sending to Continue Game");
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
@@ -537,7 +578,10 @@ public class ServerClientThread extends Thread {
 			}
 		}
 	}
-
+	/**
+	 * A method that allows the player to go to the
+	 * choosing of moleDeployer sreen
+	 */
 	public void toChooseMolesScreen() {
 		System.out.println("[SocketHandler] Sending to Change Screen to Choose Moles Screen");
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
@@ -568,7 +612,10 @@ public class ServerClientThread extends Thread {
 			}
 		} 
 	}
-
+	/**
+	 * A method that allows the player to 
+	 * return to the main menu	 
+	 */
 	public void toMainMenuScreen() {
 		System.out.println("[SocketHandler] Sending to Change Screen to MainMenuScreen");
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
@@ -597,7 +644,9 @@ public class ServerClientThread extends Thread {
 			}
 		}
 	}
-
+	/**
+	 * A method that is called when game is over
+	 */
 	public void gameOver() {
 		System.out.println("[SocketHandler] Sending GameOver");
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
@@ -626,7 +675,9 @@ public class ServerClientThread extends Thread {
 			}
 		}
 	}
-
+	/**
+	 * A method that allows the player to restart game after game is over
+	 */
 	public void restartGame() {
 		System.out.println("[SocketHandler] Sending RestartGame");
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
@@ -655,7 +706,9 @@ public class ServerClientThread extends Thread {
 			}
 		}
 	}
-
+	/**
+	 * A method that allows the player to exit the game
+	 */
 	public void exitGame() {
 		System.out.println("[SocketHandler] Sending ExitGame");
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
@@ -684,7 +737,10 @@ public class ServerClientThread extends Thread {
 			}
 		}
 	}
-
+	/**
+	 * A method that allows the player to terminate connection
+	 * after game is over
+	 */
 	public void leaveGameRoom() {
 		System.out.println("[SocketHandler] Sending to Leave GameRoom");
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
@@ -714,7 +770,11 @@ public class ServerClientThread extends Thread {
 		}
 			
 	}
-
+	/**
+	 * A method that allows the player to cast power up to the
+	 * opponent
+	 * @param powerUpType
+	 */
 	public void sendPowerUp(PowerUpType powerUpType) {
 		System.out.println("[SocketHandler] PowerUp Deployed! Sending " + "[SPAWN] " + powerUpType.toString());
 		if (authType == AuthenticationType.T3|| authType == AuthenticationType.T4){
@@ -745,7 +805,11 @@ public class ServerClientThread extends Thread {
 			}
 		} 
 	}
-
+	/**
+	 * A method that allows the player to update the opponent
+	 * about the current HP that this player has
+	 * @param hp
+	 */
 	public void sendHPMessage(int hp) {
 		System.out.println("[SocketHandler] Opponent got hit! Sending " + "[OPPONENTHP] " + hp);
 		if (authType == AuthenticationType.T3 || authType == AuthenticationType.T4){
@@ -774,23 +838,38 @@ public class ServerClientThread extends Thread {
 			}
 		}
 	}
-
+	/**
+	 * get the multiplayerScreen of this thread
+	 * @return
+	 */
 	public MultiplayerScreen getMultiplayerScreen() {
 		return multiS;
 	}
-
+	/**
+	 * Sets the multiplayerScreen of this thread
+	 * @param multiS
+	 */
 	public void setMultiplayerScreen(MultiplayerScreen multiS) {
 		this.multiS = multiS;
 	}
-
+	/**
+	 * Gets the pre game screen of this thread
+	 * @return
+	 */
 	public PreGameScreen getPreGameScreen() {
 		return preGameS;
 	}
-
+	/**
+	 * Sets the pre game screen of this thread
+	 * @param preGameS
+	 */
 	public void setPreGameScreen(PreGameScreen preGameS) {
 		this.preGameS = preGameS;
 	}
-
+	/**
+	 * Get the Game of this thread
+	 * @return
+	 */
 	public Game getGame() {
 		return game;
 	}
@@ -925,11 +1004,17 @@ public class ServerClientThread extends Thread {
 	public Key getSymmetricKey() {
 		return SymmetricKey;
 	}
-	
+	/**
+	 * Gets the symmetricKey of this thread
+	 * @return
+	 */
 	public Key getKey(){
 		return SymmetricKey;
 	}
-	
+	/**
+	 * A method that allows the player to go to the disconnect screen should
+	 * the connection be terminated abruptly
+	 */
 	public void goToDisconnectedScreen() {
 		new Thread(new Runnable() {
 			@Override

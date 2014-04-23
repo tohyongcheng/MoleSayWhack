@@ -11,7 +11,11 @@ import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameRenderer;
 import com.deny.GameWorld.GameWorld;
 import com.deny.Threads.ServerClientThread;
-
+/**
+ * A screen that is called when
+ * a game begins
+ *
+ */
 public class GameScreen implements Screen {
 	
 	private Game game;
@@ -20,7 +24,12 @@ public class GameScreen implements Screen {
 	private ServerClientThread socketHandler;
 	private ArrayList<MoleType> selectedMoles;
 	private ArrayList<PowerUpType> selectedPowerUps;
-	
+	/**
+	 * The constructor of this screen
+	 * Takes in the game that instantiate this
+	 * class and the thread that sends messages
+	 * to the other player
+	 */
 	public GameScreen(Game game, ServerClientThread sH, ArrayList<MoleType> selectedMoles, ArrayList<PowerUpType> selectedPowerUps) {
 		System.out.println("GameScreen attached.");
 		this.game = game;
@@ -35,6 +44,11 @@ public class GameScreen implements Screen {
 	}
 	
 	@Override
+	/**
+	 * The method that draw all the pictures or images
+	 * that are to be shown in this screen,
+	 * depending on the state of this screen
+	 */
 	public void render(float delta) {
 		world.update(delta);
 		renderer.render();

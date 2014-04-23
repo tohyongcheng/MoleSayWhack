@@ -3,7 +3,12 @@ package com.deny.GameObjects;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.deny.GameHelpers.AssetLoader;
-
+/**
+ * 
+ * The list of the moletypes  that
+ * are available in the game
+ *
+ */
 public enum MoleType {
 	//MOLETYPES
 	ONETAP(1,0.5f), // 1 hit, -1 hp, 0.5 seconds CD
@@ -15,14 +20,26 @@ public enum MoleType {
 	
 	int HP;
 	float coolDown;
-	
+	/**
+	 * The constructor of the moleType.
+	 * Takes in the HP and the coolDown value
+	 * of the moleType
+	 * 
+	 * @param HP
+	 * @param coolDown
+	 */
 	MoleType(int HP, float coolDown) {
 		this.HP = HP;
 		this.coolDown = coolDown;
 	}
 	
 
-	
+	/**
+	 * Returns the TextureRegion associated 
+	 * with each moleType 
+	 * 
+	 * @return 
+	 */
 	public TextureRegion getAsset(){
 		switch(this){
 		case ONETAP:
@@ -42,6 +59,11 @@ public enum MoleType {
 		} 
 	}
 	
+	/**
+	 * Returns the next MoleType associated with 
+	 * the current MoleType
+	 * @return
+	 */
 	public MoleType next() {
 		switch(this) {
 		case ONETAP:
@@ -58,21 +80,12 @@ public enum MoleType {
 	}
 	
 	
-	public Color getColor() {
-		switch(this) {
-    	case ONETAP:
-    		return Color.GREEN;
-    	case THREETAP:
-    		return Color.BLUE;
-    	case FIVETAP:
-    		return Color.YELLOW;
-    	case SABOTAGE:
-    		return Color.RED;
-    	default:
-    		return null;
-    	}
-	}
 	
+	/**
+	 * Returns the cooldown value of this
+	 * method
+	 * @return coolDown
+	 */
 	public float getCoolDown() {
 		return coolDown;
 	}

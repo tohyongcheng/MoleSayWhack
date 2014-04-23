@@ -17,7 +17,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
+/**
+ * 
+ * AssetLoader is a class that stores music, pictures, logo, and sound effects for the entire game
+ *
+ */
 public class AssetLoader 
 {
 	//The Textures//
@@ -41,7 +45,11 @@ public class AssetLoader
 	button, back, sent, slctd, popup, earthQk,fogg, block, damage;
 	public static Music summer, ann;
 
-	
+	/**
+	 * This method will be called at the beginning of the game, which
+	 * is to load all the assets from the data folder to be shown 
+	 * and rendered during the gameplay.
+	 */
 	public static void load()
 	{
 		//For trudy screen
@@ -372,9 +380,12 @@ public class AssetLoader
         damage = Gdx.audio.newSound(Gdx.files.internal("data/damage.mp3"));
         
 	}
-	
+	/**
+	 * A method which dispose all Texture and Sound after we are finished.
+	 * We must dispose of the texture when we are finished.
+	 */
 	public static void dispose() {
-        // We must dispose of the texture when we are finished.
+       
 		logoTexture.dispose();
 		font.dispose();
 		win.dispose();mismatch.dispose();optionsSC.dispose();

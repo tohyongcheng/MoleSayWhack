@@ -20,7 +20,10 @@ import javax.crypto.spec.DESKeySpec;
 
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.utils.Base64Coder;
-
+/**
+ * Client code of authentication type T3 
+ *
+ */
 public class T3Client {
 	private Socket server;
 	private String Password;

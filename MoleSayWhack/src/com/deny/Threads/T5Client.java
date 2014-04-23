@@ -16,7 +16,10 @@ import javax.crypto.spec.DESKeySpec;
 
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.utils.Base64Coder;
-
+/**
+ * Client code of authentication type T5
+ *
+ */
 public class T5Client {
 	private Socket server;
 	public static PublicKey publicKey;

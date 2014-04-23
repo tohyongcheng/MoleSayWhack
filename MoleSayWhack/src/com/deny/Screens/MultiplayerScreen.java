@@ -23,13 +23,21 @@ import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameHelpers.IPAddressInputListener;
 import com.deny.Threads.ServerClientThread;
-
+/**
+ * A screenn that is called
+ * right after start game button is
+ * pressed
+ *
+ */
 public class MultiplayerScreen implements Screen {
 	
 
 	private static final int GAME_WIDTH = Gdx.graphics.getWidth();
 	private static final int GAME_HEIGHT = Gdx.graphics.getHeight();
-
+	/**
+	 * The states of this screen
+	 *
+	 */
 	public enum MultiplayerState {
 		READY, CONNECTED, START, RESTART, QUIT, PROTOCOLMISMATCH, TRUDY;
 	}
@@ -54,7 +62,11 @@ public class MultiplayerScreen implements Screen {
 	private boolean enableSFX;
 	
 	
-	
+	/**
+	 * The constructor of this screen
+	 * Takes in the game that instantiate this
+	 * class
+	 */
 	public MultiplayerScreen(Game game) {
 		this.game = game;
 		this.multiplayerCam = new OrthographicCamera();
@@ -114,6 +126,10 @@ public class MultiplayerScreen implements Screen {
 	}
 	
 	@Override
+	/**
+	 * The method that calls update and 
+	 * draw
+	 */
 	public void render(float delta) {
 		// TODO Auto-generated method stub
 		update();
@@ -155,7 +171,11 @@ public class MultiplayerScreen implements Screen {
 		// TODO Auto-generated method stub
 
 	}
-	
+	/**
+	 * The method that update this screen, depending
+	 * on the input or the states of this screen
+	 * @param delta
+	 */
 	public void update() {	
 		
 		switch (getState()) {
@@ -261,7 +281,11 @@ public class MultiplayerScreen implements Screen {
 		}
 		
 	}
-	
+	/**
+	 * The method that draw all the pictures or images
+	 * that are to be shown in this screen,
+	 * depending on the state of this screen
+	 */
 	public void draw() {
 		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -308,30 +332,52 @@ public class MultiplayerScreen implements Screen {
 	    batcher.end();
 	}
 	
-
+	/**
+	 * The method that sets the state of
+	 * this screen
+	 * @param s
+	 */
 	public void setState(final MultiplayerState s) {
 		synchronized(multiplayerStateLock) {
 			currentState = s;
 		}
 	}
-	
+	/**
+	 * The method that returns the 
+	 * current state of this game
+	 * @return
+	 */
 	public MultiplayerState getState() {
 		synchronized(multiplayerStateLock) {
 			return currentState;
 		}
 	}
-
+	/**
+	 * Returns the IP address
+	 * of the player you are
+	 * connecting to
+	 * @return otherAddress
+	 */
 	public String getIPAddress() {
 		return otherAddress;
 	}
-
+	/**
+	 * Set the ipaddress of the
+	 * other player this player is connecting
+	 * to
+	 * @param IPAddress
+	 */
 	public synchronized void setIPAddress(String IPAddress) {
 		this.otherAddress = IPAddress;
 		prefs.putString("IPAddress", IPAddress);
 		prefs.flush();
 		System.out.println("Flushed!");
 	}
-	
+	/**
+	 * Restart the thread that is used
+	 * to send messages between the two 
+	 * players
+	 */
 	public synchronized void restartSocketHandler() {
 		if (socketHandler !=null) {
 			socketHandler.interrupt();
@@ -341,15 +387,28 @@ public class MultiplayerScreen implements Screen {
 		socketHandler.start();
 		setState(MultiplayerState.READY);
 	}
-
+	/**
+	 * Returns the thread that is used
+	 * to send messages between the two 
+	 * players
+	 * @return
+	 */
 	public ServerClientThread getSocketHandler() {
 		return socketHandler;
 	}
-
+	/**
+	 * Sets the thread that is used
+	 * to send messages between the two 
+	 * players
+	 * @param socketHandler
+	 */
 	public void setSocketHandler(ServerClientThread socketHandler) {
 		this.socketHandler = socketHandler;
 	}
-
+	/**
+	 * Returns the Game of this screen
+	 * @return game
+	 */
 	public Game getGame() {
 		return game;
 	}

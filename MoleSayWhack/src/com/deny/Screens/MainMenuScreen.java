@@ -13,7 +13,11 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.Screens.OptionsScreen.AuthenticationType;
-
+/**
+ * The screen that contains the main
+ * menu of the game, right after the
+ * splash screen
+ */
 public class MainMenuScreen implements Screen {
 
 	
@@ -32,7 +36,11 @@ public class MainMenuScreen implements Screen {
 	private Preferences prefs;
 	private boolean enableBGM;
 	private boolean enableSFX;
-	
+	/**
+	 * The constructor of this screen
+	 * Takes in the game that instantiate this
+	 * class
+	 */
 	public MainMenuScreen(Game game) {
 		System.out.println("I'm starting");
 		this.game = game;
@@ -73,7 +81,11 @@ public class MainMenuScreen implements Screen {
 		}
 
 	}
-	
+	/**
+	 * The method that draw all the pictures or images
+	 * that are to be shown in this screen,
+	 * depending on the state of this screen
+	 */
 	private void draw() {
 		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -109,7 +121,11 @@ public class MainMenuScreen implements Screen {
         		optionsBounds.width, optionsBounds.height);
         shapeRenderer.end();*/
 	}
-
+	/**
+	 * The method that update this screen, depending
+	 * on the input or the states of this screen
+	 * @param delta
+	 */
 	private void update() {
 		
 		if(Gdx.input.isKeyPressed(Keys.BACK)) {
@@ -140,6 +156,10 @@ public class MainMenuScreen implements Screen {
 	}	
 	
 	@Override
+	/**
+	 * The method that calls update and 
+	 * draw
+	 */
 	public void render(float delta) {
 		update();
 		draw();	

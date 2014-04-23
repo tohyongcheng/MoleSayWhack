@@ -6,16 +6,12 @@ import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameWorld.GameWorld;
 import com.deny.Threads.ServerClientThread;
 
-//contains moles
-//have cooldowns
-//deploy moles by sending string, initialized at the beginning of the game
-//graphic ?? 
 /**
- * Mole Deployer is responsible for sending moles from player A to player B. Both
+ * Mole Deployer is responsible for sending moles 
+ * from player A to player B. Both
  * players will have mole deployer.
- * @author Edward Loke
- *
- */
+ * 
+*/
 
 public class MoleDeployer 
 {
@@ -25,11 +21,16 @@ public class MoleDeployer
 	private float cooldown;
 	private MoleType moleType;
 
-	//ADDED THIS TO INDICATE WHETHER IT IS SELECTED / COOLDOWN
 	private boolean selected;
 	private boolean disabled;
 	private boolean isAvailable;
-
+	
+	/**
+	 * The constructor for MoleDeployer
+	 * @param gw : the gameWorld class that instantiate this class
+	 * @param moleType : the input to indicate what moleType will be spawned 
+	 * from the MoleDeployer
+	 */
 	public MoleDeployer(GameWorld gw, MoleType moleType) {
 		this.socketHandler = gw.getSocketHandler();
 		this.moleType = moleType;
@@ -40,11 +41,19 @@ public class MoleDeployer
 		disabled = false;
 	}
 	
-	
+	/**
+	 * Returns the  moletype this moledeployer has
+	 * @return
+	 */
 	public MoleType getMoleType(){
 		return moleType;
 	}
 	
+	/**
+	 * Deploy the mole to the opponent
+	 * if the moledeployer is available
+	 * @param pos : the grid where the mole is deployed to
+	 */
 	public void deployMole(int pos)
 	{
 		//If it is available, deploy the mole and change availability to false//
@@ -53,7 +62,11 @@ public class MoleDeployer
 	    	socketHandler.deployMole(moleType, pos);
 		}
 	}
-	
+	/**
+	 * Updates the cooldown time of the moledeployer
+	 * @param delta : the time interval of which
+	 * this method is checked
+	 */
 	public void update(float delta) 
 	{
 		//wait until time deployed exceeds cooldown to make it available again//
@@ -65,6 +78,11 @@ public class MoleDeployer
 		}
 	}
 	
+	/**
+	 * Return the assetloader associated with this
+	 * class's moletype
+	 * @return TextureRegion
+	 */
 	public TextureRegion getAsset(){
 		switch(moleType){
 		case ONETAP:
@@ -82,14 +100,29 @@ public class MoleDeployer
 		} 
 	}
 	
+	/**
+	 * Check whether this moleDeployer is available
+	 * @return isAvailable and not disabled
+	 */
 	public boolean isAvailable(){
 		return (isAvailable && !disabled);
 	}
-	
+	/**
+	 * Returns the location in the screen
+	 * of where this moleDeployer is located
+	 * @return boundingRectangle
+	 */
 	public Rectangle getRectangle(){
 		return boundingRectangle;
 	}
-	
+	/**
+	 * Check whether the touch in the screen
+	 * is within the boundary of the moleDeployer
+	 * box
+	 * @param screenX
+	 * @param screenY
+	 * @return true/false
+	 */
 	public boolean isTouchDown(int screenX, int screenY) {
 		if (boundingRectangle.contains(screenX, screenY)) {
 			return true;
@@ -97,26 +130,44 @@ public class MoleDeployer
 		return false;
 	}
 
-
+	/**
+	 * Disables the moleDeployer
+	 * @param b
+	 */
 	public void setDisabled(boolean b) {
 		disabled = b;
 	}
-	
+	/**
+	 * Set that  this mole is selected by  the
+	 * player
+	 * @param b
+	 */
 	public void setSelected(boolean b) {
 		selected = b;
 	}
-
+	
+	/**
+	 * Check whether this moleDeployer is
+	 * currently selected
+	 * @return selected
+	 */
 	public boolean isSelected() {
 		return selected;
 	}
-
+	/**
+	 * Change the selected status of the moleDeployer
+	 * 
+	 */
 	public void triggerSelected() {
 		if (selected==false)
 			selected = true;
 		else selected = false;
 	}
 
-
+	/**
+	 * Check whether the moleDeployer is disabled
+	 * @return disabled
+	 */
 	public boolean isDisabled() {
 		return disabled;
 	}

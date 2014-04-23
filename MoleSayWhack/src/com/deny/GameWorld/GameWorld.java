@@ -36,7 +36,11 @@ import com.deny.Screens.MainMenuScreen;
 import com.deny.Screens.PreGameScreen;
 import com.deny.Threads.ReadThread;
 import com.deny.Threads.ServerClientThread;
-
+/**
+ * The class which represent the
+ * whole game played by the player
+ *
+ */
 public class GameWorld {
 	private static final int GAME_WIDTH = Gdx.graphics.getWidth();
 	private static final int GAME_HEIGHT = Gdx.graphics.getHeight();
@@ -99,13 +103,23 @@ public class GameWorld {
 	//LOCKS
 	private Object gameStateLock = new Object();
 	private Object opponentHPLock = new Object();
-	
+	/**
+	 * The list of game states for this gameWorld
+	 *
+	 */
 	public enum GameState {
 		READY, RUNNING, DEPLOYMENT, WIN, LOSE, PAUSE, MENU, EXIT, RESTART;
 	}
 
 
 	@SuppressWarnings("unchecked")
+	/**
+	 * The constructor for this class. Takes in the
+	 * gameScreen which initialize this class and
+	 * the Game class.
+	 * @param game
+	 * @param gameScreen
+	 */
 	public GameWorld(Game game, GameScreen gameScreen) {
 		
 		this.game = game;
@@ -212,7 +226,14 @@ public class GameWorld {
 		
 	}
 
-	
+	/**
+	 * Updates the gameWorld, which involves updating all
+	 * activities in the game. Example includes updating
+	 * which moles appear on the board currently,
+	 * how many powerups are on or on cooldown state,
+	 * how many HP current player and opponent has, etc.
+	 * @param delta : the period of which this method is called
+	 */
     public void update(float delta) {    	
     	switch(getGameState()) {
     	case READY:
@@ -242,7 +263,12 @@ public class GameWorld {
 			break;
     	}
     }
-    
+    /**
+     * A method that is called when the game 
+     * exists, all the objects in the gameWorld
+     * will be unloaded and disposed
+     * @param delta
+     */
     private void updateExit(float delta) {
     	socketHandler.dispose();
 		socketHandler = null;
@@ -258,7 +284,14 @@ public class GameWorld {
 		SpawnMoleKing.unload();
 		MoleShower.unload();
 	}
-
+    /**
+	 * Updates the gameWorld, which involves updating all
+	 * activities in the game. Example includes updating
+	 * which moles appear on the board currently,
+	 * how many powerups are on or on cooldown state,
+	 * how many HP current player and opponent has, etc.
+	 * @param delta : the period of which this method is called
+	 */
 	public void updateRunning(float delta) {
     	if (player.isDead()) {
     		setGameState(GameState.LOSE);
@@ -311,12 +344,22 @@ public class GameWorld {
 		SpawnMoleKing.update(delta);
 		MoleShower.update(delta);
     }
-	
+	/**
+	 * The method which update the gameWorld when
+	 * the restart button is pressed
+	 */
 	public void updateRestart() {
 		game.setScreen(new PreGameScreen(game, socketHandler));
 		gameScreen.dispose();
 	}
-    
+    /**
+     * The method which is used to spawn mole
+     * to the player's board. If there is currently
+     * a mole on the board, then the mole will
+     * be added to the mole queue
+     * @param moleType
+     * @param pos
+     */
     public void spawnMole(MoleType moleType, int pos) {
 		if (blockedGrids[pos] == false ) { 
 	    	switch(moleType) {
@@ -343,123 +386,224 @@ public class GameWorld {
 			}
 		}
     }
-    
+    /**
+     * Return the rectangle locaton of the board
+     * @return board
+     */
     public Rectangle getBoard() {
         return board;
     }
-    
+    /**
+     * Get number of grids of the player's board
+     * @return NUMBER_OF_GRIDS
+     */
 	public static int getNumberOfMolesPerGrid() {
 		return NUMBER_OF_GRIDS;
 	}
-
+	/**
+	 * return the number of mole deployers each player has
+	 * @return NUMBER_OF_MOLE_DEPLOYERS
+	 */
 	public static int getNumberOfMoleDeployers() {
 		return NUMBER_OF_MOLE_DEPLOYERS;
 	}
-	
+	/**
+	 * Return the number of powerupDeployer of the player
+	 * in the game
+	 * @return NUMBER_OF_POWERUP_DEPLOYERS
+	 */
 	public static int getNumberOfPowerUpDeployers() {
 		return NUMBER_OF_POWERUP_DEPLOYERS;
 	}
-
+	/**
+	 * Returns the player of the game
+	 * @return player
+	 */
 	public Player getPlayer() {
 		return player;
 	}
-
+	/**
+	 * Get the read thread that is reading
+	 * commands sent by the opponent
+	 * @return readThread
+	 */
 	public ReadThread getReadThread() {
 		return readThread;
 	}
-
+	/**
+	 * Get the moles that are currently on the grid
+	 * @return moleGrid
+	 */
 	public Mole[] getMoleGrid() {
 		return moleGrid;
 	}
-
+	/**
+	 * Get the mole deck of this game
+	 * @return moleDeck
+	 */
 	public Mole[] getMoleDeck() {
 		return moleDeck;
 	}
-
+	/**
+	 * Returns the moleQueue of each grid
+	 * @return moleQueues
+	 */
 	public Queue<Mole>[] getMoleQueues() {
 		return moleQueues;
 	}
-
+	/**
+	 * Get the place holders of the moles in this
+	 * game
+	 * @return placeHolders
+	 */
 	public ArrayList<Rectangle> getPlaceHolders() {
 		return placeHolders;
 	}
-    
+    /**
+     * Get the moleDeployers in this game
+     * @return moleDeployers
+     */
 	public MoleDeployer[] getMoleDeployers() {
 		return moleDeployers;
 	}
-
+	/**
+	 * Set the game state of this game
+	 * @param gs
+	 * @GuardedBy gameStateLock
+	 */
 	public void setGameState(final GameState gs) {
 		synchronized(gameStateLock) {
 			gameState = gs;
 		}
 	}
-	
+	/**
+	 * Get the game state of this game
+	 * @return gameState
+	 * @GuardedBy gameStateLock
+	 */
 	public GameState getGameState() {
 		synchronized(gameStateLock) {
 			return gameState;
 		}
 	}
-
+	/**
+	 * Set the current mole deployer of this game
+	 * after the mole deployer type was chosen in the
+	 * pre-game screen
+	 * @param md
+	 */
 	public void setCurrentMoleDeployer(MoleDeployer md) {
 		currentMoleDeployer = md;
 	}
-	
+	/**
+	 * Get the moleDeployer of this game
+	 * @return currentMoleDeployer
+	 */
 	public MoleDeployer getCurrentMoleDeployer() {
 		return currentMoleDeployer;
 	}
-	
+	/**
+	 * Returns the serverclient thread
+	 * that is used to send messages 
+	 * to the other player
+	 * @return socketHandler
+	 */
 	public ServerClientThread getSocketHandler() {
 		return socketHandler;
 	}
+	/**
+	 * returns the game over menu of the game world
+	 * @return gameOverMenu
+	 */
 	public Rectangle getGameOverMenu() {
 		return gameOverMenu;
 	}
-
+	/**
+	 * Returns the play again button location in the
+	 * game screen
+	 * @return playAgainBounds
+	 */
 	public Rectangle getPlayAgainBounds() {
 		return playAgainBounds;
 	}
-
+	/**
+	 * Returns the exit button location of the exit button
+	 * in the game screen
+	 * @return exitBounds
+	 */
 	public Rectangle getExitBounds() {
 		return exitBounds;
 	}
-	
+	/**
+	 * Returns the game
+	 * @return game
+	 */
 	public Game getGame() {
 		return game;
 	}
-
+	/**
+	 * Get the locaton of the picture that is
+	 * drawn on the game screen when the game is
+	 * paused
+	 * @return pauseOverlay
+	 */
 	public Rectangle getPauseOverlay() {
 		return pauseOverlay;
 	}
-
+	/**
+	 * Get the location of the pauseButton
+	 * of the game
+	 * @return pauseButton
+	 */
 	public Rectangle getPauseButton() {
 		return pauseButton;
 	}
-
+	/**
+	 * A method that is called when a player
+	 * press the pause button
+	 */
 	public void pauseGame() {
 		socketHandler.pauseGame();
 		setGameState(GameState.MENU);
 	}
-
+	/**
+	 * Get the location of the continueButton
+	 * 
+	 * @return continueButton
+	 */
 	public Rectangle getContinueButton() {
 		return continueButton;
 	}
-
+	/**
+	 * Method that is called when player
+	 * decides to exit the game
+	 */
 	public void exitGame() {
 		getSocketHandler().exitGame();
 		setGameState(GameState.EXIT);
 		
 	}
-
+	/**
+	 * Method that is called when a player
+	 * press continue game after pausing the game
+	 */
 	public void continueGame() {
 		getSocketHandler().continueGame();
 		setGameState(GameState.RUNNING);
 		
 	}
-
+	/**
+	 * get the powerupDeployers of this game
+	 * @return powerUpDeployers
+	 */
 	public PowerUpDeployer[] getPowerUpDeployers() {
 		return powerUpDeployers;
 	}
-
+	/**
+	 * Invoke / cast the powerups 
+	 * of this game
+	 * @param powerUp
+	 */
 	public void invokePowerUp(PowerUpType powerUp) {
 		switch(powerUp) {
 		case BLOCKGRID:
@@ -493,25 +637,43 @@ public class GameWorld {
 			break;
 		}
 	}	
-	
+	/**
+	 * Get the number of grids which are
+	 * blocked
+	 * @return blockedGrids
+	 */
 	public boolean[] getBlockedGrids() {
 		return blockedGrids;
 	}
-
+	/**
+	 * Set whether this player has the fog
+	 * shown on the screen
+	 * @param b
+	 */
 	public void setFog(boolean b) {
 		this.hasFog = true;
 	}
-	
+	/**
+	 * Get the status on whether this player has fog 
+	 * on the screen
+	 * @return
+	 */
 	public boolean getFog() {
 		return hasFog;
 	}
-
+	/**
+	 * Set the opponent's HP
+	 * @param hp
+	 */
 	public void setOpponentHP(int hp) {
 		synchronized(opponentHPLock) {
 			opponentHP = hp;
 		}
 	}
-	
+	/**
+	 * get the opponent's HP
+	 * @return opponentHP
+	 */
 	public int getOpponentHP() {
 		synchronized(opponentHPLock) {
 			return opponentHP;

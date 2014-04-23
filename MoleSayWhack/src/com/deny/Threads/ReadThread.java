@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.net.SocketException;
+import java.nio.channels.ClosedByInterruptException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 
@@ -27,8 +28,13 @@ import com.deny.Screens.DisconnectScreen;
 import com.deny.Screens.MultiplayerScreen;
 import com.deny.Screens.MultiplayerScreen.MultiplayerState;
 import com.deny.Screens.OptionsScreen.AuthenticationType;
+import com.deny.Screens.PreGameScreen.PreGameState;
 import com.deny.Screens.PreGameScreen;
-
+/**
+ * This is a thread that reads all the input given
+ * from the other player's inputStream
+ *
+ */
 public class ReadThread  extends Thread{
 	private Game game;
 	private Socket client;
@@ -42,7 +48,12 @@ public class ReadThread  extends Thread{
 	private Key  symmetricKey;
 	private AuthenticationType authType;
 
-
+	/**
+	 * The constructor of the thread, takes in the socket of the other player
+	 * and the thread that sends information back to the other player
+	 * @param sh
+	 * @param client
+	 */
 	public ReadThread(ServerClientThread sh, Socket client) {
 		socketHandler = sh;
 		game = socketHandler.getGame();
@@ -52,7 +63,11 @@ public class ReadThread  extends Thread{
 			symmetricKey = sh.getKey();
 		}
 	}
-
+	/**
+	 * Reads all the messages sent by the other player
+	 * and calls the right method accordingly based on the
+	 * message received
+	 */
 	public void run() {
 		try {
 			in = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -82,20 +97,38 @@ public class ReadThread  extends Thread{
 						String messageTemp = new String(newMessageByte, "UTF-8");
 						message = messageTemp.substring(0);
 					}  catch (EOFException e) {
+						System.out.println("EOFE exception");
+						goToDisconnectedScreen();
+						return;
+					} 
+					catch (IOException e) {
+						System.out.println("Socket is closed.");
+						if (Thread.interrupted() == false){
+							System.out.println("Thread hasnt been interrupted");	
+							gameWorld.setGameState(GameState.EXIT);
+							socketHandler.dispose();
+							goToDisconnectedScreen();
+						}
+					
+						return;
+						
+					}
+					catch (InvalidKeyException e) {
 						goToDisconnectedScreen();
 						e.printStackTrace();
 						return;
-					} 
-					catch (SocketException e) {
-						System.out.println("Socket Closed");
-					} catch (InvalidKeyException e) {
-						goToDisconnectedScreen();
 					} catch (ClassNotFoundException e) {
 						goToDisconnectedScreen();
+						e.printStackTrace();
+						return;
 					} catch (IllegalBlockSizeException e) {
 						goToDisconnectedScreen();
+						e.printStackTrace();
+						return;
 					} catch (BadPaddingException e) {
 						goToDisconnectedScreen();
+						e.printStackTrace();
+						return;
 					}
 				}
 				else{
@@ -149,8 +182,22 @@ public class ReadThread  extends Thread{
 					gameWorld.setOpponentHP(Character.getNumericValue(hp));
 					break;
 				}
-			} catch (IOException e) {
-				System.out.println("Socket Closed");
+				
+			
+			}
+			catch(ClosedByInterruptException e){
+				System.out.println("I am Interuppted");
+			}
+			catch (IOException e) {
+				System.out.println("Socket is closed.");
+				if (Thread.interrupted() == false)
+				{
+				System.out.println("Player Leaves game illegally");	
+				gameWorld.setGameState(GameState.EXIT);
+				socketHandler.dispose();
+				goToDisconnectedScreen();
+				}
+				return;
 			} catch(NullPointerException e) {
 				goToDisconnectedScreen();
 				return;
@@ -158,15 +205,25 @@ public class ReadThread  extends Thread{
 		}
 	}
 
-
+	/**
+	 * Return the gameWorld of the game
+	 * @return gameWorld
+	 */
 	public GameWorld getGameWorld() {
 		return gameWorld;
 	}
-
+	/**
+	 * Sets the gameWorld of which this readThread is sending 
+	 * information to
+	 * @param gameWorld
+	 */
 	public void setGameWorld(GameWorld gameWorld) {
 		this.gameWorld = gameWorld;
 	}
-
+	/**
+	 * A  method that allows the player to go to the disconnected screen
+	 * should the socket connection fails
+	 */
 	public void goToDisconnectedScreen() {
 		new Thread(new Runnable() {
 			@Override

@@ -22,9 +22,7 @@ import javax.crypto.spec.DESKeySpec;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.utils.Base64Coder;
 /**
- * In this case, we send the MAC secretKey.
- * But we assume that both have already shared a known secretKey a priori
- * @author Crimsonlycans
+ * Client code of authentication type T4
  *
  */
 public class T4Client {

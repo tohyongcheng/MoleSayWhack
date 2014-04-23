@@ -21,7 +21,10 @@ import javax.crypto.KeyGenerator;
 
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.utils.Base64Coder;
-
+/**
+ * Server code of authentication type T4
+ *
+ */
 public class T4Server {
 	
 	

@@ -19,7 +19,11 @@ import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpType;
 import com.deny.Threads.ServerClientThread;
-
+/**
+ * The screen that allows user to
+ * choose powerups
+ *
+ */
 public class PreGamePowerUpScreen implements Screen {
 	private static final int NO_OF_DEPLOYERS = 3;
 	private static final int GAME_WIDTH = Gdx.graphics.getWidth();
@@ -50,7 +54,11 @@ public class PreGamePowerUpScreen implements Screen {
 	private PreGameState currentState;
 	private Object preGameStateLock = new Object();
 	
-
+	/**
+	 * The constructor of this screen
+	 * Takes in the game that instantiate this
+	 * class
+	 */
 	public PreGamePowerUpScreen(Game game, ServerClientThread socketHandler, ArrayList<MoleType> selectedMoles) {
 		this.game = game;
 		this.socketHandler = socketHandler;
@@ -81,7 +89,11 @@ public class PreGamePowerUpScreen implements Screen {
 		enableBGM = prefs.getBoolean("enableBGM", true);
 		enableSFX = prefs.getBoolean("enableSFX", true);
 	}
-	
+	/**
+	 * The method that draw all the pictures or images
+	 * that are to be shown in this screen,
+	 * depending on the state of this screen
+	 */
 	private void draw() {
 		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -116,7 +128,11 @@ public class PreGamePowerUpScreen implements Screen {
 		
 	}
 
-
+	/**
+	 * The method that update this screen, depending
+	 * on the input or the states of this screen
+	 * @param delta
+	 */
 	public void update(float delta) {
 		
 		switch(getState()) {
@@ -157,9 +173,9 @@ public class PreGamePowerUpScreen implements Screen {
 			break;
 			
 		case QUIT:
-			game.setScreen(new MainMenuScreen(game));
 			socketHandler.dispose();
 			socketHandler = null;
+			game.setScreen(new MainMenuScreen(game));
 			dispose();
 			break;
 			
@@ -173,6 +189,10 @@ public class PreGamePowerUpScreen implements Screen {
 	
 	
 	@Override
+	/**
+	 * The method that calls update and 
+	 * draw
+	 */
 	public void render(float delta) {
 		update(delta);
 		draw();
@@ -213,13 +233,21 @@ public class PreGamePowerUpScreen implements Screen {
 	public void dispose() {
 		// TODO Auto-generated method stub	
 	}
-	
+	/**
+	 * The method that sets the state of
+	 * this screen
+	 * @param s
+	 */
 	public void setState(PreGameState preGameState) {
 		synchronized(preGameStateLock) {
 			this.currentState = preGameState;
 		}
 	}
-	
+	/**
+	 * The method that returns the 
+	 * current state of this game
+	 * @return
+	 */
 	public PreGameState getState() {
 		synchronized(preGameStateLock){ 
 			return currentState;

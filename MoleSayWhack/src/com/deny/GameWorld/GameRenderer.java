@@ -26,7 +26,12 @@ import com.deny.PowerUpObjects.Earthquake;
 import com.deny.PowerUpObjects.EnableFog;
 import com.deny.PowerUpObjects.GenerateDummyMoles;
 import com.deny.PowerUpObjects.Invulnerability;
-
+/**
+ * Renders the gameWorld, the main game
+ * play, and show it to the
+ * players' screen
+ *
+ */
 public class GameRenderer {
 	
 	private static final int GAME_WIDTH = Gdx.graphics.getWidth();
@@ -38,6 +43,13 @@ public class GameRenderer {
 	private ShapeRenderer shapeRenderer;
 	private SpriteBatch batcher;
 	
+	/**
+	 * The constructor of GameRenderer,
+	 * takes in the gameWorld screen which
+	 * instantiate this renderer
+	 * once game has started
+	 * @param world
+	 */
 	public GameRenderer(GameWorld world) {
 		this.world = world;
 		
@@ -50,7 +62,11 @@ public class GameRenderer {
 		batcher.setProjectionMatrix(cam.combined);
 
 	}
-	
+	/**
+	 * Draws the all the objects in the gameWorld depending
+	 * on the current state of the game
+	 * when this method is called
+	 */
 	public void render() {
 		
 		Gdx.gl.glClearColor(0, 0, 0, 1);

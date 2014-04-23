@@ -15,7 +15,12 @@ import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameHelpers.NameInputListener;
 import com.deny.Threads.ServerClientThread;
-
+/***
+ * The screen which displays the options of the game
+ * Displayed after the option button
+ * is clicked on the main screen
+ *
+ */
 public class OptionsScreen implements Screen {
 	private static final int GAME_WIDTH = Gdx.graphics.getWidth();
 	private static final int GAME_HEIGHT = Gdx.graphics.getHeight();
@@ -32,16 +37,25 @@ public class OptionsScreen implements Screen {
 	private boolean enableSFX;
 	private AuthenticationType authType;
 
-
+	/**
+	 *The states of the Authentication Protocols
+	 *
+	 */
 	public enum AuthenticationType {
 		NOPROTOCOL, T2,T3,T4,T5, TRUDY;
-		//NATALIE, ADD THE AUTHENTICATION TYPES HERE
 		
+		/**
+		 * Get the next authentication type
+		 * @return
+		 */
 		public AuthenticationType next() {
 			return values()[(ordinal()+1) % values().length];
 		}
 	}
-	
+	/**
+	 *  The states of the optionsScreen
+	 *
+	 */
 	public enum OptionsScreenState {
 		RUNNING, BACK;
 	}
@@ -60,7 +74,11 @@ public class OptionsScreen implements Screen {
 	private Rectangle changeAuthBtn;
 	
 
-
+	/**
+	 * The constructor of this screen
+	 * Takes in the game that instantiate this
+	 * class
+	 */
 	public OptionsScreen(Game game) {
 		this.game = game;
 		this.optionsState = optionsState.RUNNING;
@@ -102,7 +120,12 @@ public class OptionsScreen implements Screen {
 		System.out.println("authType is: " + authType.toString());
 	}
 	
-	//EDIT THIS
+	
+	/**
+	 * Return the AssetLoader associated with the
+	 * current authentication protocol
+	 * @return
+	 */
 	
 	public TextureRegion getProtocolAsset(){
 		switch (authType){
@@ -124,7 +147,11 @@ public class OptionsScreen implements Screen {
 		}
 	}
 	
-	
+	/**
+	 * The method that draw all the pictures or images
+	 * that are to be shown in this screen,
+	 * depending on the state of this screen
+	 */
 	public void draw() {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
@@ -154,7 +181,11 @@ public class OptionsScreen implements Screen {
         batcher.draw(AssetLoader.ext, backBounds.x, backBounds.y,backBounds.width, backBounds.height);
         batcher.end();
 	}
-	
+	/**
+	 * The method that update this screen, depending
+	 * on the input or the states of this screen
+	 * @param delta
+	 */
 	public void update() {
 		switch(getState()) {
 		
@@ -200,6 +231,10 @@ public class OptionsScreen implements Screen {
 	}
 
 	@Override
+	/**
+	 * The method that calls update and 
+	 * draw
+	 */
 	public void render(float delta) {
 		// TODO Auto-generated method stub
 		update();
@@ -241,29 +276,50 @@ public class OptionsScreen implements Screen {
 		// TODO Auto-generated method stub
 
 	}
-	
+	/**
+	 * The method that returns the 
+	 * current state of this game
+	 * @return
+	 */
 	public OptionsScreenState getState() {
 		return optionsState;
 	}
-	
+	/**
+	 * The method that sets the state of
+	 * this screen
+	 * @param s
+	 */
 	public void setState(OptionsScreenState s) {
 		this.optionsState = s;
 	}
-
+	/**
+	 * Returns the name of the player
+	 * @return name
+	 */
 	public String getName() {
 		return name;
 	}
-
+	/**
+	 * Sets the name of the player
+	 * from the user input
+	 * @param name
+	 */
 	public void setName(String name) {
 		this.name = name;
 		prefs.putString("Name", name );
 		prefs.flush();
 	}
-
+	/**
+	 * Check whether background music is enabled
+	 * @return
+	 */
 	public boolean isEnableBGM() {
 		return enableBGM;
 	}
-
+	/**
+	 * Set the status of background music
+	 * @param enableBGM
+	 */
 	public void setEnableBGM(boolean enableBGM) {
 		if (enableBGM == false ){
 			AssetLoader.ann.stop();
@@ -278,21 +334,33 @@ public class OptionsScreen implements Screen {
 		prefs.putBoolean("enableBGM", enableBGM);
 		prefs.flush();
 	}
-
+	/**
+	 * Checks whether sound effects are enabled
+	 * @return
+	 */
 	public boolean isEnableSFX() {
 		return enableSFX;
 	}
-
+	/***
+	 * Set the status of the sound effects
+	 * @param enableSFX
+	 */
 	public void setEnableSFX(boolean enableSFX) {
 		this.enableSFX = enableSFX;
 		prefs.putBoolean("enableSFX", enableSFX);
 		prefs.flush();
 	}
-
+	/**
+	 * Get the current authentication type
+	 * @return authType
+	 */
 	public AuthenticationType getAuthType() {
 		return authType;
 	}
-
+	/**
+	 * Set the authentication type of this game
+	 * @param authType
+	 */
 	public void setAuthType(AuthenticationType authType) {
 		this.authType = authType;
 		prefs.putString("authType", authType.toString());

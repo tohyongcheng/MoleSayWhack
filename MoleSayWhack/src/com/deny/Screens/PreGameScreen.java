@@ -16,7 +16,12 @@ import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.Threads.ServerClientThread;
-
+/**
+ * The screen that allows us to choose
+ * what types of moles we want to deploy
+ * to the opponent's screen
+ *
+ */
 public class PreGameScreen implements Screen {
 	private static final int NO_OF_DEPLOYERS = 3;
 
@@ -47,7 +52,11 @@ public class PreGameScreen implements Screen {
 	
 	
 	private Object preGameStateLock = new Object();
-
+	/**
+	 * The constructor of this screen
+	 * Takes in the game that instantiate this
+	 * class
+	 */
 	public PreGameScreen(Game game, ServerClientThread socketHandler) {
 		this.game = game;
 		this.socketHandler = socketHandler;
@@ -79,7 +88,11 @@ public class PreGameScreen implements Screen {
 		enableBGM = prefs.getBoolean("enableBGM", true);
 		enableSFX = prefs.getBoolean("enableSFX", true);
 	}
-	
+	/**
+	 * The method that draw all the pictures or images
+	 * that are to be shown in this screen,
+	 * depending on the state of this screen
+	 */
 	public void draw() {
 		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -108,7 +121,11 @@ public class PreGameScreen implements Screen {
 		
 	}
 
-
+	/**
+	 * The method that update this screen, depending
+	 * on the input or the states of this screen
+	 * @param delta
+	 */
 	public void update(float delta) {
 		
 		switch(getState()) {
@@ -150,9 +167,10 @@ public class PreGameScreen implements Screen {
 		case QUIT:
 			socketHandler.dispose();
 			socketHandler = null;
-			dispose();
 			System.out.println("Im quitting!");
 			game.setScreen(new MainMenuScreen(game));
+
+			dispose();
 			break;
 			
 		case GO:
@@ -165,6 +183,10 @@ public class PreGameScreen implements Screen {
 	
 	
 	@Override
+	/**
+	 * The method that calls update and 
+	 * draw
+	 */
 	public void render(float delta) {
 		update(delta);
 		draw();
@@ -205,19 +227,31 @@ public class PreGameScreen implements Screen {
 	public void dispose() {
 		// TODO Auto-generated method stub	
 	}
-	
+	/**
+	 * The method that sets the state of
+	 * this screen
+	 * @param s
+	 */
 	public void setState(PreGameState preGameState) {
 		synchronized(preGameStateLock) {
 			this.currentState = preGameState;
 		}
 	}
-	
+	/**
+	 * The method that returns the 
+	 * current state of this game
+	 * @return
+	 */
 	public PreGameState getState() {
 		synchronized(preGameStateLock) {
 			return currentState;
 		}
 	}
-
+	/**
+	 * Returns the thread that is used to communicate
+	 * between the two players
+	 * @return
+	 */
 	public Object getSocketHandler() {
 		return socketHandler;
 	}

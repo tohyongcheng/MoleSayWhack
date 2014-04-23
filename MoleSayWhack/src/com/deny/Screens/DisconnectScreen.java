@@ -12,14 +12,21 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
-
+/**
+ * A screen that is called when
+ * one player disconnects from the game
+ *
+ */
 public class DisconnectScreen implements Screen {
 
 	private static final int GAME_WIDTH = Gdx.graphics.getWidth();
 	private static final int GAME_HEIGHT = Gdx.graphics.getHeight();
 	public double scaleW = (double)GAME_WIDTH/544;
 	public double scaleH = (double) GAME_HEIGHT/816;
-	
+	/**
+	 * The states that are present in this screen
+	 *
+	 */
 	public enum DisconnectScreenStates {
 		START, QUIT;
 	}
@@ -33,7 +40,11 @@ public class DisconnectScreen implements Screen {
 	private ShapeRenderer shapeRenderer;
 	private Vector3 touchPoint;
 	private DisconnectScreenStates currentState;
-
+	/**
+	 * The constructor of this screen
+	 * Takes in the game that instantiate this
+	 * class
+	 */
 	public DisconnectScreen(Game game) {
 		System.out.println("I'm called!");
 		this.game = game;
@@ -54,7 +65,11 @@ public class DisconnectScreen implements Screen {
 		enableBGM = prefs.getBoolean("enableBGM", true);
 		enableSFX = prefs.getBoolean("enableSFX", true);
 	}
-	
+	/**
+	 * The method that draw all the pictures or images
+	 * that are to be shown in this screen,
+	 * depending on the state of this screen
+	 */
 	private void draw() {
 		//Gdx.gl.glClearColor(0, 0, 0, 1);
        // Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
@@ -68,7 +83,11 @@ public class DisconnectScreen implements Screen {
         batcher.end();
 	}
 
-
+	/**
+	 * The method that update this screen, depending
+	 * on the input or the states of this screen
+	 * @param delta
+	 */
 	private void update(float delta) {
 		switch(currentState) {
 		case QUIT:

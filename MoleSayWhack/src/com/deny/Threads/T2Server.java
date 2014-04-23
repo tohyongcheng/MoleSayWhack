@@ -34,7 +34,10 @@ import com.deny.Screens.OptionsScreen.AuthenticationType;
 import com.deny.Screens.OptionsScreen;
 import com.deny.Screens.PreGamePowerUpScreen;
 import com.deny.Screens.PreGameScreen;
-
+/**
+ * Server code of authentication type T2 
+ *
+ */
 public class T2Server {
 
 	private Socket client;

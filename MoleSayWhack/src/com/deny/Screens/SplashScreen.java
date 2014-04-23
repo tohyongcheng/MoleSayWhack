@@ -14,7 +14,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.TweenAccessors.SpriteAccessor;
 import com.deny.molewhack.WMGame;
-
+/**
+ * The screen that is shown right after the
+ * application is started
+ */
 public class SplashScreen implements Screen
 {
 	//Variables that will be used in this class//
@@ -23,13 +26,20 @@ public class SplashScreen implements Screen
     private Sprite sprite;
     private WMGame game;
     
-    //Constructor that takes in the game//
+    /**
+     * Constructor that takes in the game//
+     * @param game
+     */
     public SplashScreen(WMGame game) 
     {
         this.game = game;
     }
     
     @Override
+    /**
+     * A method that shows the logo and draws it
+     * when the game is begun
+     */
     public void show() 
     {
         sprite = new Sprite(AssetLoader.logo);
@@ -46,7 +56,10 @@ public class SplashScreen implements Screen
         setupTween();
         batcher = new SpriteBatch();
     }
-    
+    /**
+     * a method that sets up the tween object
+     * of the splash screen
+     */
     private void setupTween() 
     {
         Tween.registerAccessor(Sprite.class, new SpriteAccessor());
@@ -67,6 +80,12 @@ public class SplashScreen implements Screen
     
     
     @Override
+    /**
+	 * The method that draw all the pictures or images
+	 * that are to be shown in this screen,
+	 * depending on the state of this screen
+	 */
+
     public void render(float delta) 
     { 
         Gdx.gl.glClearColor(1, 1, 1, 1);

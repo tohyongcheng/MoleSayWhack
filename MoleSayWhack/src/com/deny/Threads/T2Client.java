@@ -17,7 +17,10 @@ import javax.crypto.Cipher;
 
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.utils.Base64Coder;
-
+/**
+ * Client code of authentication type T2 
+ *
+ */
 public class T2Client {
 	private Socket server;
 	private String Password;

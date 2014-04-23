@@ -12,7 +12,11 @@ import com.deny.GameObjects.PowerUpDeployer;
 import com.deny.GameWorld.GameWorld;
 import com.deny.GameWorld.GameWorld.GameState;
 import com.deny.MoleObjects.Mole;
-
+/**
+ * 
+ * Handles all the touch screen/click input when playing the game
+ *
+ */
 public class GameInputHandler implements InputProcessor {
 	public static boolean moleTouched;
 	public static Mole moleT;
@@ -22,38 +26,36 @@ public class GameInputHandler implements InputProcessor {
 	private ArrayList<Rectangle> placeHolders;
 	private Preferences prefs;
 	private boolean enableSFX;
-
+/**
+ * Constructor for GameInputHandler.
+ * @param myWorld accepts gameWorld object which is the game screen
+ * @param scaleFactorX accepts the X scale factor of screen
+ * @param scaleFactorY accepts the Y scale factor of screen
+ */
 	public GameInputHandler(GameWorld myWorld, float scaleFactorX, float scaleFactorY) {
 		this.myWorld = myWorld;
 		this.scaleFactorX = scaleFactorX;
 		this.scaleFactorY = scaleFactorY;
 		placeHolders = myWorld.getPlaceHolders();
-
+	
 		//Get options
 		prefs = Gdx.app.getPreferences("Options");
 		enableSFX = prefs.getBoolean("enableSFX", true);
 	}
 
 
+	
 	@Override
-	public boolean keyDown(int keycode) {
-		if(keycode == Keys.BACK){
-			myWorld.setGameState(GameState.MENU);
-		}
-		return false;
-	}
-
-	@Override
-	public boolean keyUp(int keycode) {
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		return false;
-	}
-
-	@Override
+	/**
+	 * A method which contains all the logic when
+	 * there's a touch detected on the screen when game 
+	 * is  running, depending on the state of the game.
+	 * @param screenX : x coordinate of the screen
+	 * @param screenY : y coordinate of the screen
+	 * @param pointer
+	 * @param button
+	 * 
+	 */
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		moleTouched = false;
 		//HAMMER DISSAPEARS WHEN U TOUCH SOMETHING ELSE
@@ -175,7 +177,33 @@ public class GameInputHandler implements InputProcessor {
 
 		return false;
 	}
+	
+	/**
+	 * All the methods implemented below are 
+	 * the methods that are necessary from
+	 * InputProcessor interface but are not used in
+	 * our game
+	 * 
+	 */
+	@Override
+	public boolean keyDown(int keycode) {
+		if(keycode == Keys.BACK){
+			myWorld.setGameState(GameState.MENU);
+		}
+		return false;
+	}
 
+	@Override
+	public boolean keyUp(int keycode) {
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		return false;
+	}
+
+	
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		return false;

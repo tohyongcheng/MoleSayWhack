@@ -3,7 +3,12 @@ package com.deny.GameObjects;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.deny.GameHelpers.AssetLoader;
-
+/**
+ * 
+ * The list of the poweruptypes  that
+ * are available in the game
+ *
+ */
 public enum PowerUpType {
 	//POWERUPS
 		
@@ -11,24 +16,38 @@ public enum PowerUpType {
 	MOLESHOWER(10,5),
 	MOLEKING(20,10),
 	DISABLEONEMOLEDEPLOYER(10,5),
-	DISABLEALLPOWERUPS(10,1.5f),
+	DISABLEALLPOWERUPS(10,2),
 	FOG(10,3),
-	INVULNERABILITY(10,5),
+	INVULNERABILITY(20,5),
 	BLOCKGRID(10,5),
 	DUMMY(10,5);
 	
 	private float coolDown;
 	private float effectDuration;
-	
+	/**
+	 * The constructor for the powerupType
+	 * It takes in the coolDown value
+	 * and the duration of the powerUP effect
+	 * @param coolDown
+	 * @param duration
+	 */
 	private PowerUpType(float coolDown, float duration) {
 		this.coolDown = coolDown;
 		this.effectDuration = duration;
 	}
-	
+	/**
+	 * Returns the next powerupType associated with 
+	 * the current powerupType
+	 * @return
+	 */
 	public PowerUpType next() {
 		return values()[(ordinal()+1) % values().length];
 	}
-	
+	/**
+	 * Returns the AssetLoader associated with
+	 * this powerupType
+	 * @return
+	 */
 	public TextureRegion getAsset(){
 		switch(this){
 		case BLOCKGRID:
@@ -67,34 +86,20 @@ public enum PowerUpType {
 	}
 	
 	
-	public Color getColor() {
-		switch(this) {
-		case BLOCKGRID:
-			return Color.BLACK;
-		case DISABLEALLPOWERUPS:
-			return Color.BLUE;
-		case DISABLEONEMOLEDEPLOYER:
-			return Color.GREEN;
-		case DUMMY:
-			return Color.YELLOW;
-		case EARTHQUAKE:
-			return Color.ORANGE;
-		case FOG:
-			return Color.WHITE;
-		case INVULNERABILITY:
-			return Color.CYAN;
-		case MOLEKING:
-			return Color.MAGENTA;
-		case MOLESHOWER:
-			return Color.RED;
-    	}
-		return null;
-	}
+	/**
+	 * Returns the Cooldown of the
+	 * powerupType
+	 * @return coolDown
+	 */
 	
 	public float getCoolDown() {
 		return coolDown;
 	}
-	
+	/**
+	 * Return the effect duration of this
+	 * current power up
+	 * @return effectDuration
+	 */
 	public float getEffectDuration() {
 		return effectDuration;
 	}

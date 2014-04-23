@@ -17,7 +17,10 @@ import javax.crypto.KeyGenerator;
 
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.utils.Base64Coder;
-
+/**
+ *Server code of authentication type T5
+ *
+ */
 public class T5Server {
 
 	private Socket client;

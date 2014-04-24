@@ -7,8 +7,10 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.Protocol;
 import com.badlogic.gdx.Preferences;
@@ -20,10 +22,10 @@ import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpType;
+import com.deny.Screens.DisconnectScreen;
 import com.deny.Screens.MultiplayerScreen;
 import com.deny.Screens.MultiplayerScreen.MultiplayerState;
 import com.deny.Screens.OptionsScreen.AuthenticationType;
-import com.deny.Screens.DisconnectScreen;
 import com.deny.Screens.PreGamePowerUpScreen;
 import com.deny.Screens.PreGameScreen;
 import com.deny.molewhack.WMGame;

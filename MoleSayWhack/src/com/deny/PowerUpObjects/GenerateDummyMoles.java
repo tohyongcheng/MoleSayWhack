@@ -2,7 +2,6 @@ package com.deny.PowerUpObjects;
 
 import java.util.Random;
 
-import com.badlogic.gdx.Gdx;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpType;

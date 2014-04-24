@@ -3,17 +3,13 @@ package com.deny.GameWorld;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameHelpers.AssetLoader;
-
 import com.deny.GameHelpers.GameInputHandler;
-
 import com.deny.GameObjects.MoleDeployer;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.PowerUpDeployer;
@@ -24,7 +20,6 @@ import com.deny.PowerUpObjects.DisableAllPowerUps;
 import com.deny.PowerUpObjects.DisableOneMoleDeployer;
 import com.deny.PowerUpObjects.Earthquake;
 import com.deny.PowerUpObjects.EnableFog;
-import com.deny.PowerUpObjects.GenerateDummyMoles;
 import com.deny.PowerUpObjects.Invulnerability;
 /**
  * Renders the gameWorld, the main game

@@ -37,6 +37,9 @@ public class PreGameScreen implements Screen {
 		READY, COUNTING, GO, QUIT;
 	}
 	
+	//GuardedBy("preGameStateLock")
+	private PreGameState currentState;
+	
 	private WMGame game;
 	private OrthographicCamera mainMenuCam;
 	private SpriteBatch batcher;
@@ -47,9 +50,8 @@ public class PreGameScreen implements Screen {
 	private ArrayList<MoleType> selectedMoles;
 	private ArrayList<Rectangle> selectedMolesRectangles;
 	private float countDownTime = 20f;
-	private PreGameState currentState;
+	
 	private Preferences prefs;
-	private boolean enableBGM;
 	private boolean enableSFX;
 	
 	
@@ -88,7 +90,6 @@ public class PreGameScreen implements Screen {
 		}		
 		//Get options
 		prefs = Gdx.app.getPreferences("Options");
-		enableBGM = prefs.getBoolean("enableBGM", true);
 		enableSFX = prefs.getBoolean("enableSFX", true);
 	}
 	/**

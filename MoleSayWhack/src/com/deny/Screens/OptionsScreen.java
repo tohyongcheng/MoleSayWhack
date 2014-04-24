@@ -84,7 +84,6 @@ public class OptionsScreen implements Screen {
 
 	public OptionsScreen(WMGame game) {
 		this.game = game;
-		this.optionsState = optionsState.RUNNING;
 		this.mainMenuCam = new OrthographicCamera();
 		setState(OptionsScreenState.RUNNING);
 		mainMenuCam.setToOrtho(true, GAME_WIDTH, GAME_HEIGHT);

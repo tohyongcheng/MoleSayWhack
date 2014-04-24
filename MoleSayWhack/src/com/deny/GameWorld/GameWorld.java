@@ -2,9 +2,7 @@ package com.deny.GameWorld;
 
 import java.util.ArrayList;
 import java.util.Queue;
-import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
@@ -67,8 +65,12 @@ public class GameWorld {
 	private GameScreen gameScreen;
 	
 	//GAME MECHANICS
+	//GuardedBy("gameStateLock")
 	private GameState gameState;
+	
 	private Player player;
+	
+	//GuardedBy("opponentHPLock")
 	private int opponentHP;
 	
 	private ReadThread readThread;
@@ -100,9 +102,6 @@ public class GameWorld {
 	private boolean hasFog;
 	private boolean[] blockedGrids;
 	
-	//Generate random spawns
-	private Random r;
-	
 	//LOCKS
 	private Object gameStateLock = new Object();
 	private Object opponentHPLock = new Object();
@@ -121,6 +120,7 @@ public class GameWorld {
 	 * @param game
 	 * @param gameScreen
 	 */
+	@SuppressWarnings("unchecked")
 	public GameWorld(WMGame game, GameScreen gameScreen) {
 
 		this.game = game;
@@ -213,9 +213,6 @@ public class GameWorld {
 		continueButton = new Rectangle(GAME_WIDTH/2-(int)(82*scaleW/2), GAME_HEIGHT/2, (int)(83*scaleW), (int)(82*scaleH));
 		playAgainBounds = new Rectangle(GAME_WIDTH/2-(int)(82*scaleW/2), GAME_HEIGHT/2, (int)(83*scaleW), (int)(82*scaleH));
 		exitBounds = new Rectangle(GAME_WIDTH/2-(int)(82*scaleW/2), GAME_HEIGHT/2 + (int)(115*scaleH), (int)(83*scaleW), (int)(82*scaleH));
-		
-		//setup random for random spawning
-		this.r = new Random();
 		
 		if (enableBGM) {
 			AssetLoader.summer.stop();

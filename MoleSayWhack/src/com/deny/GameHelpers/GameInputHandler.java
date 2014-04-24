@@ -2,8 +2,8 @@ package com.deny.GameHelpers;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.Rectangle;
@@ -20,8 +20,6 @@ import com.deny.MoleObjects.Mole;
 public class GameInputHandler implements InputProcessor {
 	public static boolean moleTouched;
 	public static Mole moleT;
-	private float scaleFactorX;
-	private float scaleFactorY;
 	private GameWorld myWorld;
 	private ArrayList<Rectangle> placeHolders;
 	private Preferences prefs;
@@ -29,13 +27,9 @@ public class GameInputHandler implements InputProcessor {
 /**
  * Constructor for GameInputHandler.
  * @param myWorld accepts gameWorld object which is the game screen
- * @param scaleFactorX accepts the X scale factor of screen
- * @param scaleFactorY accepts the Y scale factor of screen
  */
-	public GameInputHandler(GameWorld myWorld, float scaleFactorX, float scaleFactorY) {
+	public GameInputHandler(GameWorld myWorld) {
 		this.myWorld = myWorld;
-		this.scaleFactorX = scaleFactorX;
-		this.scaleFactorY = scaleFactorY;
 		placeHolders = myWorld.getPlaceHolders();
 	
 		//Get options
@@ -223,16 +217,4 @@ public class GameInputHandler implements InputProcessor {
 	public boolean scrolled(int amount) {
 		return false;
 	}
-
-	private int scaleX(int screenX) {
-		return (int) (screenX / scaleFactorX);
-	}
-
-	private int scaleY(int screenY) {
-		return (int) (screenY / scaleFactorY);
-	}
-
-
-
-
 }

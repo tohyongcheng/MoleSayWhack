@@ -1,6 +1,5 @@
 package com.deny.GameObjects;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.deny.GameHelpers.AssetLoader;
 /**

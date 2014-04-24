@@ -42,9 +42,7 @@ public class GameScreen implements Screen {
 		this.selectedPowerUps = selectedPowerUps;
 		this.world = new GameWorld(game, this);
 		this.renderer = new GameRenderer(world);
-		float screenWidth = Gdx.graphics.getWidth();
-		float screenHeight = Gdx.graphics.getHeight();
-		Gdx.input.setInputProcessor(new GameInputHandler(world, screenWidth, screenHeight));
+		Gdx.input.setInputProcessor(new GameInputHandler(world));
 	}
 	
 	@Override

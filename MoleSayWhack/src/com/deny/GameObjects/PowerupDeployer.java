@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameWorld.GameWorld;
-import com.deny.Threads.ServerClientThread;
 /**
  * Deploys powerups
  * Initialized at the beginning of the game
@@ -20,8 +19,6 @@ public class PowerUpDeployer {
 	private boolean isAvailable;
 	private boolean disabled;
 
-	
-	private ServerClientThread socketHandler;
 	/**
 	 * The constructor for this class, takes in the gameWorld
 	 * which instantiate this class, and the socketHandler,
@@ -33,7 +30,6 @@ public class PowerUpDeployer {
 	 */
 	public PowerUpDeployer(GameWorld gameWorld, PowerUpType powerupType){
 		this.gameWorld = gameWorld;
-		this.socketHandler = gameWorld.getSocketHandler();
 		this.powerupType = powerupType;
 		this.coolDown = powerupType.getCoolDown();
 		boundingRectangle = new Rectangle();

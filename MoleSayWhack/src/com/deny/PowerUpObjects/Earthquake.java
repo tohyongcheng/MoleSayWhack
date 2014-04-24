@@ -89,6 +89,7 @@ public class Earthquake extends PowerUp {
 	 */
 	public static void causeEffect() {
 		Mole[] moleGrid = gameWorld.getMoleGrid();
+		@SuppressWarnings("rawtypes")
 		Queue[] moleQueues = gameWorld.getMoleQueues();
 		for (int i=0; i<GameWorld.getNumberOfMolesPerGrid(); i++) {
         	moleGrid[i] = null;

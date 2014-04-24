@@ -32,9 +32,11 @@ public class PreGamePowerUpScreen implements Screen {
 	public double scaleW = (double)GAME_WIDTH/544;
 	public double scaleH = (double) GAME_HEIGHT/816;
 
-	public enum PreGameState {
+	public enum PreGamePowerUpState {
 		READY, COUNTING, GO, QUIT;
 	}
+	//GuardedBy("preGameStateLock")
+	private PreGamePowerUpState currentState;
 	
 	private WMGame game;
 	private OrthographicCamera mainMenuCam;
@@ -42,16 +44,14 @@ public class PreGamePowerUpScreen implements Screen {
 	private ShapeRenderer shapeRenderer;
 	private Vector3 touchPoint;
 	private Rectangle backBounds;
-	private Rectangle playBounds;
 	private ServerClientThread socketHandler;
 	private ArrayList<MoleType> selectedMoles;
 	private ArrayList<PowerUpType> selectedPowerUps;
 	private ArrayList<Rectangle> selectedPowerUpsRectangles;
 	private float countDownTime = 20f;
 	private Preferences prefs;
-	private boolean enableBGM;
 	private boolean enableSFX;
-	private PreGameState currentState;
+	
 	private Object preGameStateLock = new Object();
 	
 	/**
@@ -67,7 +67,7 @@ public class PreGamePowerUpScreen implements Screen {
 		
 		this.mainMenuCam = new OrthographicCamera();
 		socketHandler.setPreGamePowerUpScreen(this);
-		setState(PreGameState.READY);
+		setState(PreGamePowerUpState.READY);
 		mainMenuCam.setToOrtho(true, GAME_WIDTH, GAME_HEIGHT);
 		
 		batcher = new SpriteBatch();
@@ -87,7 +87,6 @@ public class PreGamePowerUpScreen implements Screen {
 		}		
 		//Get options
 		prefs = Gdx.app.getPreferences("Options");
-		enableBGM = prefs.getBoolean("enableBGM", true);
 		enableSFX = prefs.getBoolean("enableSFX", true);
 	}
 	/**
@@ -139,18 +138,18 @@ public class PreGamePowerUpScreen implements Screen {
 		switch(getState()) {
 		
 		case READY:
-			setState(PreGameState.COUNTING);
+			setState(PreGamePowerUpState.COUNTING);
 			break;
 			
 		case COUNTING:
 			if (countDownTime <= 0 ) {
-				setState(PreGameState.GO);
+				setState(PreGamePowerUpState.GO);
 			} else {
 				countDownTime -= delta;
 			}
 			if(Gdx.input.isKeyPressed(Keys.BACK)) {
 				if (enableSFX) AssetLoader.back.play();
-				setState(PreGameState.QUIT);
+				setState(PreGamePowerUpState.QUIT);
 				return;
 			}
 			
@@ -159,7 +158,7 @@ public class PreGamePowerUpScreen implements Screen {
 				
 				if (backBounds.contains(touchPoint.x, touchPoint.y)) {
 					if (enableSFX) AssetLoader.back.play();
-					setState(PreGameState.QUIT);
+					setState(PreGamePowerUpState.QUIT);
 				}
 				
 				for (int i =0; i<NO_OF_DEPLOYERS; i++) {
@@ -239,7 +238,7 @@ public class PreGamePowerUpScreen implements Screen {
 	 * this screen
 	 * @param s
 	 */
-	public void setState(PreGameState preGameState) {
+	public void setState(PreGamePowerUpState preGameState) {
 		synchronized(preGameStateLock) {
 			this.currentState = preGameState;
 		}
@@ -249,7 +248,7 @@ public class PreGamePowerUpScreen implements Screen {
 	 * current state of this game
 	 * @return
 	 */
-	public PreGameState getState() {
+	public PreGamePowerUpState getState() {
 		synchronized(preGameStateLock){ 
 			return currentState;
 		}

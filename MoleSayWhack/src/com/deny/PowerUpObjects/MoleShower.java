@@ -79,7 +79,7 @@ public class MoleShower extends PowerUp {
 	 * of this powerup to the game
 	 */
 	public static void causeEffect() {
-		for (int i=0; i<gameWorld.getNumberOfMolesPerGrid(); i++) {
+		for (int i=0; i<GameWorld.getNumberOfMolesPerGrid(); i++) {
         	gameWorld.spawnMole(MoleType.ONETAP,i);
 		}
 	}

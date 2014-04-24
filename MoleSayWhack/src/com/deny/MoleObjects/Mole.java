@@ -3,14 +3,7 @@ package com.deny.MoleObjects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.graphics.Color;
-
-
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
-
-
-
 import com.badlogic.gdx.math.Rectangle;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;

@@ -6,7 +6,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector3;
 import com.deny.GameHelpers.AssetLoader;
 import com.deny.molewhack.WMGame;
 
@@ -33,10 +32,8 @@ public class DisconnectScreen implements Screen {
 	private OrthographicCamera mainMenuCam;
 	private SpriteBatch batcher;
 	private Preferences prefs;
-	private boolean enableBGM;
 	private boolean enableSFX;
 	private ShapeRenderer shapeRenderer;
-	private Vector3 touchPoint;
 	private DisconnectScreenStates currentState;
 
 	/**
@@ -57,11 +54,9 @@ public class DisconnectScreen implements Screen {
 		
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(mainMenuCam.combined);
-		touchPoint = new Vector3();
 		
 		//Get options
 		prefs = Gdx.app.getPreferences("Options");
-		enableBGM = prefs.getBoolean("enableBGM", true);
 		enableSFX = prefs.getBoolean("enableSFX", true);
 	}
 	/**

@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Preferences;
@@ -44,7 +43,10 @@ public class MultiplayerScreen implements Screen {
 	public enum MultiplayerState {
 		READY, CONNECTED, START, RESTART, QUIT, PROTOCOLMISMATCH, TRUDY;
 	}
+	
+	//GuardedBy("multiplayerStateLock")
 	private MultiplayerState currentState;
+	
 	private Object multiplayerStateLock = new Object();
 	
 	private WMGame game;
@@ -61,7 +63,6 @@ public class MultiplayerScreen implements Screen {
 	private Preferences prefs;
 	private IPAddressInputListener listener;
 	private Vector3 touchPoint;
-	private boolean enableBGM;
 	private boolean enableSFX;
 	
 	/**
@@ -93,7 +94,6 @@ public class MultiplayerScreen implements Screen {
 		//Preferences
 		prefs = Gdx.app.getPreferences("Options");
 		otherAddress = (prefs.getString("IPAddress", "127.0.0.1"));
-		enableBGM = prefs.getBoolean("enableBGM", true);
 		enableSFX = prefs.getBoolean("enableSFX", true);
 				
 		//Initialize Sockets!
@@ -369,7 +369,7 @@ public class MultiplayerScreen implements Screen {
 	 * to
 	 * @param IPAddress
 	 */
-	public synchronized void setIPAddress(String IPAddress) {
+	public void setIPAddress(String IPAddress) {
 		this.otherAddress = IPAddress;
 		prefs.putString("IPAddress", IPAddress);
 		prefs.flush();
@@ -380,7 +380,7 @@ public class MultiplayerScreen implements Screen {
 	 * to send messages between the two 
 	 * players
 	 */
-	public synchronized void restartSocketHandler() {
+	public void restartSocketHandler() {
 		if (socketHandler !=null) {
 			socketHandler.interrupt();
 			socketHandler.dispose();
@@ -395,6 +395,7 @@ public class MultiplayerScreen implements Screen {
 	 * players
 	 * @return
 	 */
+	
 	public ServerClientThread getSocketHandler() {
 		return socketHandler;
 	}

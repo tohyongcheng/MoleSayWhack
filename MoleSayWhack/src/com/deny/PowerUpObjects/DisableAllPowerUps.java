@@ -81,7 +81,7 @@ public class DisableAllPowerUps extends PowerUp {
 	 */
 	public static void causeEffect() {
 		PowerUpDeployer[] powerUpDeployers = gameWorld.getPowerUpDeployers();
-		for (int i =0; i<gameWorld.getNumberOfPowerUpDeployers();i++) {
+		for (int i =0; i<GameWorld.getNumberOfPowerUpDeployers();i++) {
 			powerUpDeployers[i].setDisabled(true);
 		}
 	}
@@ -101,7 +101,7 @@ public class DisableAllPowerUps extends PowerUp {
 						Gdx.app.postRunnable(new Runnable() {
 							public void run() {
 								PowerUpDeployer[] powerUpDeployers = gameWorld.getPowerUpDeployers();
-								for (int i =0; i<gameWorld.getNumberOfPowerUpDeployers();i++) {
+								for (int i =0; i<GameWorld.getNumberOfPowerUpDeployers();i++) {
 									powerUpDeployers[i].setDisabled(false);
 								}
 							}

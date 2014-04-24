@@ -5,7 +5,6 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
-import java.net.SocketException;
 import java.nio.channels.ClosedByInterruptException;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -22,11 +21,8 @@ import com.deny.GameObjects.PowerUpType;
 import com.deny.GameWorld.GameWorld;
 import com.deny.GameWorld.GameWorld.GameState;
 import com.deny.Screens.DisconnectScreen;
-import com.deny.Screens.MultiplayerScreen;
 import com.deny.Screens.MultiplayerScreen.MultiplayerState;
 import com.deny.Screens.OptionsScreen.AuthenticationType;
-import com.deny.Screens.PreGameScreen.PreGameState;
-import com.deny.Screens.PreGameScreen;
 import com.deny.molewhack.WMGame;
 
 /**
@@ -41,8 +37,6 @@ public class ReadThread  extends Thread{
 	private BufferedReader in;
 	private ServerClientThread socketHandler;
 	private GameWorld gameWorld;
-	private PreGameScreen preGameScreen;
-	private MultiplayerScreen multiPlayerScreen;
 	private Cipher cipher;
 	private ObjectInputStream inObject;
 	private Key  symmetricKey;

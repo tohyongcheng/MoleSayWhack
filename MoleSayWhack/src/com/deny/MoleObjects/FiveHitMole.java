@@ -1,8 +1,6 @@
 package com.deny.MoleObjects;
 
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
-import com.deny.GameHelpers.AssetLoader;
 import com.deny.GameObjects.MoleType;
 import com.deny.GameObjects.Player;
 

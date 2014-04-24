@@ -96,7 +96,7 @@ public class BlockMoleGrid extends PowerUp {
 						Gdx.app.postRunnable(new Runnable() {
 							public void run() {
 								boolean[] blockedGrids = gameWorld.getBlockedGrids();
-								for (int i =0 ; i< gameWorld.getNumberOfMolesPerGrid(); i++) {
+								for (int i =0 ; i< GameWorld.getNumberOfMolesPerGrid(); i++) {
 									blockedGrids[i] = false;
 								}
 							}
